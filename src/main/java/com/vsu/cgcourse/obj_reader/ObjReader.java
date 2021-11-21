@@ -14,6 +14,7 @@ public class ObjReader {
     private static final String OBJ_TEXTURE_TOKEN = "vt";
     private static final String OBJ_NORMAL_TOKEN = "vn";
     private static final String OBJ_FACE_TOKEN = "f";
+    private int count;
 
     public static Mesh read(String fileContent) {
         Mesh result = new Mesh();
