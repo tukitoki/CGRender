@@ -1,5 +1,7 @@
 package com.vsu.cgcourse;
 
+import com.vsu.cgcourse.obj_reader.ObjReaderException;
+import com.vsu.cgcourse.obj_writer.ObjWriter;
 import javafx.fxml.FXML;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -70,6 +72,8 @@ public class GuiController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
         fileChooser.setTitle("Load Model");
 
+        fileChooser.setInitialDirectory(new File("src/main/resources/com/vsu/cgcourse/models"));
+
         File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
         if (file == null) {
             return;
@@ -82,6 +86,29 @@ public class GuiController {
             mesh = ObjReader.read(fileContent);
             // todo: обработка ошибок
         } catch (IOException exception) {
+
+        }
+    }
+
+    @FXML
+    private void onSaveModelMenuItemClick() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
+        fileChooser.setTitle("Save Model");
+
+        fileChooser.setInitialDirectory(new File("src/main/resources/com/vsu/cgcourse/models"));
+
+        File file = fileChooser.showSaveDialog((Stage) canvas.getScene().getWindow());
+        if (file == null) {
+            return;
+        }
+
+        Path fileName = Path.of(file.getAbsolutePath());
+
+        try {
+            ObjWriter.write(mesh, file);
+            // todo: обработка ошибок
+        } catch (Exception exception) {
 
         }
     }

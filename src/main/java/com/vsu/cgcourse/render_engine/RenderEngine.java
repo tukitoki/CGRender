@@ -23,13 +23,13 @@ public class RenderEngine {
         modelViewProjectionMatrix.mul(viewMatrix);
         modelViewProjectionMatrix.mul(projectionMatrix);
 
-        final int nPolygons = mesh.polygonVertexIndices.size();
+        final int nPolygons = mesh.getPolygons().getPolygonVertexIndices().size();
         for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
-            final int nVerticesInPolygon = mesh.polygonVertexIndices.get(polygonInd).size();
+            final int nVerticesInPolygon = mesh.getPolygons().getPolygonVertexIndices().get(polygonInd).size();
 
             ArrayList<Point2f> resultPoints = new ArrayList<>();
             for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
-                Vector3f vertex = mesh.vertices.get(mesh.polygonVertexIndices.get(polygonInd).get(vertexInPolygonInd));
+                Vector3f vertex = mesh.getVertices().get(mesh.getPolygons().getPolygonVertexIndices().get(polygonInd).get(vertexInPolygonInd));
                 Point2f resultPoint = vertexToPoint(multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertex), width, height);
                 resultPoints.add(resultPoint);
             }
