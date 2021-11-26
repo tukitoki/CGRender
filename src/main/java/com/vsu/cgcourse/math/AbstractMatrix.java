@@ -86,19 +86,6 @@ public abstract class AbstractMatrix<T> {
         return resultMatrix;
     }
 
-    public AbstractMatrix<T> multiply(AbstractVector vector) throws Exception {
-        if (this.matrix[0].length != vector.getVectorCoords().length) {
-            throw new Exception("Size of vector must be equals size of matrix line");
-        }
-        AbstractMatrix<T> resultMatrix = createMatrix(this.matrix.length, this.matrix.length);
-        for (int line = 0; line < this.matrix.length; line++) {
-            for (int column = 0; column < this.matrix[line].length; column++) {
-                resultMatrix.matrix[line][column] = this.matrix[line][column] * vector.getVectorCoords()[column];
-            }
-        }
-        return resultMatrix;
-    }
-
     public void multiply(AbstractMatrix<T> matrix) throws Exception {
         if (this.matrix.length == matrix.matrix.length) {
             for (int line = 0; line < this.matrix.length; line++) {

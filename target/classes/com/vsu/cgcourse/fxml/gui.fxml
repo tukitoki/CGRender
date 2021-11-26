@@ -52,6 +52,11 @@
                     <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="S"/>
                 </accelerator>
             </MenuItem>
+            <MenuItem mnemonicParsing="false" onAction="#handleCameraRotateZ" text="Rotate">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="R"/>
+                </accelerator>
+            </MenuItem>
         </Menu>
     </MenuBar>
 

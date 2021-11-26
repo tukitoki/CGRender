@@ -1,5 +1,6 @@
 package com.vsu.cgcourse;
 
+import com.vsu.cgcourse.math.Matrix3;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.obj_reader.ObjReaderException;
 import com.vsu.cgcourse.obj_writer.ObjWriter;
@@ -146,5 +147,12 @@ public class GuiController {
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) throws Exception {
         camera.movePosition(new Vector3(new float[] {0, -TRANSLATION, 0}));
+    }
+
+    @FXML
+    public void handleCameraRotateZ(ActionEvent actionEvent) throws Exception {
+        camera.rotate(new Matrix3(new float[][] {{(float)Math.cos(30), (float)Math.sin(30), 0},
+                                                {(float)-Math.sin(30), (float)Math.cos(30), 0},
+                                                {0, 0, 1}}));
     }
 }

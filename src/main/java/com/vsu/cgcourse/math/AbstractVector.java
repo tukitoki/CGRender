@@ -63,12 +63,23 @@ public abstract class AbstractVector<T> {
         }
     }
 
-    public AbstractVector<T> multiplyConst(float scal) {
-        AbstractVector<T> resultVector = createVector();
+    public void multiply(float scal) {
         for (int i = 0; i < this.vectorCoords.length; i++) {
-            resultVector.vectorCoords[i] = this.vectorCoords[i] * scal;
+            this.vectorCoords[i] *= scal;
         }
-        return resultVector;
+    }
+
+    public void multiply(AbstractMatrix matrix) throws Exception {
+        if (matrix.getMatrix()[0].length != this.getVectorCoords().length) {
+            throw new Exception("Size of vector must be equals size of matrix line");
+        }
+        for (int line = 0; line < this.getVectorCoords().length; line++) {
+            float var = 0;
+            for (int column = 0; column < matrix.getMatrix()[line].length; column++) {
+                var += matrix.getMatrix()[line][column] * this.vectorCoords[column];
+            }
+            this.vectorCoords[line] = var;
+        }
     }
 
     public AbstractVector<T> divideConst(float scal) {

@@ -1,4 +1,5 @@
 package com.vsu.cgcourse.render_engine;
+import com.vsu.cgcourse.math.Matrix3;
 import com.vsu.cgcourse.math.Matrix4;
 import com.vsu.cgcourse.math.Vector3;
 
@@ -41,6 +42,10 @@ public class Camera {
 
     public void movePosition(final Vector3 translation) throws Exception {
         this.position.plus(translation);
+    }
+
+    public void rotate(final Matrix3 rotation) throws Exception {
+        this.position.multiply(rotation);
     }
 
     public void moveTarget(final Vector3 translation) throws Exception {
