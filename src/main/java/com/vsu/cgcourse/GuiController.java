@@ -1,5 +1,6 @@
 package com.vsu.cgcourse;
 
+import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.obj_reader.ObjReaderException;
 import com.vsu.cgcourse.obj_writer.ObjWriter;
 import javafx.fxml.FXML;
@@ -36,8 +37,8 @@ public class GuiController {
     private Mesh mesh = null;
 
     private Camera camera = new Camera(
-            new Vector3f(0, 00, 100),
-            new Vector3f(0, 0, 0),
+            new Vector3(new float[] {0, 00, 100}),
+            new Vector3(new float[] {0, 0, 0}),
             1.0F, 1, 0.01F, 100);
 
     private Timeline timeline;
@@ -58,7 +59,11 @@ public class GuiController {
             camera.setAspectRatio((float) (width / height));
 
             if (mesh != null) {
-                RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh, (int) width, (int) height);
+                try {
+                    RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh, (int) width, (int) height);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -114,32 +119,32 @@ public class GuiController {
     }
 
     @FXML
-    public void handleCameraForward(ActionEvent actionEvent) {
-        camera.movePosition(new Vector3f(0, 0, -TRANSLATION));
+    public void handleCameraForward(ActionEvent actionEvent) throws Exception {
+        camera.movePosition(new Vector3(new float[] {0, 0, -TRANSLATION}));
     }
 
     @FXML
-    public void handleCameraBackward(ActionEvent actionEvent) {
-        camera.movePosition(new Vector3f(0, 0, TRANSLATION));
+    public void handleCameraBackward(ActionEvent actionEvent) throws Exception {
+        camera.movePosition(new Vector3(new float[] {0, 0, TRANSLATION}));
     }
 
     @FXML
-    public void handleCameraLeft(ActionEvent actionEvent) {
-        camera.movePosition(new Vector3f(TRANSLATION, 0, 0));
+    public void handleCameraLeft(ActionEvent actionEvent) throws Exception {
+        camera.movePosition(new Vector3(new float[] {TRANSLATION, 0, 0}));
     }
 
     @FXML
-    public void handleCameraRight(ActionEvent actionEvent) {
-        camera.movePosition(new Vector3f(-TRANSLATION, 0, 0));
+    public void handleCameraRight(ActionEvent actionEvent) throws Exception {
+        camera.movePosition(new Vector3(new float[] {-TRANSLATION, 0, 0}));
     }
 
     @FXML
-    public void handleCameraUp(ActionEvent actionEvent) {
-        camera.movePosition(new Vector3f(0, TRANSLATION, 0));
+    public void handleCameraUp(ActionEvent actionEvent) throws Exception {
+        camera.movePosition(new Vector3(new float[] {0, TRANSLATION, 0}));
     }
 
     @FXML
-    public void handleCameraDown(ActionEvent actionEvent) {
-        camera.movePosition(new Vector3f(0, -TRANSLATION, 0));
+    public void handleCameraDown(ActionEvent actionEvent) throws Exception {
+        camera.movePosition(new Vector3(new float[] {0, -TRANSLATION, 0}));
     }
 }

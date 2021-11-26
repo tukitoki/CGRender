@@ -1,13 +1,12 @@
 package com.vsu.cgcourse.render_engine;
 
-import com.vsu.cgcourse.math.Matrix4;
-import com.vsu.cgcourse.math.Vector3;
-import com.vsu.cgcourse.model.Mesh;
-import javafx.scene.canvas.GraphicsContext;
-
-import javax.vecmath.Point2f;
 import java.util.ArrayList;
 
+import com.vsu.cgcourse.math.Matrix4;
+import com.vsu.cgcourse.math.Vector3;
+import javafx.scene.canvas.GraphicsContext;
+import javax.vecmath.*;
+import com.vsu.cgcourse.model.Mesh;
 import static com.vsu.cgcourse.render_engine.GraphicConveyor.*;
 
 public class RenderEngine {
@@ -26,13 +25,13 @@ public class RenderEngine {
         modelViewProjectionMatrix.multiply(viewMatrix);
         modelViewProjectionMatrix.multiply(projectionMatrix);
 
-        final int nPolygons = mesh.polygonVertexIndices.size();
+        final int nPolygons = mesh.getPolygons().getPolygonVertexIndices().size();
         for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
-            final int nVerticesInPolygon = mesh.polygonVertexIndices.get(polygonInd).size();
+            final int nVerticesInPolygon = mesh.getPolygons().getPolygonVertexIndices().get(polygonInd).size();
 
             ArrayList<Point2f> resultPoints = new ArrayList<>();
             for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
-                Vector3 vertex = mesh.vertices.get(mesh.polygonVertexIndices.get(polygonInd).get(vertexInPolygonInd));
+                Vector3 vertex = mesh.getVertices().get(mesh.getPolygons().getPolygonVertexIndices().get(polygonInd).get(vertexInPolygonInd));
                 Point2f resultPoint = vertexToPoint(multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertex), width, height);
                 resultPoints.add(resultPoint);
             }
