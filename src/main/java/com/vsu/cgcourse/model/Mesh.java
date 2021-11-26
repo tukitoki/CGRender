@@ -1,5 +1,7 @@
 package com.vsu.cgcourse.model;
 
+import com.vsu.cgcourse.math.Vector2;
+import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.obj_reader.ObjReaderException;
 
 import java.util.*;
@@ -8,9 +10,9 @@ import javax.vecmath.Vector2f;
 
 public class Mesh {
 
-    private ArrayList<Vector3f> vertices;
-    private ArrayList<Vector2f> textureVertices;
-    private ArrayList<Vector3f> normals;
+    private ArrayList<Vector3> vertices;
+    private ArrayList<Vector2> textureVertices;
+    private ArrayList<Vector3> normals;
     private Polygons polygons;
 
     public Mesh() {
@@ -20,15 +22,15 @@ public class Mesh {
         polygons = new Polygons();
     }
 
-    public ArrayList<Vector3f> getVertices() {
+    public ArrayList<Vector3> getVertices() {
         return vertices;
     }
 
-    public ArrayList<Vector2f> getTextureVertices() {
+    public ArrayList<Vector2> getTextureVertices() {
         return textureVertices;
     }
 
-    public ArrayList<Vector3f> getNormals() {
+    public ArrayList<Vector3> getNormals() {
         return normals;
     }
 

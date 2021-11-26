@@ -1,5 +1,7 @@
 package com.vsu.cgcourse.obj_reader;
 
+import com.vsu.cgcourse.math.Vector2;
+import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.Mesh;
 import com.vsu.cgcourse.model.Polygons;
 
@@ -59,15 +61,15 @@ public class ObjReader {
     }
 
     // Всем методам кроме основного я поставил модификатор доступа protected, чтобы обращаться к ним в тестах
-    protected static Vector3f parseVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
+    protected static Vector3 parseVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
         try {
             if (wordsInLineWithoutToken.size() > 3) {
                 throw new ObjReaderException("Too many vertex arguments.", lineInd);
             }
-            return new Vector3f(
+            return new Vector3(new float[] {
                     Float.parseFloat(wordsInLineWithoutToken.get(0)),
                     Float.parseFloat(wordsInLineWithoutToken.get(1)),
-                    Float.parseFloat(wordsInLineWithoutToken.get(2)));
+                    Float.parseFloat(wordsInLineWithoutToken.get(2)) });
         } catch(NumberFormatException e) {
             throw new ObjReaderException("Failed to parse float value.", lineInd);
 
@@ -76,16 +78,16 @@ public class ObjReader {
         }
     }
 
-    protected static Vector2f parseTextureVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
+    protected static Vector2 parseTextureVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
         try {
             if (wordsInLineWithoutToken.size() > 2) {
                 if (Math.abs(Float.parseFloat(wordsInLineWithoutToken.get(2))) - 0.00000f > 1e-6) {
                     throw new ObjReaderException("Too many texture vertex arguments.", lineInd);
                 }
             }
-            return new Vector2f(
+            return new Vector2(new float[] {
                     Float.parseFloat(wordsInLineWithoutToken.get(0)),
-                    Float.parseFloat(wordsInLineWithoutToken.get(1)));
+                    Float.parseFloat(wordsInLineWithoutToken.get(1))});
 
         } catch(NumberFormatException e) {
             throw new ObjReaderException("Failed to parse float value.", lineInd);
@@ -95,15 +97,15 @@ public class ObjReader {
         }
     }
 
-    protected static Vector3f parseNormal(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
+    protected static Vector3 parseNormal(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
         try {
             if (wordsInLineWithoutToken.size() > 3) {
                 throw new ObjReaderException("Too many normal arguments.", lineInd);
             }
-            return new Vector3f(
+            return new Vector3(new float[] {
                     Float.parseFloat(wordsInLineWithoutToken.get(0)),
                     Float.parseFloat(wordsInLineWithoutToken.get(1)),
-                    Float.parseFloat(wordsInLineWithoutToken.get(2)));
+                    Float.parseFloat(wordsInLineWithoutToken.get(2))});
 
         } catch(NumberFormatException e) {
             throw new ObjReaderException("Failed to parse float value.", lineInd);

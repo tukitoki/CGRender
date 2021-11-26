@@ -1,5 +1,7 @@
 package com.vsu.cgcourse.obj_writer;
 
+import com.vsu.cgcourse.math.Vector2;
+import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.Mesh;
 
 import javax.vecmath.Vector2f;
@@ -23,12 +25,12 @@ public class ObjWriter {
 
     protected static void writeAllVertices(
             FileWriter writer,
-            final ArrayList<Vector3f> vertices,
-            final ArrayList<Vector2f> textureVertices,
-            final ArrayList<Vector3f> normals) throws Exception{
-        List<String> listVertices = vertices.stream().map(Vector3f::toString).collect(Collectors.toList());
-        List<String> listTextureVertices = textureVertices.stream().map(Vector2f::toString).collect(Collectors.toList());
-        List<String> listNormals = normals.stream().map(Vector3f::toString).collect(Collectors.toList());
+            final ArrayList<Vector3> vertices,
+            final ArrayList<Vector2> textureVertices,
+            final ArrayList<Vector3> normals) throws Exception{
+        List<String> listVertices = vertices.stream().map(Vector3::toString).collect(Collectors.toList());
+        List<String> listTextureVertices = textureVertices.stream().map(Vector2::toString).collect(Collectors.toList());
+        List<String> listNormals = normals.stream().map(Vector3::toString).collect(Collectors.toList());
         writer.write(writeTheDesiredVertices(listVertices, OBJ_VERTEX_TOKEN));
         writer.write("\n");
         writer.flush();
