@@ -70,6 +70,9 @@ public class ObjWriter {
 
                 if (!polygonNormalIndices.get(i).isEmpty()) {
                     str.append("/");
+                    if (polygonTextureVertexIndices.get(i).isEmpty()) {
+                        str.append("/");
+                    }
                     str.append(polygonNormalIndices.get(i).get(j) + 1);
                 }
             }
