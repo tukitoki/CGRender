@@ -27,7 +27,7 @@ import com.vsu.cgcourse.render_engine.RenderEngine;
 
 public class GuiController {
 
-    final private float TRANSLATION = 0.5F;
+    final private float TRANSLATION = 2F;
 
     @FXML
     AnchorPane anchorPane;
@@ -149,10 +149,4 @@ public class GuiController {
         camera.movePosition(new Vector3(new float[] {0, -TRANSLATION, 0}));
     }
 
-    @FXML
-    public void handleCameraRotateZ(ActionEvent actionEvent) throws Exception {
-        camera.rotate(new Matrix3(new float[][] {{(float)Math.cos(30), (float)Math.sin(30), 0},
-                                                {(float)-Math.sin(30), (float)Math.cos(30), 0},
-                                                {0, 0, 1}}));
-    }
 }

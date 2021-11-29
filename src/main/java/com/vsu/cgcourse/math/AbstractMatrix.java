@@ -96,20 +96,20 @@ public abstract class AbstractMatrix<T> {
         } else {
             throw new Exception("Size of matrix must be equals size of this.matrix");
         }
+        float[][] newMatrix = new float[matrix.getMatrix().length][matrix.getMatrix()[0].length];
         for (int i = 0; i < this.matrix.length; i++) {
             for (int j = 0; j < this.matrix[i].length; j++) {
                 float var = 0F;
                 for (int k = 0; k < this.matrix[i].length; k++) {
                     var += this.matrix[i][k] * matrix.matrix[k][j];
                 }
-                this.matrix[i][j] = var;
+                newMatrix[i][j] = var;
             }
-
         }
+        this.matrix = newMatrix;
     }
 
-    public AbstractMatrix<T> transposite() {
-        AbstractMatrix<T> matrix = createMatrix(this.matrix.length, this.matrix[0].length);
+    public void transposite() {
         float n;
         for (int line = 0; line < this.matrix.length; line++) {
             for (int column = line + 1; column < this.matrix[0].length; column++) {
@@ -118,8 +118,6 @@ public abstract class AbstractMatrix<T> {
                 this.matrix[column][line] = n;
             }
         }
-        matrix.matrix = this.matrix;
-        return matrix;
     }
 
     public static float determinant(float[][] matrix) {

@@ -39,7 +39,7 @@ public class Vector4 extends AbstractVector<Vector4> {
         this.getVectorCoords()[2] = z;
     }
 
-    public double getW() {
+    public float getW() {
         return this.getVectorCoords()[3];
     }
 
