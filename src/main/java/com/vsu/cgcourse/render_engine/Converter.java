@@ -6,8 +6,21 @@ import com.vsu.cgcourse.math.Vector3;
 
 
 public class Converter {
+    private float x;
+    private float y;
+    private float z;
+    private char axis;
+    private float angle;
 
-    public static Matrix4 translate(Vector3 vector3) throws Exception {
+    public Converter(float x, float y, float z, char axis, float angle) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.axis = axis;
+        this.angle = angle;
+    }
+
+    public Matrix4 translate(Vector3 vector3) throws Exception {
         return new Matrix4(new float[][]{
                     {1, 0, 0, vector3.getX()},
                     {0, 1, 0, vector3.getY()},
@@ -15,7 +28,7 @@ public class Converter {
                     {0, 0, 0, 1}});
     }
 
-    public  static Matrix3 scale(float x, float y, float z) throws Exception {
+    public Matrix3 scale() throws Exception {
         return new Matrix3(new float[][]{
                     {x, 0, 0},
                     {0, y, 0},
@@ -23,7 +36,7 @@ public class Converter {
         });
     }
 
-    public static Matrix3 rotate(char axis, float angle)
+    public  Matrix3 rotate()
             throws Exception {
         if(axis == 'x') {
             return new Matrix3(new float[][]{

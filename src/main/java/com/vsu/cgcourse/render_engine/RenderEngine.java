@@ -16,8 +16,9 @@ public class RenderEngine {
             final Camera camera,
             final Mesh mesh,
             final int width,
-            final int height) throws Exception {
-        Matrix4 modelMatrix = rotateScaleTranslate();
+            final int height,
+            Converter converter) throws Exception {
+        Matrix4 modelMatrix = rotateScaleTranslate(converter);
         Matrix4 viewMatrix = camera.getViewMatrix();
         Matrix4 projectionMatrix = camera.getProjectionMatrix();
 
