@@ -1,9 +1,8 @@
 package com.vsu.cgcourse.render_engine;
 
-import com.vsu.cgcourse.math.Matrix3;
+
 import com.vsu.cgcourse.math.Matrix4;
 import com.vsu.cgcourse.math.Vector3;
-import com.vsu.cgcourse.math.Vector4;
 
 import javax.vecmath.Point2f;
 
@@ -14,7 +13,7 @@ public class GraphicConveyor {
                 {(float)Math.cos(Math.PI / 6), 0, (float) Math.sin(Math.PI / 6), 0},
                 {0, 1, 0, 0},
                 {(float) -Math.sin(Math.PI / 6), 0, (float) Math.cos(Math.PI / 6), 0},
-                {0,                                                              0, 0, 1}
+                {0,                              0,  0,                            1}
         });
         return new Matrix4(matrix);
     }
