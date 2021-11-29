@@ -1,19 +1,22 @@
 package com.vsu.cgcourse.render_engine;
 
-
 import com.vsu.cgcourse.math.Matrix4;
 import com.vsu.cgcourse.math.Vector3;
+import com.vsu.cgcourse.math.Vector4;
 
-import javax.vecmath.Point2f;
+import javax.vecmath.Point2f;//{1, 0, 0, 0}   {2, 0, 0, 0}   {cos(30), sin(30), 0, 0}
+                             //{0, 1, 0, 0} * {0, 2, 0, 0} * {-sin(30), cos(30), 0, 0}  *
+                             //{0, 0, 1, 0}   {0, 0, 2, 0}   {0,               0, 1, 0}
+                             //{0, 0, 0, 1}   {0, 0, 0, 1}   {0,               0, 0, 1}
 
 public class GraphicConveyor {
 
     public static Matrix4 rotateScaleTranslate() throws Exception {
-        Matrix4 matrix = new Matrix4(new float[][]{
-                {(float)Math.cos(Math.PI / 6), 0, (float) Math.sin(Math.PI / 6), 0},
+        Matrix4 matrix = new Matrix4 (new float[][]{
+                {1, 0, 0, 0},
                 {0, 1, 0, 0},
-                {(float) -Math.sin(Math.PI / 6), 0, (float) Math.cos(Math.PI / 6), 0},
-                {0,                              0,  0,                            1}
+                {0, 0, 1, 0},
+                {0, 0, 0, 1}
         });
         return new Matrix4(matrix);
     }
@@ -59,20 +62,11 @@ public class GraphicConveyor {
         return result;
     }
 
-    public static Vector3 multiplyMatrix4ByVector3(final Matrix4 matrix, final Vector3 vertex) {
-        final float x = (vertex.getX() * matrix.getElement(0, 0)) +
-                (vertex.getY() * matrix.getElement(1, 0)) +
-                (vertex.getZ() * matrix.getElement(2, 0)) + matrix.getElement(3, 0);
-        final float y = (vertex.getX() * matrix.getElement(0, 1)) +
-                (vertex.getY() * matrix.getElement(1, 1)) +
-                (vertex.getZ() * matrix.getElement(2, 1)) + matrix.getElement(3, 1);
-        final float z = (vertex.getX() * matrix.getElement(0, 2)) +
-                (vertex.getY() * matrix.getElement(1, 2)) +
-                (vertex.getZ() * matrix.getElement(2, 2)) + matrix.getElement(3, 2);
-        final float w = (vertex.getX() * matrix.getElement(0, 3)) +
-                (vertex.getY() * matrix.getElement(1, 3)) +
-                (vertex.getZ() * matrix.getElement(2, 3)) + matrix.getElement(3, 3);
-        return new Vector3(new float[]{x / w, y / w, z / w});
+    public static Vector3 multiplyMatrix4ByVector3(final Matrix4 matrix, final Vector3 vertex) throws Exception {
+        Vector4 vertex4 = new Vector4(new float[] {vertex.getX(), vertex.getY(), vertex.getZ(), 1});
+        vertex4.multiply(matrix);
+        return new Vector3(new float[] {vertex4.getX() / vertex4.getW(), vertex4.getY() / vertex4.getW(),
+                                                                        vertex4.getZ() / vertex4.getW()});
     }
 
     public static Point2f vertexToPoint(final Vector3 vertex, final int width, final int height) {

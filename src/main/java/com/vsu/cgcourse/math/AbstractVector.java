@@ -73,13 +73,15 @@ public abstract class AbstractVector<T> {
         if (matrix.getMatrix()[0].length != this.getVectorCoords().length) {
             throw new Exception("Size of vector must be equals size of matrix line");
         }
-        for (int line = 0; line < this.getVectorCoords().length; line++) {
+        float[] newCoords = new float[this.vectorCoords.length];
+        for (int line = 0; line < matrix.getMatrix().length; line++) {
             float var = 0;
             for (int column = 0; column < matrix.getMatrix()[line].length; column++) {
                 var += matrix.getMatrix()[line][column] * this.vectorCoords[column];
             }
-            this.vectorCoords[line] = var;
+            newCoords[line] = var;
         }
+        this.vectorCoords = newCoords;
     }
 
     public AbstractVector<T> divideConst(float scal) {
