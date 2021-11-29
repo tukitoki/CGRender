@@ -141,23 +141,38 @@ public class GuiController {
         button.setPrefSize(70, 40);
         button.setLayoutX(100);
         button.setLayoutY(300);
-        button.setOnAction(actionEvent ->
-        {
-            try {
-                RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
-                        (int) canvas.getWidth(), (int) canvas.getHeight(),
-                new Converter(Float.parseFloat(textField.getText()), Float.parseFloat(textField.getText()),
-                        Float.parseFloat(textField.getText()), ' ', 0));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        button.setOnAction(actionEvent -> {
+            float number = Float.parseFloat(textField.getText());
+            anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
+            anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
+
+            KeyFrame frame = new KeyFrame(Duration.millis(15), event -> {
+                double width = canvas.getWidth();
+                double height = canvas.getHeight();
+
+                canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
+                camera.setAspectRatio((float) (width / height));
+                if (mesh != null) {
+                    try {
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(),
+                                new Converter(number, number, number, ' ', 0));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                event.consume();
+            });
+            timeline.getKeyFrames().add(frame);
+            timeline.play();
+            actionEvent.consume();
         });
         group.getChildren().addAll(textField, button);
         stage.show();
     }
 
     @FXML
-    public void onOpenTransformMenuItemClick(ActionEvent actionEvent) throws  Exception {
+    public void onOpenTransformMenuItemClick(ActionEvent actionEvent) throws Exception {
         drawTransformMenu();
     }
 
