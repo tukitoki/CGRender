@@ -90,7 +90,6 @@ public class GuiController {
         fileChooser.setTitle("Load Model");
 
         fileChooser.setInitialDirectory(new File("src/main/resources/com/vsu/cgcourse/models"));
-
         File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
         if (file == null) {
             return;
