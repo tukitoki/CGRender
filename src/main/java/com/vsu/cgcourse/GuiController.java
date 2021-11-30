@@ -1,8 +1,6 @@
 package com.vsu.cgcourse;
 
-import com.vsu.cgcourse.math.Matrix3;
 import com.vsu.cgcourse.math.Vector3;
-import com.vsu.cgcourse.obj_reader.ObjReaderException;
 import com.vsu.cgcourse.obj_writer.ObjWriter;
 import com.vsu.cgcourse.render_engine.Converter;
 import javafx.fxml.FXML;
@@ -10,11 +8,9 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -24,12 +20,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-import java.awt.event.MouseEvent;
+import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
-import javax.vecmath.Vector3f;
 
 import com.vsu.cgcourse.model.Mesh;
 import com.vsu.cgcourse.obj_reader.ObjReader;
@@ -72,7 +67,7 @@ public class GuiController {
             if (mesh != null) {
                 try {
                     RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh, (int) width, (int) height,
-                            new Converter(1, 1, 1, 'f', 0));
+                            new Converter(1, 1, 1, 'f', 0, new Vector3(new float[] {0, 0, 0})));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -129,17 +124,20 @@ public class GuiController {
         }
     }
 
-    private void drawTransformMenu() {
+    private void drawScaleMenu() {
         Group group = new Group();
         Scene scene = new Scene(group, 120, 200);
         Stage stage = new Stage(StageStyle.UTILITY);
 
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         stage.setTitle("Scale");
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.setX(0);
+        stage.setY(screenSize.getHeight() / 3);
 
         Text textX = new Text("X : ");
-        textX.setX(30);
+        textX.setX(40);
         textX.setY(20);
         TextField textFieldX = new TextField();
         textFieldX.setLayoutX(textX.getX());
@@ -162,11 +160,11 @@ public class GuiController {
         textFieldZ.setLayoutY(textZ.getY() + 10);
         textFieldZ.setPrefSize(textFieldY.getPrefWidth(), textFieldY.getPrefHeight());
 
-        Button button = new Button("Accept");
-        button.setLayoutX(textFieldZ.getLayoutX());
-        button.setLayoutY(textFieldZ.getLayoutY() + textFieldZ.getPrefHeight() + 10);
-        button.setPrefSize(70, 20);
-        button.setOnAction(actionEvent -> {
+        Button buttonAccept = new Button("Accept");
+        buttonAccept.setLayoutX(30);
+        buttonAccept.setLayoutY(textFieldZ.getLayoutY() + textFieldZ.getPrefHeight() + 10);
+        buttonAccept.setPrefSize(60, 20);
+        buttonAccept.setOnAction(actionEvent -> {
             float x, y, z;
             if (textFieldX.getText().length() != 0) {
                 x = Float.parseFloat(textFieldX.getText());
@@ -196,7 +194,7 @@ public class GuiController {
                     try {
                         RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
                                 (int) canvas.getWidth(), (int) canvas.getHeight(),
-                                new Converter(x, y, z, ' ', 0));
+                                new Converter(x, y, z, ' ', 0, new Vector3(new float[] {0, 0, 0})));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -207,13 +205,175 @@ public class GuiController {
             timeline.play();
             actionEvent.consume();
         });
-        group.getChildren().addAll(textX,textFieldX, textY, textFieldY, textZ, textFieldZ, button);
+        group.getChildren().addAll(textX,textFieldX, textY, textFieldY, textZ, textFieldZ, buttonAccept);
+        stage.show();
+    }
+
+    private void drawRotateMenu() {
+        Group group = new Group();
+        Scene scene = new Scene(group, 120, 130);
+        Stage stage = new Stage(StageStyle.UTILITY);
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        stage.setTitle("Rotate");
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.setX(0);
+        stage.setY(screenSize.getHeight() / 3);
+
+        Text textAxis = new Text("Axis : ");
+        textAxis.setX(40);
+        textAxis.setY(10);
+        TextField textFieldAxis = new TextField();
+        textFieldAxis.setLayoutX(textAxis.getX());
+        textFieldAxis.setLayoutY(textAxis.getY() + 10);
+        textFieldAxis.setPrefSize(40, 20);
+
+        Text textAngle = new Text("Angle : ");
+        textAngle.setX(textFieldAxis.getLayoutX());
+        textAngle.setY(textFieldAxis.getLayoutY() + textFieldAxis.getPrefHeight() + 20);
+        TextField textFieldAngle = new TextField();
+        textFieldAngle.setLayoutX(textAngle.getX());
+        textFieldAngle.setLayoutY(textAngle.getY() + 10);
+        textFieldAngle.setPrefSize(textFieldAxis.getPrefWidth(), textFieldAxis.getPrefHeight());
+
+        Button buttonAccept = new Button("Accept");
+        buttonAccept.setLayoutX(30);
+        buttonAccept.setLayoutY(textFieldAngle.getLayoutY() + textFieldAngle.getPrefHeight() + 10);
+        buttonAccept.setPrefSize(60, 20);
+        buttonAccept.setOnAction(actionEvent -> {
+            char axis = textFieldAxis.getText().charAt(0);
+            float angle = Float.parseFloat(textFieldAngle.getText());
+            anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
+            anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
+
+            KeyFrame frame = new KeyFrame(Duration.millis(15), event -> {
+                double width = canvas.getWidth();
+                double height = canvas.getHeight();
+
+                canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
+                camera.setAspectRatio((float) (width / height));
+                if (mesh != null) {
+                    try {
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(),
+                                new Converter(1, 1, 1, axis, angle, new Vector3(new float[] {0, 0, 0})));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                event.consume();
+            });
+            timeline.getKeyFrames().add(frame);
+            timeline.play();
+            actionEvent.consume();
+        });
+        group.getChildren().addAll(textAxis, textFieldAxis, textAngle, textFieldAngle, buttonAccept);
+        stage.show();
+    }
+
+    private void drawTranslateMenu() {
+        Group group = new Group();
+        Scene scene = new Scene(group, 120, 200);
+        Stage stage = new Stage(StageStyle.UTILITY);
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        stage.setTitle("Translate");
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.setX(0);
+        stage.setY(screenSize.getHeight() / 3);
+
+        Text textVectorCoords = new Text("Координаты вектора :");
+        textVectorCoords.setX(20);
+        textVectorCoords.setY(10);
+
+        Text textX = new Text("X :");
+        textX.setX(40);
+        textX.setY(textVectorCoords.getY() + 10);
+        TextField textFieldX = new TextField();
+        textFieldX.setLayoutX(textX.getX());
+        textFieldX.setLayoutY(textX.getY() + 10);
+        textFieldX.setPrefSize(40, 20);
+
+        Text textY = new Text("Y :");
+        textY.setX(textFieldX.getLayoutX());
+        textY.setY(textFieldX.getLayoutY() + textFieldX.getPrefHeight() + 20);
+        TextField textFieldY = new TextField();
+        textFieldY.setLayoutX(textX.getX());
+        textFieldY.setLayoutY(textY.getY() + 10);
+        textFieldY.setPrefSize(textFieldX.getPrefWidth(), textFieldX.getPrefHeight());
+
+        Text textZ = new Text("Z :");
+        textZ.setX(textFieldY.getLayoutX());
+        textZ.setY(textFieldY.getLayoutY() + textFieldY.getPrefHeight() + 20);
+        TextField textFieldZ = new TextField();
+        textFieldZ.setLayoutX(textZ.getX());
+        textFieldZ.setLayoutY(textZ.getY() + 10);
+        textFieldZ.setPrefSize(textFieldY.getPrefWidth(), textFieldY.getPrefHeight());
+
+        Button buttonAccept = new Button("Accept");
+        buttonAccept.setLayoutX(30);
+        buttonAccept.setLayoutY(textFieldZ.getLayoutY() + textFieldZ.getPrefHeight() + 10);
+        buttonAccept.setPrefSize(60, 20);
+        buttonAccept.setOnAction(actionEvent -> {
+            float x, y, z;
+            if (textFieldX.getText().length() != 0) {
+                x = Float.parseFloat(textFieldX.getText());
+            } else {
+                x = 0;
+            }
+            if (textFieldY.getText().length() != 0) {
+                y = Float.parseFloat(textFieldY.getText());
+            } else {
+                y = 0;
+            }
+            if (textFieldZ.getText().length() != 0) {
+                z = Float.parseFloat(textFieldZ.getText());
+            } else {
+                z = 0;
+            }
+            anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
+            anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
+
+            KeyFrame frame = new KeyFrame(Duration.millis(15), event -> {
+                double width = canvas.getWidth();
+                double height = canvas.getHeight();
+
+                canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
+                camera.setAspectRatio((float) (width / height));
+                if (mesh != null) {
+                    try {
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(),
+                                new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {x, y, z})));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                event.consume();
+            });
+            timeline.getKeyFrames().add(frame);
+            timeline.play();
+            actionEvent.consume();
+        });
+        group.getChildren().addAll(textVectorCoords, textFieldX, textFieldY, textFieldZ, textX, textY, textZ, buttonAccept);
         stage.show();
     }
 
     @FXML
-    public void onOpenTransformMenuItemClick(ActionEvent actionEvent) throws Exception {
-        drawTransformMenu();
+    public void onOpenTranslateMenu(ActionEvent actionEvent) {
+        drawTranslateMenu();
+    }
+
+    @FXML
+    public void onOpenRotateMenu(ActionEvent actionEvent) {
+        drawRotateMenu();
+    }
+
+    @FXML
+    public void onOpenScaleMenu(ActionEvent actionEvent) throws Exception {
+        drawScaleMenu();
     }
 
     @FXML

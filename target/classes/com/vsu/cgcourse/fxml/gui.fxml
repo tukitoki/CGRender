@@ -54,20 +54,20 @@
             </MenuItem>
         </Menu>
         <Menu mnemonicParsing="false" text="Transform">
-            <MenuItem mnemonicParsing="false" onAction="#onOpenTransformMenuItemClick" text="Scale">
-<!--                <accelerator>-->
-<!--                    <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="Z"/>-->
-<!--                </accelerator>-->
+            <MenuItem mnemonicParsing="false" onAction="#onOpenScaleMenu" text="Scale">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="Z"/>
+                </accelerator>
             </MenuItem>
-            <MenuItem mnemonicParsing="false" onAction="#onSaveModelMenuItemClick" text="Rotate">
-<!--                <accelerator>-->
-<!--                    <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="X"/>-->
-<!--                </accelerator>-->
+            <MenuItem mnemonicParsing="false" onAction="#onOpenRotateMenu" text="Rotate">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="X"/>
+                </accelerator>
             </MenuItem>
-            <MenuItem mnemonicParsing="false" onAction="#onSaveModelMenuItemClick" text="Translate">
-<!--                <accelerator>-->
-<!--                    <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="C"/>-->
-<!--                </accelerator>-->
+            <MenuItem mnemonicParsing="false" onAction="#onOpenTranslateMenu" text="Translate">
+                <accelerator>
+                   <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="C"/>
+                </accelerator>
             </MenuItem>
         </Menu>
     </MenuBar>

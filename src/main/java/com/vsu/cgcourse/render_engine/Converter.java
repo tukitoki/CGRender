@@ -11,21 +11,29 @@ public class Converter {
     private float z;
     private char axis;
     private float angle;
+    private Vector3 vectorTranslate;
 
-    public Converter(float x, float y, float z, char axis, float angle) {
+    public Converter(float x, float y, float z, char axis, float angle, Vector3 vectorTranslate) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.axis = axis;
         this.angle = angle;
+        this.vectorTranslate = vectorTranslate;
     }
 
-    public Matrix4 translate(Vector3 vector3) throws Exception {
-        return new Matrix4(new float[][]{
-                    {1, 0, 0, vector3.getX()},
-                    {0, 1, 0, vector3.getY()},
-                    {0, 0, 1, vector3.getZ()},
-                    {0, 0, 0, 1}});
+    public Matrix4 translate() throws Exception {
+        if (vectorTranslate.getX() != 0 && vectorTranslate.getY() != 0 && vectorTranslate.getZ() != 0) {
+            return new Matrix4(new float[][]{
+                    {1, 0, 0, 0},
+                    {0, 1, 0, 0},
+                    {0, 0, 1, 0},
+                    {vectorTranslate.getX(), vectorTranslate.getY(), vectorTranslate.getZ(), 1}});
+        }
+        return new Matrix4(new float[][] {{1, 0, 0, 0},
+                                          {0, 1, 0, 0},
+                                          {0, 0, 1, 0},
+                                          {0, 0, 0, 1}});
     }
 
     public Matrix3 scale() throws Exception {
@@ -36,29 +44,33 @@ public class Converter {
         });
     }
 
-    public  Matrix3 rotate()
-            throws Exception {
+    public  Matrix3 rotate() throws Exception {
+        // TODO: 30.11.2021 Условие тут воплседвствии надо убрать
+        if (angle != 0) {
+            double num = Math.PI / angle;
+            angle = (float) Math.PI / (float)num;
+        }
         if(axis == 'x') {
             return new Matrix3(new float[][]{
                     {1, 0, 0},
                     {0, (float) Math.cos(angle), (float) Math.sin(angle)},
                     {0, (float) -Math.sin(angle), (float) Math.cos(angle)}
             });
-        }
-        if(axis == 'y') {
+        } else  if(axis == 'y') {
             return new Matrix3(new float[][]{
                     {(float) Math.cos(angle), 0, (float) Math.sin(angle)},
                     {0, 1, 0},
                     {(float) -Math.sin(angle),0, (float) Math.cos(angle)}
             });
-        }
-        if(axis == 'z') {
+        } else if(axis == 'z') {
             return new Matrix3(new float[][]{
                     {(float) Math.cos(angle), (float) Math.sin(angle), 0},
                     {(float) -Math.sin(angle), (float) Math.cos(angle), 0},
                     {0, 0, 1}
             });
         }
-        return null;
+        return new Matrix3(new float[][] {{1, 0, 0},
+                                          {0, 1, 0},
+                                          {0, 0, 1}});
     }
 }

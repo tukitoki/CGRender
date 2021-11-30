@@ -17,12 +17,15 @@ public class GraphicConveyor {
                 {0, 0, 0, 1}
         });
         Matrix3 matrix3 = converter.scale();
-        return new Matrix4(new float[][]{
+        matrix3.multiply(converter.rotate());
+        Matrix4 matrixScaledRotated = new Matrix4(new float[][]{
                 {matrix3.getMatrix()[0][0], matrix3.getMatrix()[0][1], matrix3.getMatrix()[0][2], 0},
                 {matrix3.getMatrix()[1][0], matrix3.getMatrix()[1][1], matrix3.getMatrix()[1][2], 0},
                 {matrix3.getMatrix()[2][0], matrix3.getMatrix()[2][1], matrix3.getMatrix()[2][2], 0},
                 {0, 0, 0, 1}
         });
+        matrixScaledRotated.multiply(converter.translate());
+        return matrixScaledRotated;
     }
 
 
