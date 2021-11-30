@@ -4,8 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -15,7 +17,8 @@ public class Simple3DViewer extends Application {
     public void start(Stage stage) throws IOException {
         AnchorPane viewport = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxml/gui.fxml")));
 
-        Scene scene = new Scene(viewport);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Scene scene = new Scene(viewport, screenSize.getWidth(), screenSize.getHeight() - 65);
         stage.setMinWidth(1600);
         stage.setMinHeight(900);
         viewport.prefWidthProperty().bind(scene.widthProperty());

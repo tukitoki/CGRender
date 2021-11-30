@@ -18,8 +18,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.awt.event.MouseEvent;
@@ -33,7 +35,6 @@ import com.vsu.cgcourse.model.Mesh;
 import com.vsu.cgcourse.obj_reader.ObjReader;
 import com.vsu.cgcourse.render_engine.Camera;
 import com.vsu.cgcourse.render_engine.RenderEngine;
-import org.w3c.dom.Text;
 
 public class GuiController {
 
@@ -131,18 +132,58 @@ public class GuiController {
 
     private void drawTransformMenu() {
         Group group = new Group();
-        Scene scene = new Scene(group, 400, 400);
-        Stage stage = new Stage();
+        Scene scene = new Scene(group, 120, 200);
+        Stage stage = new Stage(StageStyle.UTILITY);
+
+        stage.setTitle("Scale");
         stage.setScene(scene);
-        TextField textField = new TextField();
-        textField.setAlignment(Pos.CENTER);
-        textField.setPrefSize(200, 50);
+        stage.setResizable(false);
+
+        Text textX = new Text("X : ");
+        textX.setX(30);
+        textX.setY(20);
+        TextField textFieldX = new TextField();
+        textFieldX.setLayoutX(textX.getX());
+        textFieldX.setLayoutY(textX.getY() + 10);
+        textFieldX.setPrefSize(40, 20);
+
+        Text textY = new Text("Y : ");
+        textY.setX(textFieldX.getLayoutX());
+        textY.setY(textFieldX.getLayoutY() + textFieldX.getPrefHeight() + 20);
+        TextField textFieldY = new TextField();
+        textFieldY.setLayoutX(textX.getX());
+        textFieldY.setLayoutY(textY.getY() + 10);
+        textFieldY.setPrefSize(textFieldX.getPrefWidth(), textFieldX.getPrefHeight());
+
+        Text textZ = new Text("Z : ");
+        textZ.setX(textFieldY.getLayoutX());
+        textZ.setY(textFieldY.getLayoutY() + textFieldY.getPrefHeight() + 20);
+        TextField textFieldZ = new TextField();
+        textFieldZ.setLayoutX(textZ.getX());
+        textFieldZ.setLayoutY(textZ.getY() + 10);
+        textFieldZ.setPrefSize(textFieldY.getPrefWidth(), textFieldY.getPrefHeight());
+
         Button button = new Button("Accept");
-        button.setPrefSize(70, 40);
-        button.setLayoutX(100);
-        button.setLayoutY(300);
+        button.setLayoutX(textFieldZ.getLayoutX());
+        button.setLayoutY(textFieldZ.getLayoutY() + textFieldZ.getPrefHeight() + 10);
+        button.setPrefSize(70, 20);
         button.setOnAction(actionEvent -> {
-            float number = Float.parseFloat(textField.getText());
+            float x, y, z;
+            if (textFieldX.getText().length() != 0) {
+                x = Float.parseFloat(textFieldX.getText());
+            } else {
+                x = 1;
+            }
+            if (textFieldY.getText().length() != 0) {
+                y = Float.parseFloat(textFieldY.getText());
+            } else {
+                y = 1;
+            }
+            if (textFieldZ.getText().length() != 0) {
+                z = Float.parseFloat(textFieldZ.getText());
+            } else {
+                z = 1;
+            }
             anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
             anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
 
@@ -156,7 +197,7 @@ public class GuiController {
                     try {
                         RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
                                 (int) canvas.getWidth(), (int) canvas.getHeight(),
-                                new Converter(number, number, number, ' ', 0));
+                                new Converter(x, y, z, ' ', 0));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -167,7 +208,7 @@ public class GuiController {
             timeline.play();
             actionEvent.consume();
         });
-        group.getChildren().addAll(textField, button);
+        group.getChildren().addAll(textX,textFieldX, textY, textFieldY, textZ, textFieldZ, button);
         stage.show();
     }
 
