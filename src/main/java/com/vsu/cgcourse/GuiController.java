@@ -11,8 +11,20 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -91,8 +103,19 @@ public class GuiController {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
             // todo: обработка ошибок
-        } catch (IOException exception) {
-
+        } catch (Exception exception) {
+            StackPane stackPane = new StackPane();
+            Scene scene = new Scene(stackPane, 600, 120);
+            Stage stage = new Stage(StageStyle.UTILITY);
+            stage.setTitle("Cannot read model");
+            stage.centerOnScreen();
+            Label label = new Label(exception.getMessage());
+            label.setFont(new Font(15));
+            label.setAlignment(Pos.CENTER);
+            stackPane.getChildren().add(label);
+            stackPane.setAlignment(label, Pos.CENTER);
+            stage.setScene(scene);
+            stage.show();
         }
     }
 
@@ -115,7 +138,18 @@ public class GuiController {
             ObjWriter.write(mesh, file);
             // todo: обработка ошибок
         } catch (Exception exception) {
-
+            StackPane stackPane = new StackPane();
+            Scene scene = new Scene(stackPane, 600, 120);
+            Stage stage = new Stage(StageStyle.UTILITY);
+            stage.setTitle("Cannot write model");
+            stage.centerOnScreen();
+            Label label = new Label(exception.getMessage());
+            label.setFont(new Font(15));
+            label.setAlignment(Pos.CENTER);
+            stackPane.getChildren().add(label);
+            stackPane.setAlignment(label, Pos.CENTER);
+            stage.setScene(scene);
+            stage.show();
         }
     }
 

@@ -30,4 +30,9 @@ public class Vector2 extends AbstractVector<Vector2> {
     public void setY(float y) {
         this.getVectorCoords()[1] = y;
     }
+
+    @Override
+    public String toString() {
+        return Float.toString(getX()) + " " + Float.toString(getY());
+    }
 }
