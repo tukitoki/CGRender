@@ -4,27 +4,28 @@ import com.vsu.cgcourse.math.Matrix3;
 import com.vsu.cgcourse.math.Matrix4;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.math.Vector4;
+import com.vsu.cgcourse.model.MeshContext;
 
 import javax.vecmath.Point2f;
 
 public class GraphicConveyor {
 
-    public static Matrix4 rotateScaleTranslate(Converter converter) throws Exception {
-        Matrix4 matrix = new Matrix4 (new float[][]{
+    public static Matrix4 rotateScaleTranslate(MeshContext meshContext) throws Exception {
+        Matrix4 matrix = new Matrix4(new float[][]{
                 {1, 0, 0, 0},
                 {0, 1, 0, 0},
                 {0, 0, 1, 0},
                 {0, 0, 0, 1}
         });
-        Matrix3 matrix3 = converter.scale();
-        matrix3.multiply(converter.rotate());
+        Matrix3 matrix3 = meshContext.getConverter().scale();
+        matrix3.multiply(meshContext.getConverter().rotate());
         Matrix4 matrixScaledRotated = new Matrix4(new float[][]{
                 {matrix3.getMatrix()[0][0], matrix3.getMatrix()[0][1], matrix3.getMatrix()[0][2], 0},
                 {matrix3.getMatrix()[1][0], matrix3.getMatrix()[1][1], matrix3.getMatrix()[1][2], 0},
                 {matrix3.getMatrix()[2][0], matrix3.getMatrix()[2][1], matrix3.getMatrix()[2][2], 0},
                 {0, 0, 0, 1}
         });
-        matrixScaledRotated.multiply(converter.translate());
+        matrixScaledRotated.multiply(meshContext.getConverter().translate());
         return matrixScaledRotated;
     }
 

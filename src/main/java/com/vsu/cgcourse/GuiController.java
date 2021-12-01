@@ -1,6 +1,7 @@
 package com.vsu.cgcourse;
 
 import com.vsu.cgcourse.math.Vector3;
+import com.vsu.cgcourse.model.MeshContext;
 import com.vsu.cgcourse.obj_writer.ObjWriter;
 import com.vsu.cgcourse.render_engine.Converter;
 import javafx.fxml.FXML;
@@ -41,7 +42,7 @@ public class GuiController {
     @FXML
     private Canvas canvas;
 
-    private Mesh mesh = null;
+    private MeshContext meshContext;
 
     private Camera camera = new Camera(
             new Vector3(new float[] {0, 00, 100}),
@@ -64,10 +65,9 @@ public class GuiController {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
             camera.setAspectRatio((float) (width / height));
-            if (mesh != null) {
+            if (meshContext.getMesh() != null) {
                 try {
-                    RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh, (int) width, (int) height,
-                            new Converter(1, 1, 1, 'f', 0, new Vector3(new float[] {0, 0, 0})));
+                    RenderEngine.render(canvas.getGraphicsContext2D(), camera, (int) width, (int) height, meshContext);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -94,7 +94,7 @@ public class GuiController {
 
         try {
             String fileContent = Files.readString(fileName);
-            mesh = ObjReader.read(fileContent);
+            meshContext.setMesh(ObjReader.read(fileContent));
             // todo: обработка ошибок
         } catch (IOException exception) {
 
@@ -117,7 +117,7 @@ public class GuiController {
         Path fileName = Path.of(file.getAbsolutePath());
 
         try {
-            ObjWriter.write(mesh, file);
+            ObjWriter.write(meshContext.getMesh(), file);
             // todo: обработка ошибок
         } catch (Exception exception) {
 
@@ -136,28 +136,28 @@ public class GuiController {
         stage.setX(0);
         stage.setY(screenSize.getHeight() / 3);
 
-        Text textX = new Text("X : ");
+        Text textX = new Text("X :");
         textX.setX(40);
         textX.setY(20);
         TextField textFieldX = new TextField();
         textFieldX.setLayoutX(textX.getX());
-        textFieldX.setLayoutY(textX.getY() + 10);
+        textFieldX.setLayoutY(textX.getY() + 7);
         textFieldX.setPrefSize(40, 20);
 
-        Text textY = new Text("Y : ");
+        Text textY = new Text("Y :");
         textY.setX(textFieldX.getLayoutX());
         textY.setY(textFieldX.getLayoutY() + textFieldX.getPrefHeight() + 20);
         TextField textFieldY = new TextField();
         textFieldY.setLayoutX(textX.getX());
-        textFieldY.setLayoutY(textY.getY() + 10);
+        textFieldY.setLayoutY(textY.getY() + 7);
         textFieldY.setPrefSize(textFieldX.getPrefWidth(), textFieldX.getPrefHeight());
 
-        Text textZ = new Text("Z : ");
+        Text textZ = new Text("Z :");
         textZ.setX(textFieldY.getLayoutX());
         textZ.setY(textFieldY.getLayoutY() + textFieldY.getPrefHeight() + 20);
         TextField textFieldZ = new TextField();
         textFieldZ.setLayoutX(textZ.getX());
-        textFieldZ.setLayoutY(textZ.getY() + 10);
+        textFieldZ.setLayoutY(textZ.getY() + 7);
         textFieldZ.setPrefSize(textFieldY.getPrefWidth(), textFieldY.getPrefHeight());
 
         Button buttonAccept = new Button("Accept");
@@ -190,11 +190,10 @@ public class GuiController {
 
                 canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
                 camera.setAspectRatio((float) (width / height));
-                if (mesh != null) {
+                if (meshContext.getMesh() != null) {
                     try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(),
-                                new Converter(x, y, z, ' ', 0, new Vector3(new float[] {0, 0, 0})));
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(), meshContext);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -226,7 +225,7 @@ public class GuiController {
         textAxis.setY(10);
         TextField textFieldAxis = new TextField();
         textFieldAxis.setLayoutX(textAxis.getX());
-        textFieldAxis.setLayoutY(textAxis.getY() + 10);
+        textFieldAxis.setLayoutY(textAxis.getY() + 7);
         textFieldAxis.setPrefSize(40, 20);
 
         Text textAngle = new Text("Angle : ");
@@ -234,7 +233,7 @@ public class GuiController {
         textAngle.setY(textFieldAxis.getLayoutY() + textFieldAxis.getPrefHeight() + 20);
         TextField textFieldAngle = new TextField();
         textFieldAngle.setLayoutX(textAngle.getX());
-        textFieldAngle.setLayoutY(textAngle.getY() + 10);
+        textFieldAngle.setLayoutY(textAngle.getY() + 7);
         textFieldAngle.setPrefSize(textFieldAxis.getPrefWidth(), textFieldAxis.getPrefHeight());
 
         Button buttonAccept = new Button("Accept");
@@ -253,11 +252,10 @@ public class GuiController {
 
                 canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
                 camera.setAspectRatio((float) (width / height));
-                if (mesh != null) {
+                if (meshContext.getMesh() != null) {
                     try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(),
-                                new Converter(1, 1, 1, axis, angle, new Vector3(new float[] {0, 0, 0})));
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(), meshContext);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -274,7 +272,7 @@ public class GuiController {
 
     private void drawTranslateMenu() {
         Group group = new Group();
-        Scene scene = new Scene(group, 120, 200);
+        Scene scene = new Scene(group, 130, 200);
         Stage stage = new Stage(StageStyle.UTILITY);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -285,15 +283,15 @@ public class GuiController {
         stage.setY(screenSize.getHeight() / 3);
 
         Text textVectorCoords = new Text("Координаты вектора :");
-        textVectorCoords.setX(20);
-        textVectorCoords.setY(10);
+        textVectorCoords.setX(5);
+        textVectorCoords.setY(13);
 
         Text textX = new Text("X :");
-        textX.setX(40);
-        textX.setY(textVectorCoords.getY() + 10);
+        textX.setX(45);
+        textX.setY(textVectorCoords.getY() + 17);
         TextField textFieldX = new TextField();
         textFieldX.setLayoutX(textX.getX());
-        textFieldX.setLayoutY(textX.getY() + 10);
+        textFieldX.setLayoutY(textX.getY() + 7);
         textFieldX.setPrefSize(40, 20);
 
         Text textY = new Text("Y :");
@@ -301,7 +299,7 @@ public class GuiController {
         textY.setY(textFieldX.getLayoutY() + textFieldX.getPrefHeight() + 20);
         TextField textFieldY = new TextField();
         textFieldY.setLayoutX(textX.getX());
-        textFieldY.setLayoutY(textY.getY() + 10);
+        textFieldY.setLayoutY(textY.getY() + 7);
         textFieldY.setPrefSize(textFieldX.getPrefWidth(), textFieldX.getPrefHeight());
 
         Text textZ = new Text("Z :");
@@ -309,11 +307,11 @@ public class GuiController {
         textZ.setY(textFieldY.getLayoutY() + textFieldY.getPrefHeight() + 20);
         TextField textFieldZ = new TextField();
         textFieldZ.setLayoutX(textZ.getX());
-        textFieldZ.setLayoutY(textZ.getY() + 10);
+        textFieldZ.setLayoutY(textZ.getY() + 7);
         textFieldZ.setPrefSize(textFieldY.getPrefWidth(), textFieldY.getPrefHeight());
 
         Button buttonAccept = new Button("Accept");
-        buttonAccept.setLayoutX(30);
+        buttonAccept.setLayoutX(35);
         buttonAccept.setLayoutY(textFieldZ.getLayoutY() + textFieldZ.getPrefHeight() + 10);
         buttonAccept.setPrefSize(60, 20);
         buttonAccept.setOnAction(actionEvent -> {
@@ -342,11 +340,10 @@ public class GuiController {
 
                 canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
                 camera.setAspectRatio((float) (width / height));
-                if (mesh != null) {
+                if (meshContext.getMesh() != null) {
                     try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(),
-                                new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {x, y, z})));
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(), meshContext);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

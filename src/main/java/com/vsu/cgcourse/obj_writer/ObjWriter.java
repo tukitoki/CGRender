@@ -4,8 +4,6 @@ import com.vsu.cgcourse.math.Vector2;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.Mesh;
 
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
