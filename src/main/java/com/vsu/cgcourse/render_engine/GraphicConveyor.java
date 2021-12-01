@@ -1,25 +1,34 @@
 package com.vsu.cgcourse.render_engine;
 
+import com.vsu.cgcourse.math.Matrix3;
 import com.vsu.cgcourse.math.Matrix4;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.math.Vector4;
+import com.vsu.cgcourse.model.MeshContext;
 
-import javax.vecmath.Point2f;//{1, 0, 0, 0}   {2, 0, 0, 0}   {cos(30), sin(30), 0, 0}
-                             //{0, 1, 0, 0} * {0, 2, 0, 0} * {-sin(30), cos(30), 0, 0}  *
-                             //{0, 0, 1, 0}   {0, 0, 2, 0}   {0,               0, 1, 0}
-                             //{0, 0, 0, 1}   {0, 0, 0, 1}   {0,               0, 0, 1}
+import javax.vecmath.Point2f;
 
 public class GraphicConveyor {
 
-    public static Matrix4 rotateScaleTranslate() throws Exception {
-        Matrix4 matrix = new Matrix4 (new float[][]{
+    public static Matrix4 rotateScaleTranslate(MeshContext meshContext) throws Exception {
+        Matrix4 matrix = new Matrix4(new float[][]{
                 {1, 0, 0, 0},
                 {0, 1, 0, 0},
                 {0, 0, 1, 0},
                 {0, 0, 0, 1}
         });
-        return new Matrix4(matrix);
+        Matrix3 matrix3 = meshContext.getConverter().scale();
+        matrix3.multiply(meshContext.getConverter().rotate());
+        Matrix4 matrixScaledRotated = new Matrix4(new float[][]{
+                {matrix3.getMatrix()[0][0], matrix3.getMatrix()[0][1], matrix3.getMatrix()[0][2], 0},
+                {matrix3.getMatrix()[1][0], matrix3.getMatrix()[1][1], matrix3.getMatrix()[1][2], 0},
+                {matrix3.getMatrix()[2][0], matrix3.getMatrix()[2][1], matrix3.getMatrix()[2][2], 0},
+                {0, 0, 0, 1}
+        });
+        matrixScaledRotated.multiply(meshContext.getConverter().translate());
+        return matrixScaledRotated;
     }
+
 
     public static Matrix4 lookAt(Vector3 eye, Vector3 target) throws Exception {
         return lookAt(eye, target, new Vector3(new float[]{0F, 1.0F, 0F}));
@@ -64,7 +73,6 @@ public class GraphicConveyor {
 
     public static Vector3 multiplyMatrix4ByVector3(final Matrix4 matrix, final Vector3 vertex) throws Exception {
         Vector4 vertex4 = new Vector4(new float[] {vertex.getX(), vertex.getY(), vertex.getZ(), 1});
-        matrix.transposite();
         vertex4.multiply(matrix);
         return new Vector3(new float[] {vertex4.getX() / vertex4.getW(), vertex4.getY() / vertex4.getW(),
                                                                         vertex4.getZ() / vertex4.getW()});

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.vsu.cgcourse.math.Matrix4;
 import com.vsu.cgcourse.math.Vector3;
+import com.vsu.cgcourse.model.MeshContext;
 import javafx.scene.canvas.GraphicsContext;
 import javax.vecmath.*;
 import com.vsu.cgcourse.model.Mesh;
@@ -14,24 +15,25 @@ public class RenderEngine {
     public static void render(
             final GraphicsContext graphicsContext,
             final Camera camera,
-            final Mesh mesh,
             final int width,
-            final int height) throws Exception {
-        Matrix4 modelMatrix = rotateScaleTranslate();
+            final int height,
+            MeshContext meshContext) throws Exception {
+        Matrix4 modelMatrix = rotateScaleTranslate(meshContext);
         Matrix4 viewMatrix = camera.getViewMatrix();
         Matrix4 projectionMatrix = camera.getProjectionMatrix();
 
         Matrix4 modelViewProjectionMatrix = new Matrix4(modelMatrix);
         modelViewProjectionMatrix.multiply(viewMatrix);
         modelViewProjectionMatrix.multiply(projectionMatrix);
-
-        final int nPolygons = mesh.getPolygons().getPolygonVertexIndices().size();
+        modelViewProjectionMatrix.transposite();
+        final int nPolygons = meshContext.getMesh().getPolygons().getPolygonVertexIndices().size();
         for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
-            final int nVerticesInPolygon = mesh.getPolygons().getPolygonVertexIndices().get(polygonInd).size();
+            final int nVerticesInPolygon = meshContext.getMesh().getPolygons().getPolygonVertexIndices().get(polygonInd).size();
 
             ArrayList<Point2f> resultPoints = new ArrayList<>();
             for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
-                Vector3 vertex = mesh.getVertices().get(mesh.getPolygons().getPolygonVertexIndices().get(polygonInd).get(vertexInPolygonInd));
+                Vector3 vertex = meshContext.getMesh().getVertices().get(meshContext.getMesh().getPolygons()
+                        .getPolygonVertexIndices().get(polygonInd).get(vertexInPolygonInd));
                 Point2f resultPoint = vertexToPoint(multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertex), width, height);
                 resultPoints.add(resultPoint);
             }
