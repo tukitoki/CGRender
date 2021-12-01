@@ -42,7 +42,7 @@ public class GuiController {
     @FXML
     private Canvas canvas;
 
-    private MeshContext meshContext;
+    private Mesh mesh;
 
     private Camera camera = new Camera(
             new Vector3(new float[] {0, 00, 100}),
@@ -65,9 +65,10 @@ public class GuiController {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
             camera.setAspectRatio((float) (width / height));
-            if (meshContext.getMesh() != null) {
+            if (mesh != null) {
                 try {
-                    RenderEngine.render(canvas.getGraphicsContext2D(), camera, (int) width, (int) height, meshContext);
+                    RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh, (int) width, (int) height,
+                            new Converter(1, 1, 1, 'f', 0, new Vector3(new float[] {0, 0, 0})));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -94,7 +95,7 @@ public class GuiController {
 
         try {
             String fileContent = Files.readString(fileName);
-            meshContext.setMesh(ObjReader.read(fileContent));
+            mesh = ObjReader.read(fileContent);
             // todo: обработка ошибок
         } catch (IOException exception) {
 
@@ -117,7 +118,7 @@ public class GuiController {
         Path fileName = Path.of(file.getAbsolutePath());
 
         try {
-            ObjWriter.write(meshContext.getMesh(), file);
+            ObjWriter.write(mesh, file);
             // todo: обработка ошибок
         } catch (Exception exception) {
 
@@ -190,10 +191,11 @@ public class GuiController {
 
                 canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
                 camera.setAspectRatio((float) (width / height));
-                if (meshContext.getMesh() != null) {
+                if (mesh != null) {
                     try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(), meshContext);
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(),
+                                new Converter(x, y, z, ' ', 0, new Vector3(new float[] {0, 0, 0})));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -252,10 +254,11 @@ public class GuiController {
 
                 canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
                 camera.setAspectRatio((float) (width / height));
-                if (meshContext.getMesh() != null) {
+                if (mesh != null) {
                     try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(), meshContext);
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(),
+                                new Converter(1, 1, 1, axis, angle, new Vector3(new float[] {0, 0, 0})));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -340,10 +343,10 @@ public class GuiController {
 
                 canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
                 camera.setAspectRatio((float) (width / height));
-                if (meshContext.getMesh() != null) {
+                if (mesh != null) {
                     try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(), meshContext);
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(), );
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

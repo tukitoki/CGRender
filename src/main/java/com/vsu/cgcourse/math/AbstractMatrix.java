@@ -1,6 +1,6 @@
 package com.vsu.cgcourse.math;
 
-public abstract class   AbstractMatrix<T> {
+public abstract class AbstractMatrix<T> {
 
     private float[][] matrix;
 
