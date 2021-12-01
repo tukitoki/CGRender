@@ -1,14 +1,21 @@
 package com.vsu.cgcourse.obj_writer;
 
+import com.vsu.cgcourse.math.Matrix4;
 import com.vsu.cgcourse.math.Vector2;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.Mesh;
+import com.vsu.cgcourse.model.MeshContext;
+import com.vsu.cgcourse.render_engine.Converter;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.vsu.cgcourse.render_engine.GraphicConveyor.multiplyMatrix4ByVector3;
+import static com.vsu.cgcourse.render_engine.GraphicConveyor.rotateScaleTranslate;
 
 public class ObjWriter {
 
@@ -25,7 +32,13 @@ public class ObjWriter {
             FileWriter writer,
             final ArrayList<Vector3> vertices,
             final ArrayList<Vector2> textureVertices,
-            final ArrayList<Vector3> normals) throws Exception{
+            final ArrayList<Vector3> normals,
+            final MeshContext meshContext) throws Exception {
+        Matrix4 modelMatrix = rotateScaleTranslate(meshContext);
+        modelMatrix.transposite();
+        for (int i = 0; i < vertices.size(); i++) {
+            vertices.set(i, multiplyMatrix4ByVector3(modelMatrix, vertices.get(i)));
+        }
         List<String> listVertices = vertices.stream().map(Vector3::toString).collect(Collectors.toList());
         List<String> listTextureVertices = textureVertices.stream().map(Vector2::toString).collect(Collectors.toList());
         List<String> listNormals = normals.stream().map(Vector3::toString).collect(Collectors.toList());
@@ -85,11 +98,11 @@ public class ObjWriter {
         model.recheckModel();
     }
 
-    public static void write(final Mesh model, final File file) throws Exception {
+    public static void write(final Mesh model, final File file, MeshContext meshContext) throws Exception {
         isModelReadyForRecording(model);
         FileWriter writer = new FileWriter(file, false);
-
-        writeAllVertices(writer, model.getVertices(), model.getTextureVertices(), model.getNormals());
+        ArrayList<Vector3> v3 = new ArrayList<>(model.getVertices());
+        writeAllVertices(writer, v3, model.getTextureVertices(), model.getNormals(), meshContext);
         writer.flush();
         writer.write("\n");
         //writer.write(writeAllVertices(model.getVertices(), model.getTextureVertices(), model.getNormals()));
@@ -97,8 +110,7 @@ public class ObjWriter {
             writer.write(writeFace(
                     model.getPolygons().getPolygonVertexIndices(),
                     model.getPolygons().getPolygonTextureVertexIndices(),
-                    model.getPolygons().getPolygonNormalIndices())
-            );
+                    model.getPolygons().getPolygonNormalIndices()));
             writer.flush();
         } catch (Exception e) {
             e.printStackTrace();

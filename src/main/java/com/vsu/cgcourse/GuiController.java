@@ -132,7 +132,7 @@ public class GuiController {
         Path fileName = Path.of(file.getAbsolutePath());
 
         try {
-            ObjWriter.write(meshContext.getMesh(), file);
+            ObjWriter.write(meshContext.getMesh(), file, meshContext);
             // todo: обработка ошибок
         } catch (Exception exception) {
             StackPane stackPane = new StackPane();

@@ -11,12 +11,6 @@ import javax.vecmath.Point2f;
 public class GraphicConveyor {
 
     public static Matrix4 rotateScaleTranslate(MeshContext meshContext) throws Exception {
-        Matrix4 matrix = new Matrix4(new float[][]{
-                {1, 0, 0, 0},
-                {0, 1, 0, 0},
-                {0, 0, 1, 0},
-                {0, 0, 0, 1}
-        });
         Matrix3 matrix3 = meshContext.getConverter().scale();
         matrix3.multiply(meshContext.getConverter().rotate());
         Matrix4 matrixScaledRotated = new Matrix4(new float[][]{

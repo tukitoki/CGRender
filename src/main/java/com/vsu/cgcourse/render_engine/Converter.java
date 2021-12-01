@@ -94,6 +94,7 @@ public class Converter {
 
     public  Matrix3 rotate() throws Exception {
         // TODO: 30.11.2021 Условие тут воплседвствии надо убрать
+        float rad = (float) Math.toRadians(angle);
         if (angle != 0) {
             double num = Math.PI / angle;
             angle = (float) Math.PI / (float)num;
@@ -101,19 +102,19 @@ public class Converter {
         if(axis == 'x') {
             return new Matrix3(new float[][]{
                     {1, 0, 0},
-                    {0, (float) Math.cos(angle), (float) Math.sin(angle)},
-                    {0, (float) -Math.sin(angle), (float) Math.cos(angle)}
+                    {0, (float) Math.cos(rad), (float) Math.sin(rad)},
+                    {0, (float) -Math.sin(rad), (float) Math.cos(rad)}
             });
         } else  if(axis == 'y') {
             return new Matrix3(new float[][]{
-                    {(float) Math.cos(angle), 0, (float) Math.sin(angle)},
+                    {(float) Math.cos(rad), 0, (float) Math.sin(rad)},
                     {0, 1, 0},
-                    {(float) -Math.sin(angle),0, (float) Math.cos(angle)}
+                    {(float) -Math.sin(rad),0, (float) Math.cos(rad)}
             });
         } else if(axis == 'z') {
             return new Matrix3(new float[][]{
-                    {(float) Math.cos(angle), (float) Math.sin(angle), 0},
-                    {(float) -Math.sin(angle), (float) Math.cos(angle), 0},
+                    {(float) Math.cos(rad), (float) Math.sin(rad), 0},
+                    {(float) -Math.sin(rad), (float) Math.cos(rad), 0},
                     {0, 0, 1}
             });
         }
