@@ -42,7 +42,7 @@ public class GuiController {
     @FXML
     private Canvas canvas;
 
-    private Mesh mesh;
+    private MeshContext meshContext = new MeshContext(null);
 
     private Camera camera = new Camera(
             new Vector3(new float[] {0, 00, 100}),
@@ -65,10 +65,9 @@ public class GuiController {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
             camera.setAspectRatio((float) (width / height));
-            if (mesh != null) {
+            if (meshContext.getMesh() != null) {
                 try {
-                    RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh, (int) width, (int) height,
-                            new Converter(1, 1, 1, 'f', 0, new Vector3(new float[] {0, 0, 0})));
+                    RenderEngine.render(canvas.getGraphicsContext2D(), camera, (int) width, (int) height, meshContext);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -95,7 +94,7 @@ public class GuiController {
 
         try {
             String fileContent = Files.readString(fileName);
-            mesh = ObjReader.read(fileContent);
+            meshContext.setMesh(ObjReader.read(fileContent));
             // todo: обработка ошибок
         } catch (IOException exception) {
 
@@ -118,7 +117,7 @@ public class GuiController {
         Path fileName = Path.of(file.getAbsolutePath());
 
         try {
-            ObjWriter.write(mesh, file);
+            ObjWriter.write(meshContext.getMesh(), file);
             // todo: обработка ошибок
         } catch (Exception exception) {
 
@@ -182,20 +181,22 @@ public class GuiController {
             } else {
                 z = 1;
             }
+            meshContext.getConverter().setX(x);
+            meshContext.getConverter().setY(y);
+            meshContext.getConverter().setZ(z);
             anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
             anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
 
-            KeyFrame frame = new KeyFrame(Duration.millis(15), event -> {
+            KeyFrame frame = new KeyFrame(Duration.millis(30), event -> {
                 double width = canvas.getWidth();
                 double height = canvas.getHeight();
 
                 canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
                 camera.setAspectRatio((float) (width / height));
-                if (mesh != null) {
+                if (meshContext.getMesh() != null) {
                     try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(),
-                                new Converter(x, y, z, ' ', 0, new Vector3(new float[] {0, 0, 0})));
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(), meshContext);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -245,20 +246,21 @@ public class GuiController {
         buttonAccept.setOnAction(actionEvent -> {
             char axis = textFieldAxis.getText().charAt(0);
             float angle = Float.parseFloat(textFieldAngle.getText());
+            meshContext.getConverter().setAxis(axis);
+            meshContext.getConverter().setAngle(angle);
             anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
             anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
 
-            KeyFrame frame = new KeyFrame(Duration.millis(15), event -> {
+            KeyFrame frame = new KeyFrame(Duration.millis(30), event -> {
                 double width = canvas.getWidth();
                 double height = canvas.getHeight();
 
                 canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
                 camera.setAspectRatio((float) (width / height));
-                if (mesh != null) {
+                if (meshContext.getMesh() != null) {
                     try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(),
-                                new Converter(1, 1, 1, axis, angle, new Vector3(new float[] {0, 0, 0})));
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(), meshContext);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -334,19 +336,20 @@ public class GuiController {
             } else {
                 z = 0;
             }
+            meshContext.getConverter().setVectorTranslate(new Vector3(new float[] {x, y, z}));
             anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
             anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
 
-            KeyFrame frame = new KeyFrame(Duration.millis(15), event -> {
+            KeyFrame frame = new KeyFrame(Duration.millis(30), event -> {
                 double width = canvas.getWidth();
                 double height = canvas.getHeight();
 
                 canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
                 camera.setAspectRatio((float) (width / height));
-                if (mesh != null) {
+                if (meshContext.getMesh() != null) {
                     try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(), );
+                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
+                                (int) canvas.getWidth(), (int) canvas.getHeight(), meshContext);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

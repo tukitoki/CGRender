@@ -10,12 +10,12 @@ public class MeshContext {
 
     public MeshContext() {
         mesh = new Mesh();
-        converter = new Converter(0, 0, 0, ' ', 0, new Vector3(new float[] {0, 0, 0}));
+        converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
     }
 
-    public MeshContext(Mesh mesh, Converter converter) {
+    public MeshContext(Mesh mesh) {
         this.mesh = mesh;
-        this.converter = converter;
+        this.converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
     }
 
     public Mesh getMesh() {
