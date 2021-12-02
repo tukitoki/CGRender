@@ -7,6 +7,7 @@ public class MeshContext {
 
     private Mesh mesh;
     private Converter converter;
+    private boolean changes;
 
     public MeshContext() {
         mesh = new Mesh();
@@ -16,6 +17,19 @@ public class MeshContext {
     public MeshContext(Mesh mesh) {
         this.mesh = mesh;
         this.converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
+        this.changes = false;
+    }
+
+    public void setNewMeshConverter() {
+        this.converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
+    }
+
+    public boolean isChanges() {
+        return changes;
+    }
+
+    public void setChanges(boolean changes) {
+        this.changes = changes;
     }
 
     public Mesh getMesh() {

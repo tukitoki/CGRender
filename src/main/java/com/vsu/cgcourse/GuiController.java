@@ -99,6 +99,7 @@ public class GuiController {
         try {
             String fileContent = Files.readString(fileName);
             meshContext.setMesh(ObjReader.read(fileContent));
+            meshContext.setNewMeshConverter();
             // todo: обработка ошибок
         } catch (Exception exception) {
             StackPane stackPane = new StackPane();
@@ -118,6 +119,36 @@ public class GuiController {
 
     @FXML
     private void onSaveModelMenuItemClick() {
+        if (meshContext.getMesh() != null) {
+            StackPane stackPane1 = new StackPane();
+            Scene scene1 = new Scene(stackPane1, 600, 120);
+            Stage stage1 = new Stage(StageStyle.UTILITY);
+            stage1.setTitle("Cannot write model");
+            stage1.centerOnScreen();
+            Label label1 = new Label("Do you agree with changes?");
+            label1.setFont(new Font(15));
+            label1.setAlignment(Pos.CENTER);
+            Button buttonAccept = new Button("Yes");
+            buttonAccept.setOnAction(actionEvent -> {
+                meshContext.setChanges(true);
+                stage1.close();
+            });
+            Button buttonDecline = new Button("No");
+            buttonDecline.setOnAction(actionEvent -> {
+                meshContext.setChanges(false);
+                stage1.close();
+            });
+            stackPane1.getChildren().addAll(label1, buttonDecline, buttonAccept);
+            stackPane1.setAlignment(label1, Pos.CENTER);
+            stackPane1.setAlignment(buttonAccept, Pos.BOTTOM_RIGHT);
+            buttonAccept.setPrefSize(60, 40);
+            stackPane1.setAlignment(buttonDecline, Pos.BOTTOM_LEFT);
+            buttonDecline.setPrefSize(60, 40);
+            stage1.setScene(scene1);
+            stage1.showAndWait();
+
+        }
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
         fileChooser.setTitle("Save Model");
@@ -140,7 +171,7 @@ public class GuiController {
             Stage stage = new Stage(StageStyle.UTILITY);
             stage.setTitle("Cannot write model");
             stage.centerOnScreen();
-            javafx.scene.control.Label label = new Label(exception.getMessage());
+            Label label = new Label(exception.getMessage());
             label.setFont(new Font(15));
             label.setAlignment(Pos.CENTER);
             stackPane.getChildren().add(label);

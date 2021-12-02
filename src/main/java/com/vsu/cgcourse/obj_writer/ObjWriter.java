@@ -34,10 +34,12 @@ public class ObjWriter {
             final ArrayList<Vector2> textureVertices,
             final ArrayList<Vector3> normals,
             final MeshContext meshContext) throws Exception {
-        Matrix4 modelMatrix = rotateScaleTranslate(meshContext);
-        modelMatrix.transposite();
-        for (int i = 0; i < vertices.size(); i++) {
-            vertices.set(i, multiplyMatrix4ByVector3(modelMatrix, vertices.get(i)));
+        if (meshContext.isChanges()) {
+            Matrix4 modelMatrix = rotateScaleTranslate(meshContext);
+            modelMatrix.transposite();
+            for (int i = 0; i < vertices.size(); i++) {
+                vertices.set(i, multiplyMatrix4ByVector3(modelMatrix, vertices.get(i)));
+            }
         }
         List<String> listVertices = vertices.stream().map(Vector3::toString).collect(Collectors.toList());
         List<String> listTextureVertices = textureVertices.stream().map(Vector2::toString).collect(Collectors.toList());
