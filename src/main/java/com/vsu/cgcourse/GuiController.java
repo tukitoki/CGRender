@@ -211,6 +211,25 @@ public class GuiController {
                 Button buttonReadNumber = new Button("New");
                 buttonReadNumber.setOnAction(actionEvent -> {
                     newStage.close();
+                    if (Integer.parseInt(numberTextField.getText()) > sceneBuilder.getMeshContexts().size()) {
+                        try {
+                            throw new Exception("Wrong index");
+                        } catch (Exception e) {
+                            StackPane stackPane = new StackPane();
+                            Scene scene = new Scene(stackPane, 600, 120);
+                            Stage stage = new Stage(StageStyle.UTILITY);
+                            stage.setTitle("Cannot read model");
+                            stage.centerOnScreen();
+                            Label label = new Label(e.getMessage());
+                            label.setFont(new javafx.scene.text.Font(15));
+                            label.setAlignment(Pos.CENTER);
+                            stackPane.getChildren().add(label);
+                            stackPane.setAlignment(label, Pos.CENTER);
+                            stage.setScene(scene);
+                            stage.show();
+                            return;
+                        }
+                    }
                     sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setMesh(ObjReader.read(fileContent));
                     sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setNewMeshConverter();
                     sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setVerticesDeleteIndices(new ArrayList<>());
@@ -242,7 +261,7 @@ public class GuiController {
             Stage stage = new Stage(StageStyle.UTILITY);
             stage.setTitle("Cannot read model");
             stage.centerOnScreen();
-            javafx.scene.control.Label label = new javafx.scene.control.Label(exception.getMessage());
+            Label label = new Label(exception.getMessage());
             label.setFont(new javafx.scene.text.Font(15));
             label.setAlignment(Pos.CENTER);
             stackPane.getChildren().add(label);
