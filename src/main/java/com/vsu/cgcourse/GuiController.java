@@ -26,6 +26,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
@@ -105,17 +106,75 @@ public class GuiController {
 
         Path fileName = Path.of(file.getAbsolutePath());
 
+        if (sceneBuilder.getMeshContexts().get(0).getMesh() != null) {
+            StackPane stackPane1 = new StackPane();
+            Scene scene1 = new Scene(stackPane1, 600, 120);
+            Stage stage1 = new Stage(StageStyle.UTILITY);
+            stage1.setTitle("Load model");
+            stage1.centerOnScreen();
+            Label label1 = new Label("Do you want add new model or replace exist model?");
+            label1.setFont(new Font(15));
+            label1.setAlignment(Pos.CENTER);
+            Button buttonAccept = new Button("New");
+            buttonAccept.setOnAction(actionEvent -> {
+                sceneBuilder.setReplaceable(false);
+                stage1.close();
+            });
+            Button buttonDecline = new Button("Replace");
+            buttonDecline.setOnAction(actionEvent -> {
+                sceneBuilder.setReplaceable(true);
+                stage1.close();
+            });
+            stackPane1.getChildren().addAll(label1, buttonDecline, buttonAccept);
+            stackPane1.setAlignment(label1, Pos.CENTER);
+            stackPane1.setAlignment(buttonAccept, Pos.BOTTOM_RIGHT);
+            buttonAccept.setPrefSize(60, 40);
+            stackPane1.setAlignment(buttonDecline, Pos.BOTTOM_LEFT);
+            buttonDecline.setPrefSize(60, 40);
+            stage1.setScene(scene1);
+            //stage1.initModality(Modality.APPLICATION_MODAL);
+            stage1.showAndWait();
+        }
+
         try {
             String fileContent = Files.readString(fileName);
-            sceneBuilder.getMeshContexts().add(new MeshContext(null));
-            if (sceneBuilder.getMeshContexts().size() == 2 && sceneBuilder.getMeshContexts().get(0).getMesh() == null) {
-                sceneBuilder.getMeshContexts().remove(0);
+            if (sceneBuilder.isReplaceable()) {
+                StackPane newStackPane = new StackPane();
+                Scene newScene = new Scene(newStackPane, 600, 120);
+                Stage newStage = new Stage(StageStyle.UTILITY);
+                newStage.setTitle("Number of model");
+                newStage.centerOnScreen();
+                Label replaceLabel = new Label("Type number of model that you want to replace");
+                replaceLabel.setFont(new Font(15));
+                replaceLabel.setAlignment(Pos.CENTER);
+                TextField numberTextField = new TextField();
+                numberTextField.setPrefWidth(200);
+                Button buttonReadNumber = new Button("New");
+                buttonReadNumber.setOnAction(actionEvent -> {
+                    newStage.close();
+                    sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setMesh(ObjReader.read(fileContent));
+                    sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setNewMeshConverter();
+                    if (sceneBuilder.getMeshContexts().size() > 1) {
+                        drawRadioButtons(sceneBuilder);
+                    }
+                });
+                newStackPane.setAlignment(numberTextField, Pos.CENTER);
+                newStackPane.setAlignment(buttonReadNumber, Pos.BOTTOM_CENTER);
+                newStackPane.getChildren().addAll(replaceLabel, numberTextField, buttonReadNumber);
+                newStage.setScene(newScene);
+                newStage.initModality(Modality.APPLICATION_MODAL);
+                newStage.showAndWait();
+            } else {
+                sceneBuilder.getMeshContexts().add(new MeshContext(null));
+                if (sceneBuilder.getMeshContexts().size() == 2 && sceneBuilder.getMeshContexts().get(0).getMesh() == null) {
+                    sceneBuilder.getMeshContexts().remove(0);
+                }
+                if (sceneBuilder.getMeshContexts().size() > 1) {
+                    drawRadioButtons(sceneBuilder);
+                }
+                sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setMesh(ObjReader.read(fileContent));
+                sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setNewMeshConverter();
             }
-            if (sceneBuilder.getMeshContexts().size() > 1) {
-                drawRadioButtons(sceneBuilder);
-            }
-            sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setMesh(ObjReader.read(fileContent));
-            sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setNewMeshConverter();
             // todo: обработка ошибок
         } catch (Exception exception) {
             StackPane stackPane = new StackPane();
@@ -161,8 +220,8 @@ public class GuiController {
             stackPane1.setAlignment(buttonDecline, Pos.BOTTOM_LEFT);
             buttonDecline.setPrefSize(60, 40);
             stage1.setScene(scene1);
+            //stage1.initModality(Modality.APPLICATION_MODAL);
             stage1.showAndWait();
-
         }
 
         FileChooser fileChooser = new FileChooser();
@@ -175,8 +234,6 @@ public class GuiController {
         if (file == null) {
             return;
         }
-
-        Path fileName = Path.of(file.getAbsolutePath());
 
         try {
             ObjWriter.write(sceneBuilder.getMeshContexts().get(0).getMesh(), file, sceneBuilder.getMeshContexts().get(0));
@@ -198,14 +255,19 @@ public class GuiController {
     }
 
     private void drawRadioButtons(SceneBuilder sceneBuilder) {
+        sceneBuilder.getSceneStage().close();
         Group group = new Group();
         ToggleGroup toggleGroup = new ToggleGroup();
-        Scene scene = new Scene(group, 200, 50);
+        Scene scene = new Scene(group, 500, 50);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Stage stageCheckers = new Stage();
         for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
             RadioButton radioButton = new RadioButton();
-            radioButton.setLayoutX(20 * (i + 1));
+            radioButton.setText("Model" + i);
+            if (i != 0) {
+                radioButton.setLayoutX(20 * (i + 4));
+            } else {
+                radioButton.setLayoutX(20 * (i + 1));
+            }
             radioButton.setLayoutY(25);
             radioButton.setToggleGroup(toggleGroup);
             group.getChildren().add(radioButton);
@@ -217,10 +279,12 @@ public class GuiController {
             sceneBuilder.getMeshContexts().get(group.getChildren().indexOf(toggleGroup.getSelectedToggle())).
                     getConverter().setTransform(true);
         });
-        stageCheckers.setScene(scene);
-        stageCheckers.setX(screenSize.getWidth() / 2);
-        stageCheckers.setY(30);
-        stageCheckers.show();
+        sceneBuilder.getSceneStage().setScene(scene);
+        sceneBuilder.getSceneStage().setX(screenSize.getWidth() / 2);
+        sceneBuilder.getSceneStage().setY(30);
+        sceneBuilder.getSceneStage().setTitle("Models controller");
+        sceneBuilder.getSceneStage().setAlwaysOnTop(true);
+        sceneBuilder.getSceneStage().show();
     }
 
     private void drawScaleMenu() {
@@ -280,41 +344,17 @@ public class GuiController {
             } else {
                 z = 1;
             }
-            int index = 0;
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
                 if (sceneBuilder.getMeshContexts().get(i).getConverter().isTransform()) {
                     sceneBuilder.getMeshContexts().get(i).getConverter().setX(x);
                     sceneBuilder.getMeshContexts().get(i).getConverter().setY(y);
                     sceneBuilder.getMeshContexts().get(i).getConverter().setZ(z);
-                    index = i;
                     break;
                 }
             }
-            anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
-            anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
-
-            int finalInt = index;
-            KeyFrame frame = new KeyFrame(Duration.millis(30), event -> {
-                double width = canvas.getWidth();
-                double height = canvas.getHeight();
-
-                canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
-                camera.setAspectRatio((float) (width / height));
-                if (sceneBuilder.getMeshContexts().get(finalInt).getMesh() != null) {
-                    try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(), sceneBuilder.getMeshContexts().get(finalInt));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                event.consume();
-            });
-            timeline.getKeyFrames().add(frame);
-            timeline.play();
-            actionEvent.consume();
         });
         group.getChildren().addAll(textX, textFieldX, textY, textFieldY, textZ, textFieldZ, buttonAccept);
+        stage.setAlwaysOnTop(true);
         stage.show();
     }
 
@@ -353,40 +393,16 @@ public class GuiController {
         buttonAccept.setOnAction(actionEvent -> {
             char axis = textFieldAxis.getText().charAt(0);
             float angle = Float.parseFloat(textFieldAngle.getText());
-            int index = 0;
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
                 if (sceneBuilder.getMeshContexts().get(i).getConverter().isTransform()) {
                     sceneBuilder.getMeshContexts().get(i).getConverter().setAxis(axis);
                     sceneBuilder.getMeshContexts().get(i).getConverter().setAngle(angle);
-                    index = i;
                     break;
                 }
             }
-            anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
-            anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
-
-            int finalInt = index;
-            KeyFrame frame = new KeyFrame(Duration.millis(30), event -> {
-                double width = canvas.getWidth();
-                double height = canvas.getHeight();
-
-                canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
-                camera.setAspectRatio((float) (width / height));
-                if (sceneBuilder.getMeshContexts().get(finalInt).getMesh() != null) {
-                    try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(), sceneBuilder.getMeshContexts().get(finalInt));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                event.consume();
-            });
-            timeline.getKeyFrames().add(frame);
-            timeline.play();
-            actionEvent.consume();
         });
         group.getChildren().addAll(textAxis, textFieldAxis, textAngle, textFieldAngle, buttonAccept);
+        stage.setAlwaysOnTop(true);
         stage.show();
     }
 
@@ -451,39 +467,15 @@ public class GuiController {
             } else {
                 z = 0;
             }
-            int index = 0;
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
                 if (sceneBuilder.getMeshContexts().get(i).getConverter().isTransform()) {
                     sceneBuilder.getMeshContexts().get(i).getConverter().setVectorTranslate(new Vector3(new float[] {x, y, z}));
-                    index = i;
                     break;
                 }
             }
-            anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
-            anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
-
-            int finalIndex = index;
-            KeyFrame frame = new KeyFrame(Duration.millis(30), event -> {
-                double width = canvas.getWidth();
-                double height = canvas.getHeight();
-
-                canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
-                camera.setAspectRatio((float) (width / height));
-                if (sceneBuilder.getMeshContexts().get(finalIndex).getMesh() != null) {
-                    try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera,
-                                (int) canvas.getWidth(), (int) canvas.getHeight(), sceneBuilder.getMeshContexts().get(finalIndex));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                event.consume();
-            });
-            timeline.getKeyFrames().add(frame);
-            timeline.play();
-            actionEvent.consume();
         });
         group.getChildren().addAll(textVectorCoords, textFieldX, textFieldY, textFieldZ, textX, textY, textZ, buttonAccept);
+        stage.setAlwaysOnTop(true);
         stage.show();
     }
 
