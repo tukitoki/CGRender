@@ -14,9 +14,19 @@ public class MeshContext {
         converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
     }
 
+    public MeshContext(float x, float y, float z, char axis, float angle) {
+        mesh = new Mesh();
+        converter = new Converter(x, y, z, axis, angle, new Vector3(new float[] {0, 0, 0}));
+    }
+
     public MeshContext(Mesh mesh) {
         this.mesh = mesh;
         this.converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
+        this.changes = false;
+    }
+    public MeshContext(Mesh mesh, char axis, float angle) {
+        this.mesh = mesh;
+        this.converter = new Converter(1, 1, 1, axis, angle, new Vector3(new float[] {0, 0, 0}));
         this.changes = false;
     }
 
