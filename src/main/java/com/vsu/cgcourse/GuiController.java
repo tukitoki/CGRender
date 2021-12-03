@@ -1,6 +1,7 @@
 package com.vsu.cgcourse;
 
 import com.vsu.cgcourse.math.Vector3;
+import com.vsu.cgcourse.model.DeleteFace;
 import com.vsu.cgcourse.model.MeshContext;
 import com.vsu.cgcourse.obj_writer.ObjWriter;
 import com.vsu.cgcourse.render_engine.SceneBuilder;
@@ -20,10 +21,13 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -33,9 +37,11 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.awt.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.File;
+import java.util.ArrayList;
 
 import com.vsu.cgcourse.obj_reader.ObjReader;
 import com.vsu.cgcourse.render_engine.Camera;
@@ -93,13 +99,68 @@ public class GuiController {
     }
 
     @FXML
+    private void onOpenFacesMenu() {
+        Stage stageFaces = new Stage(StageStyle.UTILITY);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        stageFaces.setX(screenSize.getWidth() - 310);
+        stageFaces.setY(screenSize.getHeight() / 3);
+        Group group = new Group();
+        VBox vBox = new VBox();
+        ScrollPane scrollPane = new ScrollPane(vBox);
+        scrollPane.setPrefWidth(300);
+        scrollPane.setPrefHeight(300);
+        int index = 0;
+        for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
+            if (sceneBuilder.getMeshContexts().get(i).getConverter().isTransform()) {
+                index = i;
+            }
+        }
+        Scene sceneFaces = new Scene(group, scrollPane.getPrefWidth(), scrollPane.getPrefHeight() + 50);
+        scrollPane.setPrefViewportHeight(sceneBuilder.getMeshContexts().get(index).getMesh().getPolygons().
+                getPolygonVertexIndices().size() * 10);
+        for (int i = 0; i < sceneBuilder.getMeshContexts().get(index).getMesh().getPolygons().getPolygonVertexIndices().size(); i++) {
+            CheckBox checkBox = new CheckBox();
+            checkBox.setText(" " + (i + 1) + "f");
+            vBox.getChildren().add(checkBox);
+            int finalIndex = index;
+            int finalI = i;
+            checkBox.setOnAction(actionEvent -> {
+                if (checkBox.isSelected()) {
+                    sceneBuilder.getMeshContexts().get(finalIndex).getVerticesDeleteIndices().add(finalI);
+                }
+            });
+        }
+        Button buttonCheck = new Button("Accept");
+        buttonCheck.setLayoutX(80);
+        buttonCheck.setLayoutY(scrollPane.getLayoutX() + scrollPane.getPrefHeight() + 10);
+        buttonCheck.setPrefSize(150, 30);
+        int finalIndex1 = index;
+        buttonCheck.setOnAction(actionEvent -> {
+            try {
+                DeleteFace.deleteFace(sceneBuilder.getMeshContexts().get(finalIndex1).getMesh(),
+                        sceneBuilder.getMeshContexts().get(finalIndex1).getVerticesDeleteIndices(), true);
+                sceneBuilder.getMeshContexts().get(finalIndex1).getVerticesDeleteIndices().clear();
+                sceneBuilder.getMeshContexts().get(finalIndex1).getConverter().setTransform(true);
+                stageFaces.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        group.getChildren().add(scrollPane);
+        group.getChildren().add(buttonCheck);
+        stageFaces.setScene(sceneFaces);
+        stageFaces.setResizable(false);
+        stageFaces.show();
+    }
+
+    @FXML
     private void onOpenModelMenuItemClick() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
         fileChooser.setTitle("Load Model");
 
         fileChooser.setInitialDirectory(new File("src/main/resources/com/vsu/cgcourse/models"));
-        File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
+        File file = fileChooser.showOpenDialog( canvas.getScene().getWindow());
         if (file == null) {
             return;
         }
@@ -132,10 +193,8 @@ public class GuiController {
             stackPane1.setAlignment(buttonDecline, Pos.BOTTOM_LEFT);
             buttonDecline.setPrefSize(60, 40);
             stage1.setScene(scene1);
-            //stage1.initModality(Modality.APPLICATION_MODAL);
             stage1.showAndWait();
         }
-
         try {
             String fileContent = Files.readString(fileName);
             if (sceneBuilder.isReplaceable()) {
@@ -154,6 +213,7 @@ public class GuiController {
                     newStage.close();
                     sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setMesh(ObjReader.read(fileContent));
                     sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setNewMeshConverter();
+                    sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setVerticesDeleteIndices(new ArrayList<>());
                     if (sceneBuilder.getMeshContexts().size() > 1) {
                         drawRadioButtons(sceneBuilder);
                     }
@@ -284,6 +344,8 @@ public class GuiController {
         sceneBuilder.getSceneStage().setY(30);
         sceneBuilder.getSceneStage().setTitle("Models controller");
         sceneBuilder.getSceneStage().setAlwaysOnTop(true);
+        sceneBuilder.getSceneStage().setResizable(false);
+        sceneBuilder.getSceneStage().initStyle(StageStyle.UTILITY);
         sceneBuilder.getSceneStage().show();
     }
 
@@ -425,7 +487,7 @@ public class GuiController {
         Text textX = new Text("X :");
         textX.setX(45);
         textX.setY(textVectorCoords.getY() + 17);
-        TextField textFieldX = new TextField();
+        TextField textFieldX = new TextField("1");
         textFieldX.setLayoutX(textX.getX());
         textFieldX.setLayoutY(textX.getY() + 7);
         textFieldX.setPrefSize(40, 20);
@@ -433,7 +495,7 @@ public class GuiController {
         Text textY = new Text("Y :");
         textY.setX(textFieldX.getLayoutX());
         textY.setY(textFieldX.getLayoutY() + textFieldX.getPrefHeight() + 20);
-        TextField textFieldY = new TextField();
+        TextField textFieldY = new TextField("1");
         textFieldY.setLayoutX(textX.getX());
         textFieldY.setLayoutY(textY.getY() + 7);
         textFieldY.setPrefSize(textFieldX.getPrefWidth(), textFieldX.getPrefHeight());
@@ -441,7 +503,7 @@ public class GuiController {
         Text textZ = new Text("Z :");
         textZ.setX(textFieldY.getLayoutX());
         textZ.setY(textFieldY.getLayoutY() + textFieldY.getPrefHeight() + 20);
-        TextField textFieldZ = new TextField();
+        TextField textFieldZ = new TextField("1");
         textFieldZ.setLayoutX(textZ.getX());
         textFieldZ.setLayoutY(textZ.getY() + 7);
         textFieldZ.setPrefSize(textFieldY.getPrefWidth(), textFieldY.getPrefHeight());

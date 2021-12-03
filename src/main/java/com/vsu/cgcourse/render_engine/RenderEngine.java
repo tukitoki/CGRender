@@ -6,8 +6,11 @@ import com.vsu.cgcourse.math.Matrix4;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.MeshContext;
 import javafx.scene.canvas.GraphicsContext;
+
 import javax.vecmath.*;
+
 import com.vsu.cgcourse.model.Mesh;
+
 import static com.vsu.cgcourse.render_engine.GraphicConveyor.*;
 
 public class RenderEngine {
