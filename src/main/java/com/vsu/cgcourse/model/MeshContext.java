@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class MeshContext {
 
+    private Mesh oldMesh;
     private Mesh mesh;
     private Converter converter;
     private boolean changes;
@@ -69,5 +70,13 @@ public class MeshContext {
 
     public void setVerticesDeleteIndices(ArrayList<Integer> verticesDeleteIndices) {
         this.verticesDeleteIndices = verticesDeleteIndices;
+    }
+
+    public Mesh getOldMesh() {
+        return oldMesh;
+    }
+
+    public void setOldMesh(Mesh oldMesh) {
+        this.oldMesh = oldMesh;
     }
 }

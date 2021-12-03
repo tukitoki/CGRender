@@ -100,14 +100,18 @@ public class ObjWriter {
         model.recheckModel();
     }
 
-    public static void write(final Mesh model, final File file, MeshContext meshContext) throws Exception {
-        isModelReadyForRecording(model);
+    public static void write(final File file, MeshContext meshContext) throws Exception {
         FileWriter writer = new FileWriter(file, false);
-        ArrayList<Vector3> v3 = new ArrayList<>(model.getVertices());
-        writeAllVertices(writer, v3, model.getTextureVertices(), model.getNormals(), meshContext);
+        Mesh model;
+        if (meshContext.isChanges()) {
+            model = meshContext.getMesh();
+        } else {
+            model = meshContext.getOldMesh();
+        }
+        isModelReadyForRecording(model);
+        writeAllVertices(writer, model.getVertices(), model.getTextureVertices(), model.getNormals(), meshContext);
         writer.flush();
         writer.write("\n");
-        //writer.write(writeAllVertices(model.getVertices(), model.getTextureVertices(), model.getNormals()));
         try {
             writer.write(writeFace(
                     model.getPolygons().getPolygonVertexIndices(),

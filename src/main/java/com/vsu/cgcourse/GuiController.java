@@ -231,6 +231,7 @@ public class GuiController {
                         }
                     }
                     sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setMesh(ObjReader.read(fileContent));
+                    sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setOldMesh(ObjReader.read(fileContent));
                     sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setNewMeshConverter();
                     sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setVerticesDeleteIndices(new ArrayList<>());
                     if (sceneBuilder.getMeshContexts().size() > 1) {
@@ -251,6 +252,7 @@ public class GuiController {
                 if (sceneBuilder.getMeshContexts().size() > 1) {
                     drawRadioButtons(sceneBuilder);
                 }
+                sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setOldMesh(ObjReader.read(fileContent));
                 sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setMesh(ObjReader.read(fileContent));
                 sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setNewMeshConverter();
             }
@@ -315,7 +317,7 @@ public class GuiController {
         }
 
         try {
-            ObjWriter.write(sceneBuilder.getMeshContexts().get(0).getMesh(), file, sceneBuilder.getMeshContexts().get(0));
+            ObjWriter.write(file, sceneBuilder.getMeshContexts().get(0));
             // todo: обработка ошибок
         } catch (Exception exception) {
             StackPane stackPane = new StackPane();
