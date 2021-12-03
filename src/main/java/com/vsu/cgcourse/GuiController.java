@@ -102,13 +102,13 @@ public class GuiController {
     private void onOpenFacesMenu() {
         Stage stageFaces = new Stage(StageStyle.UTILITY);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        stageFaces.setX(screenSize.getWidth() - 310);
-        stageFaces.setY(screenSize.getHeight() / 3);
         Group group = new Group();
         VBox vBox = new VBox();
         ScrollPane scrollPane = new ScrollPane(vBox);
-        scrollPane.setPrefWidth(300);
+        scrollPane.setPrefWidth(200);
         scrollPane.setPrefHeight(300);
+        stageFaces.setX(screenSize.getWidth() - 10 - scrollPane.getPrefWidth());
+        stageFaces.setY(screenSize.getHeight() / 3);
         int index = 0;
         for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
             if (sceneBuilder.getMeshContexts().get(i).getConverter().isTransform()) {
@@ -131,9 +131,9 @@ public class GuiController {
             });
         }
         Button buttonCheck = new Button("Accept");
-        buttonCheck.setLayoutX(80);
+        buttonCheck.setLayoutX(50);
         buttonCheck.setLayoutY(scrollPane.getLayoutX() + scrollPane.getPrefHeight() + 10);
-        buttonCheck.setPrefSize(150, 30);
+        buttonCheck.setPrefSize(100, 30);
         int finalIndex1 = index;
         buttonCheck.setOnAction(actionEvent -> {
             try {
