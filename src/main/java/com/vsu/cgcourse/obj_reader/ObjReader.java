@@ -34,23 +34,9 @@ public class ObjReader {
 
             lineInd++;
             switch (token) {
-                // Обратите внимание!
-                // Для структур типа вершин методы написаны так, чтобы ничего не знать о внешней среде.
-                // Они принимают только то, что им нужно для работы, а возвращают только то, что могут создать.
-                // Исключение - индекс строки. Он прокидывается, чтобы выводить сообщение об ошибке.
-                // Могло быть иначе. Например, метод parseVertex мог вместо возвращения вершины принимать вектор вершин
-                // модели или сам класс модели, работать с ним.
-                // Но такой подход может привести к большему количеству ошибок в коде. Например, в нем что-то может
-                // тайно сделаться с классом модели.
-                // А еще это портит читаемость
-                // И не стоит забывать про тесты. Чем проще вам задать данные для теста, проверить, что метод рабочий,
-                // тем лучше.
                 case OBJ_VERTEX_TOKEN -> result.getVertices().add(parseVertex(wordsInLine, lineInd));
                 case OBJ_TEXTURE_TOKEN -> result.getTextureVertices().add(parseTextureVertex(wordsInLine, lineInd));
                 case OBJ_NORMAL_TOKEN -> result.getNormals().add(parseNormal(wordsInLine, lineInd));
-                // А здесь описанное выше правило нарушается, и это плохо. Например, очевидно, что тестировать такой
-                // метод сложнее.
-                // Подумайте и перепишите его так, чтобы с ним было легче работать.
                 case OBJ_FACE_TOKEN -> result.setPolygons(parseFace(wordsInLine, result.getPolygons(), lineInd));
                 default -> {}
             }
@@ -60,7 +46,6 @@ public class ObjReader {
         return result;
     }
 
-    // Всем методам кроме основного я поставил модификатор доступа protected, чтобы обращаться к ним в тестах
     protected static Vector3 parseVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
         try {
             if (wordsInLineWithoutToken.size() > 3) {
@@ -126,18 +111,13 @@ public class ObjReader {
         for (String s : wordsInLineWithoutToken) {
             parseFaceWord(s, onePolygonVertexIndices, onePolygonTextureVertexIndices, onePolygonNormalIndices, lineInd);
         }
-        //Polygons polygons = model.getPolygons();
         polygons.getPolygonVertexIndices().add(onePolygonVertexIndices);
         polygons.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices);
         polygons.getPolygonNormalIndices().add(onePolygonNormalIndices);
 
-        //model.recheckingModel(polygons.getPolygonVertexIndices().size() - 1, lineInd);
         return polygons;
     }
 
-    // Обратите внимание, что для чтения полигонов я выделил еще один вспомогательный метод.
-    // Это бывает очень полезно и с точки зрения структурирования алгоритма в голове, и с точки зрения тестирования.
-    // В радикальных случаях не бойтесь выносить в отдельные методы и тестировать код из одной-двух строчек.
     protected static void parseFaceWord(
             String wordInLine,
             ArrayList<Integer> onePolygonVertexIndices,

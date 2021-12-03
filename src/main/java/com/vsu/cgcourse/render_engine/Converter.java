@@ -12,6 +12,7 @@ public class Converter {
     private char axis;
     private float angle;
     private Vector3 vectorTranslate;
+    private boolean transform = true;
 
     public Converter(float x, float y, float z, char axis, float angle, Vector3 vectorTranslate) {
         this.x = x;
@@ -20,6 +21,14 @@ public class Converter {
         this.axis = axis;
         this.angle = angle;
         this.vectorTranslate = vectorTranslate;
+    }
+
+    public boolean isTransform() {
+        return transform;
+    }
+
+    public void setTransform(boolean transform) {
+        this.transform = transform;
     }
 
     public float getX() {
@@ -78,10 +87,12 @@ public class Converter {
                     {0, 0, 1, 0},
                     {vectorTranslate.getX(), vectorTranslate.getY(), vectorTranslate.getZ(), 1}});
         }
-        return new Matrix4(new float[][] {{1, 0, 0, 0},
-                                          {0, 1, 0, 0},
-                                          {0, 0, 1, 0},
-                                          {0, 0, 0, 1}});
+        return new Matrix4(new float[][] {
+                {1, 0, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 1, 0},
+                {0, 0, 0, 1}
+        });
     }
 
     public Matrix3 scale() throws Exception {
@@ -93,12 +104,7 @@ public class Converter {
     }
 
     public  Matrix3 rotate() throws Exception {
-        // TODO: 30.11.2021 Условие тут воплседвствии надо убрать
         float rad = (float) Math.toRadians(angle);
-        if (angle != 0) {
-            double num = Math.PI / angle;
-            angle = (float) Math.PI / (float)num;
-        }
         if(axis == 'x') {
             return new Matrix3(new float[][]{
                     {1, 0, 0},

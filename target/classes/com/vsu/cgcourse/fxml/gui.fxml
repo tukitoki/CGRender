@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.canvas.Canvas?>
 
+<?import javafx.scene.control.CustomMenuItem?>
 <AnchorPane fx:id="anchorPane" xmlns:fx="http://javafx.com/fxml" fx:controller="com.vsu.cgcourse.GuiController">
     <MenuBar>
         <Menu mnemonicParsing="false" text="File">
@@ -67,6 +68,13 @@
             <MenuItem mnemonicParsing="false" onAction="#onOpenTranslateMenu" text="Translate">
                 <accelerator>
                    <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="C"/>
+                </accelerator>
+            </MenuItem>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Faces">
+            <MenuItem mnemonicParsing="false" onAction="#onOpenFacesMenu" text="Show faces">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="O"/>
                 </accelerator>
             </MenuItem>
         </Menu>

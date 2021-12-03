@@ -48,7 +48,7 @@ public class Vector3 extends AbstractVector<Vector3> {
 
     public void vectorMultiply(Vector3 secondVector) {
         float x = this.getY() * secondVector.getZ() - this.getZ() * secondVector.getY();
-        float y = this.getZ() * secondVector.getX() + this.getX() * secondVector.getZ();
+        float y = -this.getX() * secondVector.getZ() + this.getZ() * secondVector.getX();
         this.getVectorCoords()[2] = this.getX() * secondVector.getY() - this.getY() * secondVector.getX();
         this.getVectorCoords()[0] = x;
         this.getVectorCoords()[1] = y;
