@@ -80,18 +80,19 @@ public class Converter {
     }
 
     public Matrix4 translate() throws Exception {
-        if (vectorTranslate.getX() != 0 && vectorTranslate.getY() != 0 && vectorTranslate.getZ() != 0) {
+        if (vectorTranslate.getX() == 0 && vectorTranslate.getY() == 0 && vectorTranslate.getZ() == 0) {
             return new Matrix4(new float[][]{
                     {1, 0, 0, 0},
                     {0, 1, 0, 0},
                     {0, 0, 1, 0},
-                    {vectorTranslate.getX(), vectorTranslate.getY(), vectorTranslate.getZ(), 1}});
+                    {0, 0, 0, 1}
+            });
         }
         return new Matrix4(new float[][] {
                 {1, 0, 0, 0},
                 {0, 1, 0, 0},
                 {0, 0, 1, 0},
-                {0, 0, 0, 1}
+                {vectorTranslate.getX(), vectorTranslate.getY(), vectorTranslate.getZ(), 1}
         });
     }
 
