@@ -2,6 +2,7 @@ package com.vsu.cgcourse.render_engine;
 
 import com.vsu.cgcourse.model.MeshContext;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,13 @@ public class SceneBuilder {
 
     public SceneBuilder(ArrayList<MeshContext> meshContexts) {
         this.meshContexts = meshContexts;
+        initStage();
+    }
+
+    public void initStage() {
         sceneStage = new Stage();
+        sceneStage.initStyle(StageStyle.UTILITY);
+        sceneStage.setTitle("Models controller");
     }
 
     public ArrayList<MeshContext> getMeshContexts() {

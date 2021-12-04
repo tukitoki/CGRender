@@ -5,10 +5,6 @@ import com.vsu.cgcourse.model.DeleteFace;
 import com.vsu.cgcourse.model.MeshContext;
 import com.vsu.cgcourse.obj_writer.ObjWriter;
 import com.vsu.cgcourse.render_engine.SceneBuilder;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -22,9 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -111,7 +105,7 @@ public class GuiController {
         stageFaces.setY(screenSize.getHeight() / 3);
         int index = 0;
         for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-            if (sceneBuilder.getMeshContexts().get(i).getConverter().isTransform()) {
+            if (sceneBuilder.getMeshContexts().get(i).getConverter().isSelected()) {
                 index = i;
             }
         }
@@ -140,7 +134,7 @@ public class GuiController {
                 DeleteFace.deleteFace(sceneBuilder.getMeshContexts().get(finalIndex1).getMesh(),
                         sceneBuilder.getMeshContexts().get(finalIndex1).getVerticesDeleteIndices(), true);
                 sceneBuilder.getMeshContexts().get(finalIndex1).getVerticesDeleteIndices().clear();
-                sceneBuilder.getMeshContexts().get(finalIndex1).getConverter().setTransform(true);
+                sceneBuilder.getMeshContexts().get(finalIndex1).getConverter().setSelected(true);
                 stageFaces.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -256,7 +250,6 @@ public class GuiController {
                 sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setMesh(ObjReader.read(fileContent));
                 sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setNewMeshConverter();
             }
-            // todo: обработка ошибок
         } catch (Exception exception) {
             StackPane stackPane = new StackPane();
             Scene scene = new Scene(stackPane, 600, 120);
@@ -317,8 +310,11 @@ public class GuiController {
         }
 
         try {
-            ObjWriter.write(file, sceneBuilder.getMeshContexts().get(0));
-            // todo: обработка ошибок
+            for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
+                if (sceneBuilder.getMeshContexts().get(i).getConverter().isSelected()) {
+                    ObjWriter.write(file, sceneBuilder.getMeshContexts().get(i));
+                }
+            }
         } catch (Exception exception) {
             StackPane stackPane = new StackPane();
             Scene scene = new Scene(stackPane, 600, 120);
@@ -340,12 +336,14 @@ public class GuiController {
         Group group = new Group();
         ToggleGroup toggleGroup = new ToggleGroup();
         Scene scene = new Scene(group, 500, 50);
+        int x = 5;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
             RadioButton radioButton = new RadioButton();
-            radioButton.setText("Model" + i);
+            radioButton.setText("Model" + (i + 1));
             if (i != 0) {
-                radioButton.setLayoutX(20 * (i + 4));
+                radioButton.setLayoutX(20 * x);
+                x += 4;
             } else {
                 radioButton.setLayoutX(20 * (i + 1));
             }
@@ -355,10 +353,10 @@ public class GuiController {
         }
         toggleGroup.selectedToggleProperty().addListener((observableValue, toggle, t1) -> {
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                sceneBuilder.getMeshContexts().get(i).getConverter().setTransform(false);
+                sceneBuilder.getMeshContexts().get(i).getConverter().setSelected(false);
             }
             sceneBuilder.getMeshContexts().get(group.getChildren().indexOf(toggleGroup.getSelectedToggle())).
-                    getConverter().setTransform(true);
+                    getConverter().setSelected(true);
         });
         sceneBuilder.getSceneStage().setScene(scene);
         sceneBuilder.getSceneStage().setX(screenSize.getWidth() / 2);
@@ -366,7 +364,6 @@ public class GuiController {
         sceneBuilder.getSceneStage().setTitle("Models controller");
         sceneBuilder.getSceneStage().setAlwaysOnTop(true);
         sceneBuilder.getSceneStage().setResizable(false);
-        sceneBuilder.getSceneStage().initStyle(StageStyle.UTILITY);
         sceneBuilder.getSceneStage().show();
     }
 
@@ -428,7 +425,7 @@ public class GuiController {
                 z = 1;
             }
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getConverter().isTransform()) {
+                if (sceneBuilder.getMeshContexts().get(i).getConverter().isSelected()) {
                     sceneBuilder.getMeshContexts().get(i).getConverter().setX(x);
                     sceneBuilder.getMeshContexts().get(i).getConverter().setY(y);
                     sceneBuilder.getMeshContexts().get(i).getConverter().setZ(z);
@@ -477,7 +474,7 @@ public class GuiController {
             char axis = textFieldAxis.getText().charAt(0);
             float angle = Float.parseFloat(textFieldAngle.getText());
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getConverter().isTransform()) {
+                if (sceneBuilder.getMeshContexts().get(i).getConverter().isSelected()) {
                     sceneBuilder.getMeshContexts().get(i).getConverter().setAxis(axis);
                     sceneBuilder.getMeshContexts().get(i).getConverter().setAngle(angle);
                     break;
@@ -551,7 +548,7 @@ public class GuiController {
                 z = 0;
             }
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getConverter().isTransform()) {
+                if (sceneBuilder.getMeshContexts().get(i).getConverter().isSelected()) {
                     sceneBuilder.getMeshContexts().get(i).getConverter().setVectorTranslate(new Vector3(new float[] {x, y, z}));
                     break;
                 }
