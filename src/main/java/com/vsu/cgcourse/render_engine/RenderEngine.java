@@ -28,7 +28,7 @@ public class RenderEngine {
         Matrix4 modelViewProjectionMatrix = new Matrix4(modelMatrix);
         modelViewProjectionMatrix.multiply(viewMatrix);
         modelViewProjectionMatrix.multiply(projectionMatrix);
-        //modelViewProjectionMatrix.transposite();
+        modelViewProjectionMatrix.transposite();
         final int nPolygons = meshContext.getMesh().getPolygons().getPolygonVertexIndices().size();
         for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
             final int nVerticesInPolygon = meshContext.getMesh().getPolygons().getPolygonVertexIndices().get(polygonInd).size();

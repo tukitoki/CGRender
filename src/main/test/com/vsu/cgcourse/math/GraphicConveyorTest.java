@@ -112,4 +112,33 @@ public class GraphicConveyorTest {
         Assertions.assertEquals(vector3.getY(), vector3Ans.getY());
         Assertions.assertEquals(vector3.getZ(), vector3Ans.getZ());
     }
+
+    @Test
+    public void checkTranslateForMatrix() throws Exception {
+        MeshContext meshContext = new MeshContext(1, 7, 5);
+        Matrix4 matrix4 = meshContext.getConverter().translate();
+        Matrix4 matrix4Ans = new Matrix4(new float[][]{
+                {1, 0, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 1, 0},
+                {1, 7, 5, 1}
+        });
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                Assertions.assertEquals(matrix4.getMatrix()[i][j], matrix4Ans.getMatrix()[i][j]);
+            }
+        }
+    }
+
+    @Test
+    public void checkTranslateForVector() throws Exception {
+        MeshContext meshContext = new MeshContext(2, 4, 3);
+        Matrix4 matrix4 = meshContext.getConverter().translate();
+        matrix4.transposite();
+        Vector3 vector3 = GraphicConveyor.multiplyMatrix4ByVector3(matrix4, new Vector3(new float[] {3, 7, 2}));
+        Vector3 vector3Ans = new Vector3(new float[] {5, 11, 5});
+        Assertions.assertEquals(vector3.getX(), vector3Ans.getX());
+        Assertions.assertEquals(vector3.getY(), vector3Ans.getY());
+        Assertions.assertEquals(vector3.getZ(), vector3Ans.getZ());
+    }
 }

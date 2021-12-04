@@ -23,6 +23,11 @@ public class MeshContext {
         converter = new Converter(x, y, z, axis, angle, new Vector3(new float[] {0, 0, 0}));
     }
 
+    public MeshContext(float x, float y, float z) {
+        mesh = new Mesh();
+        converter = new Converter(0, 0, 0, ' ', 0, new Vector3(new float[] {x, y, z}));
+    }
+
     public MeshContext(Mesh mesh) {
         this.mesh = mesh;
         this.converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
