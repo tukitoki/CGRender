@@ -12,7 +12,7 @@ public class Converter {
     private char axis;
     private float angle;
     private Vector3 vectorTranslate;
-    private boolean transform = true;
+    private boolean selected = true;
 
     public Converter(float x, float y, float z, char axis, float angle, Vector3 vectorTranslate) {
         this.x = x;
@@ -23,12 +23,12 @@ public class Converter {
         this.vectorTranslate = vectorTranslate;
     }
 
-    public boolean isTransform() {
-        return transform;
+    public boolean isSelected() {
+        return selected;
     }
 
-    public void setTransform(boolean transform) {
-        this.transform = transform;
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     public float getX() {
