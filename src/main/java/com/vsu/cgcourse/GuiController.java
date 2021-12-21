@@ -1,5 +1,6 @@
 package com.vsu.cgcourse;
 
+import com.vsu.cgcourse.math.Matrix3;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.DeleteFace;
 import com.vsu.cgcourse.model.MeshContext;
@@ -105,7 +106,7 @@ public class GuiController {
         stageFaces.setY(screenSize.getHeight() / 3);
         int index = 0;
         for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-            if (sceneBuilder.getMeshContexts().get(i).getConverter().isSelected()) {
+            if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
                 index = i;
             }
         }
@@ -134,7 +135,7 @@ public class GuiController {
                 DeleteFace.deleteFace(sceneBuilder.getMeshContexts().get(finalIndex1).getMesh(),
                         sceneBuilder.getMeshContexts().get(finalIndex1).getVerticesDeleteIndices(), true);
                 sceneBuilder.getMeshContexts().get(finalIndex1).getVerticesDeleteIndices().clear();
-                sceneBuilder.getMeshContexts().get(finalIndex1).getConverter().setSelected(true);
+                sceneBuilder.getMeshContexts().get(finalIndex1).getStatus().setSelected(true);
                 stageFaces.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -172,12 +173,12 @@ public class GuiController {
             label1.setAlignment(Pos.CENTER);
             Button buttonAccept = new Button("New");
             buttonAccept.setOnAction(actionEvent -> {
-                sceneBuilder.setReplaceable(false);
+                sceneBuilder.getMeshContexts().get(0).getStatus().setReplaceable(false);
                 stage1.close();
             });
             Button buttonDecline = new Button("Replace");
             buttonDecline.setOnAction(actionEvent -> {
-                sceneBuilder.setReplaceable(true);
+                sceneBuilder.getMeshContexts().get(0).getStatus().setReplaceable(true);
                 stage1.close();
             });
             stackPane1.getChildren().addAll(label1, buttonDecline, buttonAccept);
@@ -191,7 +192,7 @@ public class GuiController {
         }
         try {
             String fileContent = Files.readString(fileName);
-            if (sceneBuilder.isReplaceable()) {
+            if (sceneBuilder.getMeshContexts().get(0).getStatus().isReplaceable()) {
                 StackPane newStackPane = new StackPane();
                 Scene newScene = new Scene(newStackPane, 600, 120);
                 Stage newStage = new Stage(StageStyle.UTILITY);
@@ -279,12 +280,12 @@ public class GuiController {
             label1.setAlignment(Pos.CENTER);
             Button buttonAccept = new Button("Yes");
             buttonAccept.setOnAction(actionEvent -> {
-                sceneBuilder.getMeshContexts().get(0).setChanges(true);
+                sceneBuilder.getMeshContexts().get(0).getStatus().setChanges(true);
                 stage1.close();
             });
             Button buttonDecline = new Button("No");
             buttonDecline.setOnAction(actionEvent -> {
-                sceneBuilder.getMeshContexts().get(0).setChanges(false);
+                sceneBuilder.getMeshContexts().get(0).getStatus().setChanges(false);
                 stage1.close();
             });
             stackPane1.getChildren().addAll(label1, buttonDecline, buttonAccept);
@@ -311,7 +312,7 @@ public class GuiController {
 
         try {
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getConverter().isSelected()) {
+                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
                     ObjWriter.write(file, sceneBuilder.getMeshContexts().get(i));
                 }
             }
@@ -353,10 +354,10 @@ public class GuiController {
         }
         toggleGroup.selectedToggleProperty().addListener((observableValue, toggle, t1) -> {
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                sceneBuilder.getMeshContexts().get(i).getConverter().setSelected(false);
+                sceneBuilder.getMeshContexts().get(i).getStatus().setSelected(false);
             }
-            sceneBuilder.getMeshContexts().get(group.getChildren().indexOf(toggleGroup.getSelectedToggle())).
-                    getConverter().setSelected(true);
+            sceneBuilder.getMeshContexts().get(group.getChildren().indexOf(toggleGroup.getSelectedToggle()))
+                    .getStatus().setSelected(true);
         });
         sceneBuilder.getSceneStage().setScene(scene);
         sceneBuilder.getSceneStage().setX(screenSize.getWidth() / 2);
@@ -425,10 +426,10 @@ public class GuiController {
                 z = 1;
             }
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getConverter().isSelected()) {
-                    sceneBuilder.getMeshContexts().get(i).getConverter().setX(x);
-                    sceneBuilder.getMeshContexts().get(i).getConverter().setY(y);
-                    sceneBuilder.getMeshContexts().get(i).getConverter().setZ(z);
+                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
+                    sceneBuilder.getMeshContexts().get(i).getConverter().setScaleX(x);
+                    sceneBuilder.getMeshContexts().get(i).getConverter().setScaleY(y);
+                    sceneBuilder.getMeshContexts().get(i).getConverter().setScaleZ(z);
                     break;
                 }
             }
@@ -474,7 +475,7 @@ public class GuiController {
             char axis = textFieldAxis.getText().charAt(0);
             float angle = Float.parseFloat(textFieldAngle.getText());
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getConverter().isSelected()) {
+                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
                     sceneBuilder.getMeshContexts().get(i).getConverter().setAxis(axis);
                     sceneBuilder.getMeshContexts().get(i).getConverter().setAngle(angle);
                     break;
@@ -548,7 +549,7 @@ public class GuiController {
                 z = 0;
             }
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getConverter().isSelected()) {
+                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
                     sceneBuilder.getMeshContexts().get(i).getConverter().setVectorTranslate(new Vector3(new float[] {x, y, z}));
                     break;
                 }
@@ -604,4 +605,43 @@ public class GuiController {
         camera.movePosition(new Vector3(new float[]{0, -TRANSLATION, 0}));
     }
 
+    @FXML
+    public void handleCameraRotateLeft(ActionEvent actionEvent) throws Exception {
+        float rad = (float) Math.toRadians(1);
+        camera.rotate(new Matrix3(new float[][]{
+                {(float) Math.cos(rad), 0, (float) Math.sin(rad)},
+                {0, 1, 0},
+                {(float) -Math.sin(rad),0, (float) Math.cos(rad)}
+        }));
+    }
+
+    @FXML
+    public void handleCameraRotateRight(ActionEvent actionEvent) throws Exception {
+        float rad = (float) Math.toRadians(-1);
+        camera.rotate(new Matrix3(new float[][]{
+                {(float) Math.cos(rad), 0, (float) Math.sin(rad)},
+                {0, 1, 0},
+                {(float) -Math.sin(rad),0, (float) Math.cos(rad)}
+        }));
+    }
+
+    @FXML
+    public void handleCameraRotateUp(ActionEvent actionEvent) throws Exception {
+        float rad = (float) Math.toRadians(1);
+        camera.rotate(new Matrix3(new float[][]{
+                {1, 0, 0},
+                {0, (float) Math.cos(rad), (float) Math.sin(rad)},
+                {0, (float) -Math.sin(rad), (float) Math.cos(rad)}
+        }));
+    }
+
+    @FXML
+    public void handleCameraRotateDown(ActionEvent actionEvent) throws Exception {
+        float rad = (float) Math.toRadians(-1);
+        camera.rotate(new Matrix3(new float[][]{
+                {1, 0, 0},
+                {0, (float) Math.cos(rad), (float) Math.sin(rad)},
+                {0, (float) -Math.sin(rad), (float) Math.cos(rad)}
+        }));
+    }
 }

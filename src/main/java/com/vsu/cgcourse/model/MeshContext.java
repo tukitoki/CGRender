@@ -10,31 +10,23 @@ public class MeshContext {
     private Mesh oldMesh;
     private Mesh mesh;
     private Converter converter;
-    private boolean changes;
     private ArrayList<Integer> verticesDeleteIndices;
+    private ModeStatus status;
 
-    public MeshContext(float x, float y, float z, char axis, float angle) {
+    public MeshContext(float scaleX, float scaleY, float scaleZ, char axis, float angle) {
         mesh = new Mesh();
-        converter = new Converter(x, y, z, axis, angle, new Vector3(new float[] {0, 0, 0}));
+        converter = new Converter(scaleX, scaleY, scaleZ, axis, angle, new Vector3(new float[] {0, 0, 0}));
     }
 
     public MeshContext(Mesh mesh) {
         this.mesh = mesh;
         this.converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
-        this.changes = false;
         verticesDeleteIndices = new ArrayList<>();
+        status = new ModeStatus();
     }
 
     public void setNewMeshConverter() {
         this.converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
-    }
-
-    public boolean isChanges() {
-        return changes;
-    }
-
-    public void setChanges(boolean changes) {
-        this.changes = changes;
     }
 
     public Mesh getMesh() {
@@ -67,5 +59,13 @@ public class MeshContext {
 
     public void setOldMesh(Mesh oldMesh) {
         this.oldMesh = oldMesh;
+    }
+
+    public ModeStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ModeStatus status) {
+        this.status = status;
     }
 }

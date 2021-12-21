@@ -11,15 +11,15 @@ import javax.vecmath.Point2f;
 public class GraphicConveyor {
 
     public static Matrix4 rotateScaleTranslate(MeshContext meshContext) throws Exception {
-        Matrix3 matrix3 = meshContext.getConverter().scale();
-        matrix3.multiply(meshContext.getConverter().rotate());
+        Matrix3 matrix3 = scale(meshContext.getConverter());
+        matrix3.multiply(rotate(meshContext.getConverter()));
         Matrix4 matrixScaledRotated = new Matrix4(new float[][]{
                 {matrix3.getMatrix()[0][0], matrix3.getMatrix()[0][1], matrix3.getMatrix()[0][2], 0},
                 {matrix3.getMatrix()[1][0], matrix3.getMatrix()[1][1], matrix3.getMatrix()[1][2], 0},
                 {matrix3.getMatrix()[2][0], matrix3.getMatrix()[2][1], matrix3.getMatrix()[2][2], 0},
                 {0, 0, 0, 1}
         });
-        matrixScaledRotated.multiply(meshContext.getConverter().translate());
+        matrixScaledRotated.multiply(translate(meshContext.getConverter()));
         return matrixScaledRotated;
     }
 
@@ -74,5 +74,57 @@ public class GraphicConveyor {
 
     public static Point2f vertexToPoint(final Vector3 vertex, final int width, final int height) {
         return new Point2f(vertex.getVectorCoords()[0] * width + width / 2.0F, -vertex.getVectorCoords()[1] * height + height / 2.0F);
+    }
+
+    public static Matrix3 scale(Converter cnv) throws Exception {
+        return new Matrix3(new float[][]{
+                {cnv.getScaleX(), 0, 0},
+                {0, cnv.getScaleY(), 0},
+                {0, 0, cnv.getScaleZ()}
+        });
+    }
+
+    public static Matrix3 rotate(Converter cnv) throws Exception {
+        float rad = (float) Math.toRadians(cnv.getAngle());
+        if(cnv.getAxis() == 'x') {
+            return new Matrix3(new float[][]{
+                    {1, 0, 0},
+                    {0, (float) Math.cos(rad), (float) Math.sin(rad)},
+                    {0, (float) -Math.sin(rad), (float) Math.cos(rad)}
+            });
+        } else if(cnv.getAxis() == 'y') {
+            return new Matrix3(new float[][]{
+                    {(float) Math.cos(rad), 0, (float) Math.sin(rad)},
+                    {0, 1, 0},
+                    {(float) -Math.sin(rad),0, (float) Math.cos(rad)}
+            });
+        } else if(cnv.getAxis() == 'z') {
+            return new Matrix3(new float[][]{
+                    {(float) Math.cos(rad), (float) Math.sin(rad), 0},
+                    {(float) -Math.sin(rad), (float) Math.cos(rad), 0},
+                    {0, 0, 1}
+            });
+        }
+        return new Matrix3(new float[][] {{1, 0, 0},
+                {0, 1, 0},
+                {0, 0, 1}});
+    }
+
+    public static Matrix4 translate(Converter cnv) throws Exception {
+        if (cnv.getVectorTranslate().getX() == 0 && cnv.getVectorTranslate().getY() == 0 &&
+                cnv.getVectorTranslate().getZ() == 0) {
+            return new Matrix4(new float[][]{
+                    {1, 0, 0, 0},
+                    {0, 1, 0, 0},
+                    {0, 0, 1, 0},
+                    {0, 0, 0, 1}
+            });
+        }
+        return new Matrix4(new float[][] {
+                {1, 0, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 1, 0},
+                {cnv.getVectorTranslate().getX(), cnv.getVectorTranslate().getY(), cnv.getVectorTranslate().getZ(), 1}
+        });
     }
 }
