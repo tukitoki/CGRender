@@ -588,21 +588,25 @@ public class GuiController {
     @FXML
     public void handleCameraLeft(ActionEvent actionEvent) throws Exception {
         camera.movePosition(new Vector3(new float[]{TRANSLATION, 0, 0}));
+        camera.moveTarget(new Vector3(new float[] {TRANSLATION, 0, 0}));
     }
 
     @FXML
     public void handleCameraRight(ActionEvent actionEvent) throws Exception {
         camera.movePosition(new Vector3(new float[]{-TRANSLATION, 0, 0}));
+        camera.moveTarget(new Vector3(new float[] {-TRANSLATION, 0, 0}));
     }
 
     @FXML
     public void handleCameraUp(ActionEvent actionEvent) throws Exception {
         camera.movePosition(new Vector3(new float[]{0, TRANSLATION, 0}));
+        camera.moveTarget(new Vector3(new float[] {0, TRANSLATION, 0}));
     }
 
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) throws Exception {
         camera.movePosition(new Vector3(new float[]{0, -TRANSLATION, 0}));
+        camera.moveTarget(new Vector3(new float[] {0, -TRANSLATION, 0}));
     }
 
     @FXML
