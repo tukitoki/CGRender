@@ -60,6 +60,7 @@
 #rotateScaleTranslatePane > .button:pressed {
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
 }
+
 .titled-pane > *.content {
     -fx-font: 15px Arial;
     -fx-background-color: darkgray;
@@ -77,6 +78,10 @@
 }
 #modelGridPane > .toggle-button:selected {
     -fx-background-color: #a3a3f6;
+}
+.titled-pane > .title {
+    -fx-font: 15px Arial;
+    -fx-background-color: darkgray;
 }
 .titled-pane > .title {
     -fx-font: 15px Arial;
