@@ -13,10 +13,6 @@ public class MeshContext {
     private boolean changes;
     private ArrayList<Integer> verticesDeleteIndices;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 02664db67118fc7b767048bcf2d76b6f4a887c42
     public MeshContext(float x, float y, float z, char axis, float angle) {
         mesh = new Mesh();
         converter = new Converter(x, y, z, axis, angle, new Vector3(new float[] {0, 0, 0}));
