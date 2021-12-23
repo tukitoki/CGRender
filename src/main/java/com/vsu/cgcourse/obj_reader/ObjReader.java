@@ -38,7 +38,8 @@ public class ObjReader {
                 case OBJ_TEXTURE_TOKEN -> result.getTextureVertices().add(parseTextureVertex(wordsInLine, lineInd));
                 case OBJ_NORMAL_TOKEN -> result.getNormals().add(parseNormal(wordsInLine, lineInd));
                 case OBJ_FACE_TOKEN -> result.setPolygons(parseFace(wordsInLine, result.getPolygons(), lineInd));
-                default -> {}
+                default -> {
+                }
             }
         }
         scanner.close();
@@ -51,14 +52,14 @@ public class ObjReader {
             if (wordsInLineWithoutToken.size() > 3) {
                 throw new ObjReaderException("Too many vertex arguments.", lineInd);
             }
-            return new Vector3(new float[] {
+            return new Vector3(new float[]{
                     Float.parseFloat(wordsInLineWithoutToken.get(0)),
                     Float.parseFloat(wordsInLineWithoutToken.get(1)),
-                    Float.parseFloat(wordsInLineWithoutToken.get(2)) });
-        } catch(NumberFormatException e) {
+                    Float.parseFloat(wordsInLineWithoutToken.get(2))});
+        } catch (NumberFormatException e) {
             throw new ObjReaderException("Failed to parse float value.", lineInd);
 
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new ObjReaderException("Too few vertex arguments.", lineInd);
         }
     }
@@ -70,14 +71,14 @@ public class ObjReader {
                     throw new ObjReaderException("Too many texture vertex arguments.", lineInd);
                 }
             }
-            return new Vector2(new float[] {
+            return new Vector2(new float[]{
                     Float.parseFloat(wordsInLineWithoutToken.get(0)),
                     Float.parseFloat(wordsInLineWithoutToken.get(1))});
 
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new ObjReaderException("Failed to parse float value.", lineInd);
 
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new ObjReaderException("Too few texture vertex arguments.", lineInd);
         }
     }
@@ -87,15 +88,15 @@ public class ObjReader {
             if (wordsInLineWithoutToken.size() > 3) {
                 throw new ObjReaderException("Too many normal arguments.", lineInd);
             }
-            return new Vector3(new float[] {
+            return new Vector3(new float[]{
                     Float.parseFloat(wordsInLineWithoutToken.get(0)),
                     Float.parseFloat(wordsInLineWithoutToken.get(1)),
                     Float.parseFloat(wordsInLineWithoutToken.get(2))});
 
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new ObjReaderException("Failed to parse float value.", lineInd);
 
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new ObjReaderException("Too few normal arguments.", lineInd);
         }
     }
@@ -111,10 +112,17 @@ public class ObjReader {
         for (String s : wordsInLineWithoutToken) {
             parseFaceWord(s, onePolygonVertexIndices, onePolygonTextureVertexIndices, onePolygonNormalIndices, lineInd);
         }
-        polygons.getPolygonVertexIndices().add(onePolygonVertexIndices);
-        polygons.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices);
-        polygons.getPolygonNormalIndices().add(onePolygonNormalIndices);
-
+        polygons.getPolygonVertexIndices().addAll(triangulate(onePolygonVertexIndices));
+        if (triangulate(onePolygonTextureVertexIndices) != null && onePolygonTextureVertexIndices.size() != 0) {
+            polygons.getPolygonTextureVertexIndices().addAll(triangulate(onePolygonTextureVertexIndices));
+        } else {
+            polygons.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices);
+        }
+        if (triangulate(onePolygonNormalIndices) != null && onePolygonNormalIndices.size() != 0) {
+            polygons.getPolygonVertexIndices().addAll(triangulate(onePolygonNormalIndices));
+        } else {
+            polygons.getPolygonNormalIndices().add(onePolygonNormalIndices);
+        }
         return polygons;
     }
 
@@ -146,11 +154,27 @@ public class ObjReader {
                 }
             }
 
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new ObjReaderException("Failed to parse int value.", lineInd);
 
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new ObjReaderException("Too few arguments.", lineInd);
         }
     }
+
+    protected static ArrayList<ArrayList<Integer>> triangulate(ArrayList<Integer> onePolygonIndices) {
+        if (onePolygonIndices.size() > 3) {
+            ArrayList<ArrayList<Integer>> resultVertices = new ArrayList<>();
+            for (int i = 1; i < onePolygonIndices.size() - 1; i++) {
+                ArrayList<Integer> triangulatedVertex = new ArrayList<>();
+                triangulatedVertex.add(onePolygonIndices.get(0));
+                triangulatedVertex.add(onePolygonIndices.get(i));
+                triangulatedVertex.add(onePolygonIndices.get(i + 1));
+                resultVertices.add(triangulatedVertex);
+            }
+            return resultVertices;
+        }
+        return null;
+    }
+
 }

@@ -34,7 +34,7 @@ public class ObjWriter {
             final ArrayList<Vector2> textureVertices,
             final ArrayList<Vector3> normals,
             final MeshContext meshContext) throws Exception {
-        if (meshContext.isChanges()) {
+        if (meshContext.getStatus().isChanges()) {
             Matrix4 modelMatrix = rotateScaleTranslate(meshContext);
             modelMatrix.transposite();
             for (int i = 0; i < vertices.size(); i++) {
@@ -103,7 +103,7 @@ public class ObjWriter {
     public static void write(final File file, MeshContext meshContext) throws Exception {
         FileWriter writer = new FileWriter(file, false);
         Mesh model;
-        if (meshContext.isChanges()) {
+        if (meshContext.getStatus().isChanges()) {
             model = meshContext.getMesh();
         } else {
             model = meshContext.getOldMesh();

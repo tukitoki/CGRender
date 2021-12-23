@@ -49,7 +49,7 @@ public class Camera {
     }
 
     public void moveTarget(final Vector3 translation) throws Exception {
-        this.target.plus(target);
+        this.target.plus(translation);
     }
 
     Matrix4 getViewMatrix() throws Exception {

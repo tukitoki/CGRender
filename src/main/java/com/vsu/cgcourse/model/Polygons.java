@@ -51,6 +51,10 @@ public class Polygons {
         }
     }
 
+    public void triangulation() {
+
+    }
+
     private void checkOnCorrectPolygonFill(int index) {
         if (index != 0) {
             if (polygonTextureVertexIndices.get(0).isEmpty() && !polygonTextureVertexIndices.get(index).isEmpty()) {

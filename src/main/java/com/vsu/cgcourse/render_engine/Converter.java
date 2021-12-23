@@ -6,69 +6,76 @@ import com.vsu.cgcourse.math.Vector3;
 
 
 public class Converter {
-    private float x;
-    private float y;
-    private float z;
-    private char axis;
-    private float angle;
+    private float scaleX;
+    private float scaleY;
+    private float scaleZ;
+    private float angleX;
+    private float angleY;
+    private float angleZ;
     private Vector3 vectorTranslate;
-    private boolean selected = true;
 
-    public Converter(float x, float y, float z, char axis, float angle, Vector3 vectorTranslate) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.axis = axis;
-        this.angle = angle;
+    public Converter(float scaleX, float scaleY, float scaleZ, float angleX, float angleY, float angleZ, Vector3 vectorTranslate) {
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.scaleZ = scaleZ;
+        this.angleX = angleX;
+        this.angleY = angleY;
+        this.angleZ = angleZ;
         this.vectorTranslate = vectorTranslate;
     }
 
-    public boolean isSelected() {
-        return selected;
+    public float getScaleX() {
+        return scaleX;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    public void setScaleX(float scaleX) {
+        this.scaleX = scaleX;
     }
 
-    public float getX() {
-        return x;
+    public float getScaleY() {
+        return scaleY;
     }
 
-    public void setX(float x) {
-        this.x = x;
+    public void setScaleY(float scaleY) {
+        this.scaleY = scaleY;
     }
 
-    public float getY() {
-        return y;
+    public float getScaleZ() {
+        return scaleZ;
     }
 
-    public void setY(float y) {
-        this.y = y;
+    public void setScaleZ(float scaleZ) {
+        this.scaleZ = scaleZ;
     }
 
-    public float getZ() {
-        return z;
+    public float getAngleX() {
+        return angleX;
     }
 
-    public void setZ(float z) {
-        this.z = z;
+    public void setAngleX(float angleX) {
+        this.angleX = angleX;
     }
 
-    public char getAxis() {
-        return axis;
+    public float getAngleY() {
+        return angleY;
     }
 
-    public void setAxis(char axis) {
-        this.axis = axis;
+    public void setAngleY(float angleY) {
+        this.angleY = angleY;
     }
 
-    public float getAngle() {
-        return angle;
+    public float getAngleZ() {
+        return angleZ;
     }
 
-    public void setAngle(float angle) {
-        this.angle = angle;
+    public void setAngleZ(float angleZ) {
+        this.angleZ = angleZ;
+    }
+
+    public void setAngle(float angleX, float angleY, float angleZ) {
+        this.angleX = angleX;
+        this.angleY = angleY;
+        this.angleZ = angleZ;
     }
 
     public Vector3 getVectorTranslate() {
@@ -77,56 +84,5 @@ public class Converter {
 
     public void setVectorTranslate(Vector3 vectorTranslate) {
         this.vectorTranslate = vectorTranslate;
-    }
-
-    public Matrix4 translate() throws Exception {
-        if (vectorTranslate.getX() == 0 && vectorTranslate.getY() == 0 && vectorTranslate.getZ() == 0) {
-            return new Matrix4(new float[][]{
-                    {1, 0, 0, 0},
-                    {0, 1, 0, 0},
-                    {0, 0, 1, 0},
-                    {0, 0, 0, 1}
-            });
-        }
-        return new Matrix4(new float[][] {
-                {1, 0, 0, 0},
-                {0, 1, 0, 0},
-                {0, 0, 1, 0},
-                {vectorTranslate.getX(), vectorTranslate.getY(), vectorTranslate.getZ(), 1}
-        });
-    }
-
-    public Matrix3 scale() throws Exception {
-        return new Matrix3(new float[][]{
-                    {x, 0, 0},
-                    {0, y, 0},
-                    {0, 0, z}
-        });
-    }
-
-    public  Matrix3 rotate() throws Exception {
-        float rad = (float) Math.toRadians(angle);
-        if(axis == 'x') {
-            return new Matrix3(new float[][]{
-                    {1, 0, 0},
-                    {0, (float) Math.cos(rad), (float) Math.sin(rad)},
-                    {0, (float) -Math.sin(rad), (float) Math.cos(rad)}
-            });
-        } else  if(axis == 'y') {
-            return new Matrix3(new float[][]{
-                    {(float) Math.cos(rad), 0, (float) Math.sin(rad)},
-                    {0, 1, 0},
-                    {(float) -Math.sin(rad),0, (float) Math.cos(rad)}
-            });
-        } else if(axis == 'z') {
-            return new Matrix3(new float[][]{
-                    {(float) Math.cos(rad), (float) Math.sin(rad), 0},
-                    {(float) -Math.sin(rad), (float) Math.cos(rad), 0},
-                    {0, 0, 1}
-            });
-        }
-        return new Matrix3(new float[][] {{1, 0, 0},
-                                          {0, 1, 0},
-                                          {0, 0, 1}});
     }
 }

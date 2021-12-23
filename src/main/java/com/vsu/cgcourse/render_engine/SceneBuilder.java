@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class SceneBuilder {
 
     private ArrayList<MeshContext> meshContexts;
-    private boolean replaceable = false;
     private Stage sceneStage;
 
     public SceneBuilder() {
@@ -34,14 +33,6 @@ public class SceneBuilder {
 
     public void setMeshContexts(ArrayList<MeshContext> meshContexts) {
         this.meshContexts = meshContexts;
-    }
-
-    public boolean isReplaceable() {
-        return replaceable;
-    }
-
-    public void setReplaceable(boolean replaceable) {
-        this.replaceable = replaceable;
     }
 
     public Stage getSceneStage() {
