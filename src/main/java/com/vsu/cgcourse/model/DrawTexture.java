@@ -6,8 +6,6 @@ import javafx.scene.image.WritableImage;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class DrawTexture {
 
@@ -20,7 +18,7 @@ public class DrawTexture {
             Vector2 v1 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(1));
             Vector2 v2 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(2));
             findForthPoint(v0, v1, v2);
-            if (findPointOppositeX(v0, v1, v2) == null) {
+            if (findPointOppositeX(v0, v1, v2) == null){
 
             }
         }
@@ -39,12 +37,14 @@ public class DrawTexture {
     }
 
     private static Vector2 findForthPoint(Vector2 v0, Vector2 v1, Vector2 v2) {
-        ArrayList<Float> vectorsY = new ArrayList<>();
-        vectorsY.add(v0.getY());
-        vectorsY.add(v2.getY());
-        vectorsY.add(v1.getY());
-        Collections.sort(vectorsY);
-        return (getXFuncLine())
+        ArrayList<Float> vectors = new ArrayList<>();
+        vectors.add(v0.getY());
+        vectors.add(v1.getY());
+        vectors.add(v2.getY());
+        for (int i = 0; i < vectors.size(); i++) {
+
+        }
+        return v0;
     }
 
     private static ArrayList<Float> findTriangleBounds(Vector2 v0, Vector2 v1, Vector2 v2) {
@@ -56,8 +56,8 @@ public class DrawTexture {
         return bound;
     }
 
-    private static float getXFuncLine(Vector2 v0, Vector2 v1, float y) {
-        return (y - v0.getY()) * (v1.getX() - v0.getX()) / (v1.getY() - v0.getY()) - v0.getX();
+    private static float getXFuncLine(float x1, float y1, float x2, float y2, float y0) {
+        return (y0 - y1) * (x2 - x1) / (y2 - y1) - x1;
     }
 
     private static float min(float n0, float n1, float n2) {

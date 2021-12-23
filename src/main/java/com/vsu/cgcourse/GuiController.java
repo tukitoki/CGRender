@@ -13,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -21,11 +22,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.File;
-import java.util.ArrayList;
 
 import com.vsu.cgcourse.obj_reader.ObjReader;
 import com.vsu.cgcourse.render_engine.Camera;
@@ -162,95 +161,40 @@ public class GuiController {
 
         Path fileName = Path.of(file.getAbsolutePath());
 
-        if (sceneBuilder.getMeshContexts().get(0).getMesh() != null) {
-            StackPane stackPane1 = new StackPane();
-            Scene scene1 = new Scene(stackPane1, 600, 120);
-            Stage stage1 = new Stage(StageStyle.UTILITY);
-            stage1.setTitle("Load model");
-            stage1.centerOnScreen();
-            Label label1 = new Label("Do you want add new model or replace exist model?");
-            label1.setFont(new Font(15));
-            label1.setAlignment(Pos.CENTER);
-            Button buttonAccept = new Button("New");
-            buttonAccept.setOnAction(actionEvent -> {
-                sceneBuilder.getMeshContexts().get(0).getStatus().setReplaceable(false);
-                stage1.close();
-            });
-            Button buttonDecline = new Button("Replace");
-            buttonDecline.setOnAction(actionEvent -> {
-                sceneBuilder.getMeshContexts().get(0).getStatus().setReplaceable(true);
-                stage1.close();
-            });
-            stackPane1.getChildren().addAll(label1, buttonDecline, buttonAccept);
-            stackPane1.setAlignment(label1, Pos.CENTER);
-            stackPane1.setAlignment(buttonAccept, Pos.BOTTOM_RIGHT);
-            buttonAccept.setPrefSize(60, 40);
-            stackPane1.setAlignment(buttonDecline, Pos.BOTTOM_LEFT);
-            buttonDecline.setPrefSize(60, 40);
-            stage1.setScene(scene1);
-            stage1.showAndWait();
-        }
         try {
             String fileContent = Files.readString(fileName);
-            if (sceneBuilder.getMeshContexts().get(0).getStatus().isReplaceable()) {
-                StackPane newStackPane = new StackPane();
-                Scene newScene = new Scene(newStackPane, 600, 120);
-                Stage newStage = new Stage(StageStyle.UTILITY);
-                newStage.setTitle("Number of model");
-                newStage.centerOnScreen();
-                Label replaceLabel = new Label("Type number of model that you want to replace");
-                replaceLabel.setFont(new Font(15));
-                replaceLabel.setAlignment(Pos.CENTER);
-                TextField numberTextField = new TextField();
-                numberTextField.setPrefWidth(200);
-                Button buttonReadNumber = new Button("New");
-                buttonReadNumber.setOnAction(actionEvent -> {
-                    newStage.close();
-                    if (Integer.parseInt(numberTextField.getText()) > sceneBuilder.getMeshContexts().size()) {
-                        try {
-                            throw new Exception("Wrong index");
-                        } catch (Exception e) {
-                            StackPane stackPane = new StackPane();
-                            Scene scene = new Scene(stackPane, 600, 120);
-                            Stage stage = new Stage(StageStyle.UTILITY);
-                            stage.setTitle("Cannot read model");
-                            stage.centerOnScreen();
-                            Label label = new Label(e.getMessage());
-                            label.setFont(new javafx.scene.text.Font(15));
-                            label.setAlignment(Pos.CENTER);
-                            stackPane.getChildren().add(label);
-                            stackPane.setAlignment(label, Pos.CENTER);
-                            stage.setScene(scene);
-                            stage.show();
-                            return;
+            sceneBuilder.getMeshContexts().add(new MeshContext(null));
+            if (sceneBuilder.getMeshContexts().size() == 2 && sceneBuilder.getMeshContexts().get(0).getMesh() == null) {
+                sceneBuilder.getMeshContexts().remove(0);
+            }
+            modelPane.setVisible(true);
+            sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setOldMesh(ObjReader.read(fileContent));
+            sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setMesh(ObjReader.read(fileContent));
+            sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setNewMeshConverter();
+            int counter = 0;
+            for (Node node : modelGridPane.getChildren()) {
+                if (node != null) {
+                    counter++;
+                }
+            }
+            ToggleButton tb = new ToggleButton(fileName.getFileName().toString());
+            tb.setOnAction(actionEvent -> {
+                int index = 0;
+                for (Node node : modelGridPane.getChildren()) {
+                    if (node != null) {
+                        ToggleButton tb2 = (ToggleButton) node;
+                        if (tb2 != tb) {
+                            sceneBuilder.getMeshContexts().get(index).getStatus().setSelected(false);
+                            tb2.setSelected(false);
+                        } else {
+                            sceneBuilder.getMeshContexts().get(index).getStatus().setSelected(true);
+                            tb2.setSelected(true);
                         }
                     }
-                    sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setMesh(ObjReader.read(fileContent));
-                    sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setOldMesh(ObjReader.read(fileContent));
-                    sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setNewMeshConverter();
-                    sceneBuilder.getMeshContexts().get(Integer.parseInt(numberTextField.getText())).setVerticesDeleteIndices(new ArrayList<>());
-                    if (sceneBuilder.getMeshContexts().size() > 1) {
-                        drawRadioButtons(sceneBuilder);
-                    }
-                });
-                newStackPane.setAlignment(numberTextField, Pos.CENTER);
-                newStackPane.setAlignment(buttonReadNumber, Pos.BOTTOM_CENTER);
-                newStackPane.getChildren().addAll(replaceLabel, numberTextField, buttonReadNumber);
-                newStage.setScene(newScene);
-                newStage.initModality(Modality.APPLICATION_MODAL);
-                newStage.showAndWait();
-            } else {
-                sceneBuilder.getMeshContexts().add(new MeshContext(null));
-                if (sceneBuilder.getMeshContexts().size() == 2 && sceneBuilder.getMeshContexts().get(0).getMesh() == null) {
-                    sceneBuilder.getMeshContexts().remove(0);
+                    index++;
                 }
-                if (sceneBuilder.getMeshContexts().size() > 1) {
-                    drawRadioButtons(sceneBuilder);
-                }
-                sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setOldMesh(ObjReader.read(fileContent));
-                sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setMesh(ObjReader.read(fileContent));
-                sceneBuilder.getMeshContexts().get(sceneBuilder.getMeshContexts().size() - 1).setNewMeshConverter();
-            }
+            });
+            modelGridPane.add(tb, 0, counter);
         } catch (Exception exception) {
             StackPane stackPane = new StackPane();
             Scene scene = new Scene(stackPane, 600, 120);
@@ -266,7 +210,6 @@ public class GuiController {
             stage.show();
         }
     }
-
 
     @FXML
     private void onSaveModelMenuItemClick() {
@@ -333,42 +276,15 @@ public class GuiController {
         }
     }
 
-    private void drawRadioButtons(SceneBuilder sceneBuilder) {
-        sceneBuilder.getSceneStage().close();
-        Group group = new Group();
-        ToggleGroup toggleGroup = new ToggleGroup();
-        Scene scene = new Scene(group, 500, 50);
-        int x = 5;
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-            RadioButton radioButton = new RadioButton();
-            radioButton.setText("Model" + (i + 1));
-            if (i != 0) {
-                radioButton.setLayoutX(20 * x);
-                x += 4;
-            } else {
-                radioButton.setLayoutX(20 * (i + 1));
-            }
-            radioButton.setLayoutY(25);
-            radioButton.setToggleGroup(toggleGroup);
-            group.getChildren().add(radioButton);
-        }
-        toggleGroup.selectedToggleProperty().addListener((observableValue, toggle, t1) -> {
-            for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                sceneBuilder.getMeshContexts().get(i).getStatus().setSelected(false);
-            }
-            sceneBuilder.getMeshContexts().get(group.getChildren().indexOf(toggleGroup.getSelectedToggle()))
-                    .getStatus().setSelected(true);
-        });
-        sceneBuilder.getSceneStage().setScene(scene);
-        sceneBuilder.getSceneStage().setX(screenSize.getWidth() / 2);
-        sceneBuilder.getSceneStage().setY(30);
-        sceneBuilder.getSceneStage().setTitle("Models controller");
-        sceneBuilder.getSceneStage().setAlwaysOnTop(true);
-        sceneBuilder.getSceneStage().setResizable(false);
-        sceneBuilder.getSceneStage().show();
-    }
+    @FXML
+    TitledPane modelPane;
+    @FXML
+    GridPane modelGridPane;
 
+    @FXML
+    public void testAct(ActionEvent actionEvent) throws Exception {
+        modelGridPane.add(new Label("sdada"), 0, 0);
+    }
     @FXML
     AnchorPane rotateScaleTranslatePane;
     @FXML

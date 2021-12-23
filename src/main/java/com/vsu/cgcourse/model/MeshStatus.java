@@ -1,14 +1,14 @@
 package com.vsu.cgcourse.model;
 
-public class ModeStatus {
+public class MeshStatus {
 
     private boolean selected = true;
     private boolean replaceable = false;
     private boolean changes;
 
-    public ModeStatus() {}
+    public MeshStatus() {}
 
-    public ModeStatus(boolean selected, boolean replaceable, boolean changes) {
+    public MeshStatus(boolean selected, boolean replaceable, boolean changes) {
         this.selected = selected;
         this.replaceable = replaceable;
         this.changes = changes;

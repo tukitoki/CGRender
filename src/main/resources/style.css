@@ -61,6 +61,15 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
 }
 
+.titled-pane > *.content {
+    -fx-font: 15px, Arial;
+    -fx-background-color: darkgray;
+}
+.titled-pane > .title {
+    -fx-font: 15px, Arial;
+    -fx-background-color: darkgray;
+}
+
 #rotateScaleTranslateArticle {
     -fx-font: 20px Tahoma;
     -fx-text-fill: #4d4848;
