@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.vsu.cgcourse.math.Matrix4;
 import com.vsu.cgcourse.math.Vector3;
+import com.vsu.cgcourse.model.DrawTexture;
 import com.vsu.cgcourse.model.MeshContext;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -56,5 +57,6 @@ public class RenderEngine {
                         resultPoints.get(0).x,
                         resultPoints.get(0).y);
         }
+        DrawTexture.drawPixels(meshContext.getMesh());
     }
 }
