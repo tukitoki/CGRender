@@ -9,16 +9,18 @@ public class Converter {
     private float scaleX;
     private float scaleY;
     private float scaleZ;
-    private char axis;
-    private float angle;
+    private float angleX;
+    private float angleY;
+    private float angleZ;
     private Vector3 vectorTranslate;
 
-    public Converter(float scaleX, float scaleY, float scaleZ, char axis, float angle, Vector3 vectorTranslate) {
+    public Converter(float scaleX, float scaleY, float scaleZ, float angleX, float angleY, float angleZ, Vector3 vectorTranslate) {
         this.scaleX = scaleX;
         this.scaleY = scaleY;
         this.scaleZ = scaleZ;
-        this.axis = axis;
-        this.angle = angle;
+        this.angleX = angleX;
+        this.angleY = angleY;
+        this.angleZ = angleZ;
         this.vectorTranslate = vectorTranslate;
     }
 
@@ -46,20 +48,34 @@ public class Converter {
         this.scaleZ = scaleZ;
     }
 
-    public char getAxis() {
-        return axis;
+    public float getAngleX() {
+        return angleX;
     }
 
-    public void setAxis(char axis) {
-        this.axis = axis;
+    public void setAngleX(float angleX) {
+        this.angleX = angleX;
     }
 
-    public float getAngle() {
-        return angle;
+    public float getAngleY() {
+        return angleY;
     }
 
-    public void setAngle(float angle) {
-        this.angle = angle;
+    public void setAngleY(float angleY) {
+        this.angleY = angleY;
+    }
+
+    public float getAngleZ() {
+        return angleZ;
+    }
+
+    public void setAngleZ(float angleZ) {
+        this.angleZ = angleZ;
+    }
+
+    public void setAngle(float angleX, float angleY, float angleZ) {
+        this.angleX = angleX;
+        this.angleY = angleY;
+        this.angleZ = angleZ;
     }
 
     public Vector3 getVectorTranslate() {

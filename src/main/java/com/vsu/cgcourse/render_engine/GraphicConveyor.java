@@ -85,29 +85,26 @@ public class GraphicConveyor {
     }
 
     public static Matrix3 rotate(Converter cnv) throws Exception {
-        float rad = (float) Math.toRadians(cnv.getAngle());
-        if(cnv.getAxis() == 'x') {
-            return new Matrix3(new float[][]{
-                    {1, 0, 0},
-                    {0, (float) Math.cos(rad), (float) Math.sin(rad)},
-                    {0, (float) -Math.sin(rad), (float) Math.cos(rad)}
-            });
-        } else if(cnv.getAxis() == 'y') {
-            return new Matrix3(new float[][]{
-                    {(float) Math.cos(rad), 0, (float) Math.sin(rad)},
-                    {0, 1, 0},
-                    {(float) -Math.sin(rad),0, (float) Math.cos(rad)}
-            });
-        } else if(cnv.getAxis() == 'z') {
-            return new Matrix3(new float[][]{
-                    {(float) Math.cos(rad), (float) Math.sin(rad), 0},
-                    {(float) -Math.sin(rad), (float) Math.cos(rad), 0},
-                    {0, 0, 1}
-            });
-        }
-        return new Matrix3(new float[][] {{1, 0, 0},
+        float radX = (float) Math.toRadians(cnv.getAngleX());
+        float radY = (float) Math.toRadians(cnv.getAngleY());
+        float radZ = (float) Math.toRadians(cnv.getAngleZ());
+        Matrix3 matrix3 = new Matrix3(new float[][]{
+                {1, 0, 0},
+                {0, (float) Math.cos(radX), (float) Math.sin(radX)},
+                {0, (float) -Math.sin(radX), (float) Math.cos(radX)}
+        });
+        matrix3.multiply(new Matrix3(new float[][]{
+                {(float) Math.cos(radY), 0, (float) Math.sin(radY)},
                 {0, 1, 0},
-                {0, 0, 1}});
+                {(float) -Math.sin(radY), 0, (float) Math.cos(radY)}
+        }));
+        matrix3.multiply(new Matrix3(new float[][]{
+                {(float) Math.cos(radZ), (float) Math.sin(radZ), 0},
+                {(float) -Math.sin(radZ), (float) Math.cos(radZ), 0},
+                {0, 0, 1}
+        }));
+
+        return matrix3;
     }
 
     public static Matrix4 translate(Converter cnv) throws Exception {

@@ -267,6 +267,7 @@ public class GuiController {
         }
     }
 
+
     @FXML
     private void onSaveModelMenuItemClick() {
         if (sceneBuilder.getMeshContexts().get(0).getMesh() != null) {
@@ -368,211 +369,109 @@ public class GuiController {
         sceneBuilder.getSceneStage().show();
     }
 
-    private void drawScaleMenu() {
-        Group group = new Group();
-        Scene scene = new Scene(group, 120, 200);
-        Stage stage = new Stage(StageStyle.UTILITY);
+    @FXML
+    AnchorPane rotateScaleTranslatePane;
+    @FXML
+    TextField scaleX;
+    @FXML
+    TextField scaleY;
+    @FXML
+    TextField scaleZ;
+    @FXML
+    TextField translationX;
+    @FXML
+    TextField translationY;
+    @FXML
+    TextField translationZ;
+    @FXML
+    TextField rotateX;
+    @FXML
+    TextField rotateY;
+    @FXML
+    TextField rotateZ;
+    @FXML
+    Button acceptButton;
+    @FXML
+    Button closeButton;
 
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        stage.setTitle("Scale");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.setX(0);
-        stage.setY(screenSize.getHeight() / 3);
-
-        Text textX = new Text("X :");
-        textX.setX(40);
-        textX.setY(20);
-        TextField textFieldX = new TextField("1");
-        textFieldX.setLayoutX(textX.getX());
-        textFieldX.setLayoutY(textX.getY() + 7);
-        textFieldX.setPrefSize(40, 20);
-
-        Text textY = new Text("Y :");
-        textY.setX(textFieldX.getLayoutX());
-        textY.setY(textFieldX.getLayoutY() + textFieldX.getPrefHeight() + 20);
-        TextField textFieldY = new TextField("1");
-        textFieldY.setLayoutX(textX.getX());
-        textFieldY.setLayoutY(textY.getY() + 7);
-        textFieldY.setPrefSize(textFieldX.getPrefWidth(), textFieldX.getPrefHeight());
-
-        Text textZ = new Text("Z :");
-        textZ.setX(textFieldY.getLayoutX());
-        textZ.setY(textFieldY.getLayoutY() + textFieldY.getPrefHeight() + 20);
-        TextField textFieldZ = new TextField("1");
-        textFieldZ.setLayoutX(textZ.getX());
-        textFieldZ.setLayoutY(textZ.getY() + 7);
-        textFieldZ.setPrefSize(textFieldY.getPrefWidth(), textFieldY.getPrefHeight());
-
-        Button buttonAccept = new Button("Accept");
-        buttonAccept.setLayoutX(30);
-        buttonAccept.setLayoutY(textFieldZ.getLayoutY() + textFieldZ.getPrefHeight() + 10);
-        buttonAccept.setPrefSize(60, 20);
-        buttonAccept.setOnAction(actionEvent -> {
-            float x, y, z;
-            if (textFieldX.getText().length() != 0) {
-                x = Float.parseFloat(textFieldX.getText());
-            } else {
-                x = 1;
-            }
-            if (textFieldY.getText().length() != 0) {
-                y = Float.parseFloat(textFieldY.getText());
-            } else {
-                y = 1;
-            }
-            if (textFieldZ.getText().length() != 0) {
-                z = Float.parseFloat(textFieldZ.getText());
-            } else {
-                z = 1;
-            }
-            for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
-                    sceneBuilder.getMeshContexts().get(i).getConverter().setScaleX(x);
-                    sceneBuilder.getMeshContexts().get(i).getConverter().setScaleY(y);
-                    sceneBuilder.getMeshContexts().get(i).getConverter().setScaleZ(z);
-                    break;
-                }
-            }
-        });
-        group.getChildren().addAll(textX, textFieldX, textY, textFieldY, textZ, textFieldZ, buttonAccept);
-        stage.setAlwaysOnTop(true);
-        stage.show();
-    }
-
-    private void drawRotateMenu() {
-        Group group = new Group();
-        Scene scene = new Scene(group, 120, 130);
-        Stage stage = new Stage(StageStyle.UTILITY);
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        stage.setTitle("Rotate");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.setX(0);
-        stage.setY(screenSize.getHeight() / 3);
-
-        Text textAxis = new Text("Axis : ");
-        textAxis.setX(40);
-        textAxis.setY(10);
-        TextField textFieldAxis = new TextField();
-        textFieldAxis.setLayoutX(textAxis.getX());
-        textFieldAxis.setLayoutY(textAxis.getY() + 7);
-        textFieldAxis.setPrefSize(40, 20);
-
-        Text textAngle = new Text("Angle : ");
-        textAngle.setX(textFieldAxis.getLayoutX());
-        textAngle.setY(textFieldAxis.getLayoutY() + textFieldAxis.getPrefHeight() + 20);
-        TextField textFieldAngle = new TextField();
-        textFieldAngle.setLayoutX(textAngle.getX());
-        textFieldAngle.setLayoutY(textAngle.getY() + 7);
-        textFieldAngle.setPrefSize(textFieldAxis.getPrefWidth(), textFieldAxis.getPrefHeight());
-
-        Button buttonAccept = new Button("Accept");
-        buttonAccept.setLayoutX(30);
-        buttonAccept.setLayoutY(textFieldAngle.getLayoutY() + textFieldAngle.getPrefHeight() + 10);
-        buttonAccept.setPrefSize(60, 20);
-        buttonAccept.setOnAction(actionEvent -> {
-            char axis = textFieldAxis.getText().charAt(0);
-            float angle = Float.parseFloat(textFieldAngle.getText());
-            for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
-                    sceneBuilder.getMeshContexts().get(i).getConverter().setAxis(axis);
-                    sceneBuilder.getMeshContexts().get(i).getConverter().setAngle(angle);
-                    break;
-                }
-            }
-        });
-        group.getChildren().addAll(textAxis, textFieldAxis, textAngle, textFieldAngle, buttonAccept);
-        stage.setAlwaysOnTop(true);
-        stage.show();
-    }
-
-    private void drawTranslateMenu() {
-        Group group = new Group();
-        Scene scene = new Scene(group, 130, 200);
-        Stage stage = new Stage(StageStyle.UTILITY);
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        stage.setTitle("Translate");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.setX(0);
-        stage.setY(screenSize.getHeight() / 3);
-
-        Text textVectorCoords = new Text("Координаты вектора :");
-        textVectorCoords.setX(5);
-        textVectorCoords.setY(13);
-
-        Text textX = new Text("X :");
-        textX.setX(45);
-        textX.setY(textVectorCoords.getY() + 17);
-        TextField textFieldX = new TextField("1");
-        textFieldX.setLayoutX(textX.getX());
-        textFieldX.setLayoutY(textX.getY() + 7);
-        textFieldX.setPrefSize(40, 20);
-
-        Text textY = new Text("Y :");
-        textY.setX(textFieldX.getLayoutX());
-        textY.setY(textFieldX.getLayoutY() + textFieldX.getPrefHeight() + 20);
-        TextField textFieldY = new TextField("1");
-        textFieldY.setLayoutX(textX.getX());
-        textFieldY.setLayoutY(textY.getY() + 7);
-        textFieldY.setPrefSize(textFieldX.getPrefWidth(), textFieldX.getPrefHeight());
-
-        Text textZ = new Text("Z :");
-        textZ.setX(textFieldY.getLayoutX());
-        textZ.setY(textFieldY.getLayoutY() + textFieldY.getPrefHeight() + 20);
-        TextField textFieldZ = new TextField("1");
-        textFieldZ.setLayoutX(textZ.getX());
-        textFieldZ.setLayoutY(textZ.getY() + 7);
-        textFieldZ.setPrefSize(textFieldY.getPrefWidth(), textFieldY.getPrefHeight());
-
-        Button buttonAccept = new Button("Accept");
-        buttonAccept.setLayoutX(35);
-        buttonAccept.setLayoutY(textFieldZ.getLayoutY() + textFieldZ.getPrefHeight() + 10);
-        buttonAccept.setPrefSize(60, 20);
-        buttonAccept.setOnAction(actionEvent -> {
-            float x, y, z;
-            if (textFieldX.getText().length() != 0) {
-                x = Float.parseFloat(textFieldX.getText());
-            } else {
-                x = 0;
-            }
-            if (textFieldY.getText().length() != 0) {
-                y = Float.parseFloat(textFieldY.getText());
-            } else {
-                y = 0;
-            }
-            if (textFieldZ.getText().length() != 0) {
-                z = Float.parseFloat(textFieldZ.getText());
-            } else {
-                z = 0;
-            }
-            for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
-                    sceneBuilder.getMeshContexts().get(i).getConverter().setVectorTranslate(new Vector3(new float[] {x, y, z}));
-                    break;
-                }
-            }
-        });
-        group.getChildren().addAll(textVectorCoords, textFieldX, textFieldY, textFieldZ, textX, textY, textZ, buttonAccept);
-        stage.setAlwaysOnTop(true);
-        stage.show();
+    @FXML
+    public void openRotateScaleTranslate(ActionEvent actionEvent) throws Exception {
+        rotateScaleTranslatePane.setVisible(true);
     }
 
     @FXML
-    public void onOpenTranslateMenu(ActionEvent actionEvent) {
-        drawTranslateMenu();
+    public void cancelRotateScaleTranslate(ActionEvent actionEvent) throws Exception {
+        rotateScaleTranslatePane.setVisible(false);
     }
 
-    @FXML
-    public void onOpenRotateMenu(ActionEvent actionEvent) {
-        drawRotateMenu();
+    private void scaleModel() {
+        float x, y, z;
+        if (scaleX.getText().length() != 0) {
+            x = Float.parseFloat(scaleX.getText());
+        } else {
+            x = 1;
+        }
+        if (scaleY.getText().length() != 0) {
+            y = Float.parseFloat(scaleY.getText());
+        } else {
+            y = 1;
+        }
+        if (scaleZ.getText().length() != 0) {
+            z = Float.parseFloat(scaleZ.getText());
+        } else {
+            z = 1;
+        }
+        for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
+            if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
+                sceneBuilder.getMeshContexts().get(i).getConverter().setScaleX(x);
+                sceneBuilder.getMeshContexts().get(i).getConverter().setScaleY(y);
+                sceneBuilder.getMeshContexts().get(i).getConverter().setScaleZ(z);
+                break;
+            }
+        }
     }
 
+    private void rotateModel() {
+        float angleX = Float.parseFloat(rotateX.getText());
+        float angleY = Float.parseFloat(rotateY.getText());
+        float angleZ = Float.parseFloat(rotateZ.getText());
+        for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
+            if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
+                sceneBuilder.getMeshContexts().get(i).getConverter().setAngle(angleX, angleY, angleZ);
+                break;
+            }
+        }
+    }
+
+    private void translateModel() {
+        float x, y, z;
+        if (translationX.getText().length() != 0) {
+            x = Float.parseFloat(translationX.getText());
+        } else {
+            x = 0;
+        }
+        if (translationY.getText().length() != 0) {
+            y = Float.parseFloat(translationY.getText());
+        } else {
+            y = 0;
+        }
+        if (translationZ.getText().length() != 0) {
+            z = Float.parseFloat(translationZ.getText());
+        } else {
+            z = 0;
+        }
+        for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
+            if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
+                sceneBuilder.getMeshContexts().get(i).getConverter().setVectorTranslate(new Vector3(new float[] {x, y, z}));
+                break;
+            }
+        }
+    }
     @FXML
-    public void onOpenScaleMenu(ActionEvent actionEvent) throws Exception {
-        drawScaleMenu();
+    public void acceptRotateScaleTranslate(ActionEvent actionEvent) throws Exception {
+        scaleModel();
+        translateModel();
+        rotateModel();
     }
 
     @FXML

@@ -6,10 +6,19 @@
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.stage.Stage ?>
 
 <?import javafx.scene.control.CustomMenuItem?>
-<AnchorPane fx:id="anchorPane" xmlns:fx="http://javafx.com/fxml" fx:controller="com.vsu.cgcourse.GuiController">
-    <MenuBar>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.Button?>
+<AnchorPane fx:id="anchorPane" xmlns="http://javafx.com/javafx/11.0.2"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vsu.cgcourse.GuiController" stylesheets="/style.css">
+    <MenuBar fx:id="mainMenuBar">
         <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" onAction="#onOpenModelMenuItemClick" text="Load Model">
             <accelerator>
@@ -74,24 +83,12 @@
                 </accelerator>
             </MenuItem>
         </Menu>
-        <Menu mnemonicParsing="false" text="Transform">
-            <MenuItem mnemonicParsing="false" onAction="#onOpenScaleMenu" text="Scale">
+        <Menu mnemonicParsing="false" text="Actions with model">
+            <MenuItem mnemonicParsing="false" onAction="#openRotateScaleTranslate" text="Scale/Rotate/Translate">
                 <accelerator>
                     <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="Z"/>
                 </accelerator>
             </MenuItem>
-            <MenuItem mnemonicParsing="false" onAction="#onOpenRotateMenu" text="Rotate">
-                <accelerator>
-                    <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="X"/>
-                </accelerator>
-            </MenuItem>
-            <MenuItem mnemonicParsing="false" onAction="#onOpenTranslateMenu" text="Translate">
-                <accelerator>
-                   <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="C"/>
-                </accelerator>
-            </MenuItem>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Faces">
             <MenuItem mnemonicParsing="false" onAction="#onOpenFacesMenu" text="Show faces">
                 <accelerator>
                     <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="O"/>
@@ -99,6 +96,41 @@
             </MenuItem>
         </Menu>
     </MenuBar>
-
     <Canvas fx:id="canvas" width="1600" height="870" AnchorPane.topAnchor="30.0"/>
+
+    <AnchorPane fx:id="rotateScaleTranslatePane"
+                visible="false"
+                AnchorPane.RightAnchor="20.0"
+                AnchorPane.topAnchor="220.0"
+                 prefWidth="300" prefHeight="600">
+        <Label text="Rotate/Scale/Translate panel" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="10.0"/>
+
+        <Label text="Scale: " AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="40.0"/>
+        <Label text="X: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="75.0"/>
+        <TextField text="1" fx:id="scaleX" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="75.0"/>
+        <Label text="Y: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="115.0" />
+        <TextField text="1" fx:id="scaleY" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="115.0"/>
+        <Label text="Z: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="155.0"/>
+        <TextField text="1" fx:id="scaleZ" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="155.0"/>
+
+        <Label text="Rotate: " AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="190.0"/>
+        <Label text="X: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="235.0"/>
+        <TextField text="0" fx:id="rotateX" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="235.0"/>
+        <Label text="Y: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="280.0" />
+        <TextField text="0" fx:id="rotateY" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="280.0"/>
+        <Label text="Z: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="325.0"/>
+        <TextField text="0" fx:id="rotateZ" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="325.0"/>
+
+        <Label text="Translate: " AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="360.0"/>
+        <Label text="X: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="405.0"/>
+        <TextField text="0" fx:id="translationX" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="405.0"/>
+        <Label text="Y: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="450.0" />
+        <TextField text="0" fx:id="translationY" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="450.0"/>
+        <Label text="Z: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="495.0"/>
+        <TextField text="0" fx:id="translationZ" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="495.0"/>
+
+        <Button fx:id="acceptButton" text="Accept" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="545.0" onAction="#acceptRotateScaleTranslate"/>
+        <Button fx:id="closeButton" text="Close" AnchorPane.RightAnchor="40.0" AnchorPane.topAnchor="545.0" onAction="#cancelRotateScaleTranslate"/>
+
+    </AnchorPane>
 </AnchorPane>

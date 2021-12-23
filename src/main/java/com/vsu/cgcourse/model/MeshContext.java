@@ -13,20 +13,20 @@ public class MeshContext {
     private ArrayList<Integer> verticesDeleteIndices;
     private ModeStatus status;
 
-    public MeshContext(float scaleX, float scaleY, float scaleZ, char axis, float angle) {
+    public MeshContext(float scaleX, float scaleY, float scaleZ, float angleX, float angleY, float angleZ) {
         mesh = new Mesh();
-        converter = new Converter(scaleX, scaleY, scaleZ, axis, angle, new Vector3(new float[] {0, 0, 0}));
+        converter = new Converter(scaleX, scaleY, scaleZ, angleX, angleY, angleZ, new Vector3(new float[] {0, 0, 0}));
     }
 
     public MeshContext(Mesh mesh) {
         this.mesh = mesh;
-        this.converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
+        this.converter = new Converter(1, 1, 1, 0, 0, 0, new Vector3(new float[] {0, 0, 0}));
         verticesDeleteIndices = new ArrayList<>();
         status = new ModeStatus();
     }
 
     public void setNewMeshConverter() {
-        this.converter = new Converter(1, 1, 1, ' ', 0, new Vector3(new float[] {0, 0, 0}));
+        this.converter = new Converter(1, 1, 1, 0, 0, 0,  new Vector3(new float[] {0, 0, 0}));
     }
 
     public Mesh getMesh() {
