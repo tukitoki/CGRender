@@ -6,6 +6,7 @@ import javafx.scene.image.WritableImage;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class DrawTexture {
 
@@ -17,15 +18,25 @@ public class DrawTexture {
             Vector2 v0 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(0));
             Vector2 v1 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(1));
             Vector2 v2 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(2));
-            findForthPoint(v0, v1, v2);
-            if (findPointOppositeX(v0, v1, v2) == null){
+            ArrayList<Vector2> vectors = new ArrayList<>();
+            vectors.add(v0);
+            vectors.add(v1);
+            vectors.add(v2);
+            vectors.sort((o1, o2) -> {
+                if (Math.abs(o1.getY() - o2.getY()) < 1E-5) {
+                    return 0;
+                } else if (o1.getY() - o1.getY() < 0) {
+                    return -1;
+                }
+                return 1;
+            });
+            if (findPointOppositeXAxis(v0, v1, v2) != null) {
 
             }
         }
-
     }
 
-    private static Vector2 findPointOppositeX(Vector2 v0, Vector2 v1, Vector2 v2) {
+    private static Vector2 findPointOppositeXAxis(Vector2 v0, Vector2 v1, Vector2 v2) {
         if (Math.abs(v0.getY() - v1.getY()) < 1E-5) {
             return v2;
         } else if (Math.abs(v0.getY() - v2.getY()) < 1E-5) {
@@ -36,46 +47,80 @@ public class DrawTexture {
         return null;
     }
 
-    private static Vector2 findForthPoint(Vector2 v0, Vector2 v1, Vector2 v2) {
+    public static Vector2 findForthPoint(Vector2 v0, Vector2 v1, Vector2 v2) {
         ArrayList<Float> vectors = new ArrayList<>();
         vectors.add(v0.getY());
         vectors.add(v1.getY());
         vectors.add(v2.getY());
-        for (int i = 0; i < vectors.size(); i++) {
-
+        Collections.sort(vectors);
+        for (Float vector : vectors) {
+            if (Math.abs(vector - v0.getY()) < 1E-5) {
+                return getOppositePoint(v1, v2, vectors.get(1));
+            } else if (Math.abs(vector - v1.getY()) < 1E-5) {
+                return getOppositePoint(v0, v2, vectors.get(1));
+            } else if (Math.abs(vector - v2.getY()) < 1E-5) {
+                return getOppositePoint(v0, v1, vectors.get(1));
+            }
         }
-        return v0;
+        return null;
     }
 
-    private static ArrayList<Float> findTriangleBounds(Vector2 v0, Vector2 v1, Vector2 v2) {
+    /*private static ArrayList<Float> findTriangleBounds(Vector2 v0, Vector2 v1, Vector2 v2) {
         ArrayList<Float> bound = new ArrayList<>();
-        bound.add(max(v0.getY(), v1.getY(), v2.getY()));
+        bound.add(maxY(v0.getY(), v1.getY(), v2.getY()));
         bound.add(min(v0.getY(), v1.getY(), v2.getY()));
-        bound.add(max(v0.getX(), v1.getX(), v2.getX()));
+        bound.add(maxY(v0.getX(), v1.getX(), v2.getX()));
         bound.add(min(v0.getX(), v1.getX(), v2.getX()));
         return bound;
     }
 
-    private static float getXFuncLine(float x1, float y1, float x2, float y2, float y0) {
-        return (y0 - y1) * (x2 - x1) / (y2 - y1) - x1;
+     */
+
+    private static float getXFuncLine(Vector2 v0, Vector2 v1, float y0) {
+        return (y0 - v0.getY()) * (v1.getX() - v0.getX()) / (v1.getY() - v0.getY()) - v0.getX();
     }
 
-    private static float min(float n0, float n1, float n2) {
-        if (Math.abs(n0 - n1) < 1E-5 && Math.abs(n0 - n2) < 1E-5) {
-            return n0;
-        } else if (Math.abs(n1 - n0) < 1E-5 && Math.abs(n1 - n2) < 1E-5) {
-            return n1;
+    private static float getYFuncLine(Vector2 v0, Vector2 v1, float x0) {
+        return (x0 - v0.getX()) * (v1.getY() - v0.getY()) / (v1.getX() - v0.getX()) - v0.getY();
+    }
+
+    private static Vector2 getOppositePoint(Vector2 v0, Vector2 v1, float y0) {
+        return new Vector2(new float[]{(y0 - v0.getY()) * (v1.getX() - v0.getX()) / (v1.getY() - v0.getY()) - v0.getX(), y0});
+    }
+
+    private static Vector2 getVectorMinY(Vector2 v0, Vector2 v1, Vector2 v2) {
+        if (v0.getY() - v1.getY() < 0 && v0.getY() - v2.getY() < 0) {
+            return v0;
+        } else if (v1.getY() - v0.getY() < 0 && v1.getY() - v2.getY() < 0) {
+            return v1;
         }
-        return n2;
+        return v2;
     }
 
-    private static float max(float n0, float n1, float n2) {
-        if (Math.abs(n0 - n1) > 1E-5 && Math.abs(n0 - n2) > 1E-5) {
-            return n0;
-        } else if (Math.abs(n1 - n0) > 1E-5 && Math.abs(n1 - n2) > 1E-5) {
-            return n1;
+    private static Vector2 getVectorMinX(Vector2 v0, Vector2 v1, Vector2 v2) {
+        if (v0.getX() - v1.getX() < 0 && v0.getX() - v2.getX() < 0) {
+            return v0;
+        } else if (v1.getX() - v0.getX() < 0 && v1.getX() - v2.getX() < 0) {
+            return v1;
         }
-        return n2;
+        return v2;
     }
 
+    private static Vector2 getVectorMaxX(Vector2 v0, Vector2 v1, Vector2 v2) {
+        if (v0.getX() - v1.getX() > 0 && v0.getX() - v2.getX() > 0) {
+            return v0;
+        } else if (v1.getX() - v0.getX() > 0 && v1.getX() - v2.getX() > 0) {
+            return v1;
+        }
+        return v2;
+    }
+
+    private static Vector2 getVectorMaxY(Vector2 v0, Vector2 v1, Vector2 v2) {
+        if (v0.getY() - v1.getY() > 0 && v0.getY() - v2.getY() > 0) {
+            return v0;
+        } else if (v1.getY() - v0.getY() > 0 && v1.getY() - v2.getY() > 0) {
+            return v1;
+        }
+        return v2;
+    }
 }
