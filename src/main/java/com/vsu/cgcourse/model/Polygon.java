@@ -1,16 +1,14 @@
 package com.vsu.cgcourse.model;
 
-import com.vsu.cgcourse.obj_reader.ObjReaderException;
-
 import java.util.ArrayList;
 
-public class Polygons {
+public class Polygon {
 
     private ArrayList<Integer> polygonVertexIndices;
     private ArrayList<Integer> polygonTextureVertexIndices;
     private ArrayList<Integer> polygonNormalIndices;
 
-    public Polygons() {
+    public Polygon() {
         polygonVertexIndices = new ArrayList<>();
         polygonTextureVertexIndices = new ArrayList<>();
         polygonNormalIndices = new ArrayList<>();

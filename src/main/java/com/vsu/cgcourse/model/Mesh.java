@@ -4,17 +4,14 @@ import com.vsu.cgcourse.math.Vector2;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.obj_reader.ObjReaderException;
 
-import java.awt.*;
 import java.util.*;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector2f;
 
 public class Mesh {
 
     private ArrayList<Vector3> vertices;
     private ArrayList<Vector2> textureVertices;
     private ArrayList<Vector3> normals;
-    private ArrayList<Polygons> polygons;
+    private ArrayList<Polygon> polygons;
 
     public Mesh() {
         vertices = new ArrayList<>();
@@ -35,7 +32,7 @@ public class Mesh {
         return normals;
     }
 
-    public ArrayList<Polygons> getPolygons() {
+    public ArrayList<Polygon> getPolygons() {
         return polygons;
     }
 

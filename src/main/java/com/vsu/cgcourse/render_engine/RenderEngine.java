@@ -37,13 +37,17 @@ public class RenderEngine {
         modelViewProjectionMatrix.multiply(viewMatrix);
         modelViewProjectionMatrix.multiply(projectionMatrix);
         modelViewProjectionMatrix.transposite();
+        meshContext.setTexture(new Image("file:src\\main\\resources\\com\\vsu\\cgcourse\\models\\Rock1\\Rock-Texture-Surface.jpg"));
         Collections.synchronizedList(meshContext.getMesh().getPolygons()).parallelStream().
                 forEachOrdered(p1 -> {
                     final int nVerticesInPolygon = p1.getPolygonVertexIndices().size();
                     ArrayList<Vector2> resultPoints = new ArrayList<>();
+                    ArrayList<Vector2> resultTexturePoints = new ArrayList<>();
                     for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
                         Vector3 vertex = meshContext.getMesh().getVertices().get(p1.
                                 getPolygonVertexIndices().get(vertexInPolygonInd));
+                        Vector2 textureVertex = meshContext.getMesh().getTextureVertices().get(p1.
+                                getPolygonTextureVertexIndices().get(vertexInPolygonInd));
                         Vector2 resultPoint = null;
                         try {
                             resultPoint = vertexToPoint(multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertex), width, height);
@@ -51,6 +55,7 @@ public class RenderEngine {
                             e.printStackTrace();
                         }
                         resultPoints.add(resultPoint);
+                        resultTexturePoints.add(textureVertex);
                     }
 
                     for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
@@ -68,10 +73,26 @@ public class RenderEngine {
                                 resultPoints.get(0).getX(),
                                 resultPoints.get(0).getY());
 
-                    DrawTexture.drawPixels(resultPoints, graphicsContext.getPixelWriter());
-                    if (meshContext.getTexture() != null) {
-                        DrawTexture.drawTexture(meshContext, graphicsContext.getPixelWriter(), meshContext.getTexture().getPixelReader());
+                    for (int i = 0; i < resultPoints.size(); i += 3) {
+                        if (meshContext.getTexture() != null) {
+                            try {
+                                DrawTexture.drawTexture(resultPoints.get(i), resultPoints.get(i + 1), resultPoints.get(i + 2),
+                                        resultTexturePoints.get(i), resultTexturePoints.get(i + 1), resultPoints.get(i + 2),
+                                        meshContext, graphicsContext.getPixelWriter(), meshContext.getTexture().getPixelReader());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            try {
+                                DrawTexture.drawPixels(resultPoints.get(i), resultPoints.get(i + 1), resultPoints.get(i + 2),
+                                        resultTexturePoints.get(i), resultTexturePoints.get(i + 1), resultPoints.get(i + 2),
+                                        graphicsContext.getPixelWriter());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
+
                 });
 //        final int nPolygons = meshContext.getMesh().getPolygons().size();
 //        for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {

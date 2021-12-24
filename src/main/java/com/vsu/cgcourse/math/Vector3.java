@@ -54,6 +54,10 @@ public class Vector3 extends AbstractVector<Vector3> {
         this.getVectorCoords()[1] = y;
     }
 
+    public Vector2 getVector2() {
+        return new Vector2(new float[] {getX(), getY()});
+    }
+
     @Override
     public String toString() {
         return Float.toString(getX()) + " " + Float.toString(getY()) + " " + Float.toString(getZ());

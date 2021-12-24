@@ -3,10 +3,8 @@ package com.vsu.cgcourse.obj_reader;
 import com.vsu.cgcourse.math.Vector2;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.Mesh;
-import com.vsu.cgcourse.model.Polygons;
+import com.vsu.cgcourse.model.Polygon;
 
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -37,7 +35,7 @@ public class ObjReader {
                 case OBJ_VERTEX_TOKEN -> result.getVertices().add(parseVertex(wordsInLine, lineInd));
                 case OBJ_TEXTURE_TOKEN -> result.getTextureVertices().add(parseTextureVertex(wordsInLine, lineInd));
                 case OBJ_NORMAL_TOKEN -> result.getNormals().add(parseNormal(wordsInLine, lineInd));
-                case OBJ_FACE_TOKEN -> result.getPolygons().add(parseFace(wordsInLine, lineInd));
+                case OBJ_FACE_TOKEN -> parseFace(wordsInLine, lineInd, result);
                 default -> {
                 }
             }
@@ -101,29 +99,19 @@ public class ObjReader {
         }
     }
 
-    protected static Polygons parseFace(
+    protected static void parseFace(
             final ArrayList<String> wordsInLineWithoutToken,
-            int lineInd) {
+            int lineInd, Mesh mesh) {
         ArrayList<Integer> onePolygonVertexIndices = new ArrayList<Integer>();
         ArrayList<Integer> onePolygonTextureVertexIndices = new ArrayList<Integer>();
         ArrayList<Integer> onePolygonNormalIndices = new ArrayList<Integer>();
-        Polygons polygons = new Polygons();
 
         for (String s : wordsInLineWithoutToken) {
             parseFaceWord(s, onePolygonVertexIndices, onePolygonTextureVertexIndices, onePolygonNormalIndices, lineInd);
         }
-        polygons.getPolygonVertexIndices().addAll(triangulate(onePolygonVertexIndices));
-        if (triangulate(onePolygonTextureVertexIndices) != null && onePolygonTextureVertexIndices.size() != 0) {
-            polygons.getPolygonTextureVertexIndices().addAll(triangulate(onePolygonTextureVertexIndices));
-        } else {
-            polygons.getPolygonTextureVertexIndices().addAll(onePolygonTextureVertexIndices);
-        }
-        if (triangulate(onePolygonNormalIndices) != null && onePolygonNormalIndices.size() != 0) {
-            polygons.getPolygonNormalIndices().addAll(triangulate(onePolygonNormalIndices));
-        } else {
-            polygons.getPolygonNormalIndices().addAll(onePolygonNormalIndices);
-        }
-        return polygons;
+
+        mesh.getPolygons().addAll(triangulate(onePolygonVertexIndices, onePolygonTextureVertexIndices, onePolygonNormalIndices));
+
     }
 
     protected static void parseFaceWord(
@@ -162,14 +150,34 @@ public class ObjReader {
         }
     }
 
-    protected static ArrayList<Integer> triangulate(ArrayList<Integer> onePolygonIndices) {
-        ArrayList<Integer> triangulatedVertex = new ArrayList<>();
-        for (int i = 1; i < onePolygonIndices.size() - 1; i++) {
-            triangulatedVertex.add(onePolygonIndices.get(0));
-            triangulatedVertex.add(onePolygonIndices.get(i));
-            triangulatedVertex.add(onePolygonIndices.get(i + 1));
+    protected static ArrayList<Polygon> triangulate(ArrayList<Integer> onePolygonVertexIndices,
+                                                    ArrayList<Integer> onePolygonTextureVertexIndices,
+                                                    ArrayList<Integer> onePolygonNormalIndices) {
+        ArrayList<Polygon> triangulatedPolygons = new ArrayList<>();
+        for (int i = 1; i < onePolygonTextureVertexIndices.size() - 1; i++) {
+            Polygon polygon = new Polygon();
+
+            if (onePolygonVertexIndices.size() > 0) {
+                polygon.getPolygonVertexIndices().add(onePolygonVertexIndices.get(0));
+                polygon.getPolygonVertexIndices().add(onePolygonVertexIndices.get(i));
+                polygon.getPolygonVertexIndices().add(onePolygonVertexIndices.get(i + 1));
+            }
+
+            if (onePolygonTextureVertexIndices.size() > 0) {
+                polygon.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices.get(0));
+                polygon.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices.get(i));
+                polygon.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices.get(i + 1));
+            }
+
+            if (onePolygonNormalIndices.size() > 0) {
+                polygon.getPolygonNormalIndices().add(onePolygonNormalIndices.get(0));
+                polygon.getPolygonNormalIndices().add(onePolygonNormalIndices.get(i));
+                polygon.getPolygonNormalIndices().add(onePolygonNormalIndices.get(i + 1));
+            }
+
+            triangulatedPolygons.add(polygon);
         }
-        return triangulatedVertex;
+        return triangulatedPolygons;
     }
 
 }

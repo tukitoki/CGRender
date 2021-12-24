@@ -5,10 +5,8 @@ import com.vsu.cgcourse.math.Vector2;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.Mesh;
 import com.vsu.cgcourse.model.MeshContext;
-import com.vsu.cgcourse.model.Polygons;
-import com.vsu.cgcourse.render_engine.Converter;
+import com.vsu.cgcourse.model.Polygon;
 
-import java.io.Console;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -70,7 +68,7 @@ public class ObjWriter {
 
 
     protected static String writeFace(
-            final ArrayList<Polygons> polygons) {
+            final ArrayList<Polygon> polygons) {
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < polygons.size(); i++) {
             str.append(OBJ_FACE_TOKEN);

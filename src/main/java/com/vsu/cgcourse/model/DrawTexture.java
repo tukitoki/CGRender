@@ -1,6 +1,7 @@
 package com.vsu.cgcourse.model;
 
 import com.vsu.cgcourse.math.Vector2;
+import com.vsu.cgcourse.math.Vector3;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
@@ -13,29 +14,40 @@ import java.util.Arrays;
 
 public class DrawTexture {
 
-    public static void drawTexture(MeshContext meshContext, PixelWriter pw, PixelReader pr) {
-        Mesh mesh = meshContext.getMesh();
+    public static void drawTexture(Vector2 p0, Vector2 p1, Vector2 p2,
+                                   Vector2 vt0, Vector2 vt1, Vector2 vt2,
+                                   MeshContext meshContext, PixelWriter pw,
+                                   PixelReader pr) throws Exception {
         Image texture = meshContext.getTexture();
-        for (int i = 0; i < mesh.getPolygons().size(); i++) {
-            Vector2 vt0 = mesh.getTextureVertices().get(mesh.getPolygons().get(i).getPolygonTextureVertexIndices().get(0));
-            Vector2 vt1 = mesh.getTextureVertices().get(mesh.getPolygons().get(i).getPolygonTextureVertexIndices().get(1));
-            Vector2 vt2 = mesh.getTextureVertices().get(mesh.getPolygons().get(i).getPolygonTextureVertexIndices().get(2));
-            ArrayList<Vector2> sortedVectors = getSortedVectors(vt0, vt1, vt2);
-            draw(sortedVectors, texture, pw, pr);
-        }
+        ArrayList<Vector2> sortedVectors = getSortedVectors(p0, p1, p2, vt0, vt1, vt2);
+        draw(sortedVectors, vt0, vt1, vt2, texture, pw);
     }
 
-    public static void drawPixels(ArrayList<Vector2> resultPoints, PixelWriter pw) {
-        for (int i = 0; i < resultPoints.size(); i += 3) {
-            Vector2 v0 = resultPoints.get(i);
-            Vector2 v1 = resultPoints.get(i + 1);
-            Vector2 v2 = resultPoints.get(i + 2);
-            ArrayList<Vector2> sortedVectors = getSortedVectors(v0, v1, v2);
-            draw(sortedVectors, null, pw, null);
-        }
+    public static void drawPixels(Vector2 p0, Vector2 p1, Vector2 p2,
+                                   Vector2 vt0, Vector2 vt1, Vector2 vt2,
+                                   PixelWriter pw) throws Exception {
+
+        ArrayList<Vector2> sortedVectors = getSortedVectors(p0, p1, p2, vt0, vt1, vt2);
+        draw(sortedVectors, vt0, vt1, vt2, null, pw);
     }
 
-    private static void draw(ArrayList<Vector2> sortedVectors, Image texture, PixelWriter pw, PixelReader pr) {
+    private static void putPixel(Vector2 o, Vector2 p0, Vector2 p1, Vector2 p2,
+                                 Vector2 vt0, Vector2 vt1, Vector2 vt2,
+                                 Image texture, PixelWriter pw) throws Exception {
+        p1.sub(p0);
+        p2.sub(p0);
+        o.sub(p0);
+        float alpha = findAlpha(o, p1, p2);
+        float beta = findBeta(o, p1, p2);
+        float vtResultX = vt0.getX() * (1 - alpha - beta) + vt1.getX() * beta + vt2.getX() * alpha;
+        float vtResultY = vt0.getY() * (1 - alpha - beta) + vt1.getY() * beta + vt2.getY() * alpha;
+        vtResultX *= (float) texture.getWidth();
+        vtResultY *= (float) texture.getHeight();
+        pw.setColor((int) vtResultX,(int) vtResultY, texture.getPixelReader().getColor((int) vtResultX,(int) vtResultY));
+    }
+
+    private static void draw(ArrayList<Vector2> sortedVectors, Vector2 vt0, Vector2 vt1, Vector2 vt2,
+                             Image texture, PixelWriter pw) throws Exception {
         if (sortedVectors.size() == 3) {
             float n;
             if (sortedVectors.get(0).getY() - sortedVectors.get(1).getY() > 0) {
@@ -43,64 +55,97 @@ public class DrawTexture {
             } else {
                 n = 1;
             }
-            for (float y = sortedVectors.get(0).getY(); y  < sortedVectors.get(1).getY(); y += n) {
+            for (float y = sortedVectors.get(0).getY(); y < sortedVectors.get(1).getY(); y += n) {
                 for (float x = getXFuncLine(sortedVectors.get(0), sortedVectors.get(1), y); x < getXFuncLine(sortedVectors.get(0), sortedVectors.get(2), y); x++) {
-                    pw.setColor((int) x, (int) y, Color.BLUE);
                     if (texture != null) {
-                        // сюда ебать
+                        putPixel(new Vector2(new float[]{(int) x, (int) y}), sortedVectors.get(0), sortedVectors.get(1),
+                                sortedVectors.get(2), vt0, vt1, vt2, texture, pw);
+                    } else {
+                        pw.setColor((int) x, (int) y, Color.BLUE);
                     }
                 }
             }
         } else if (sortedVectors.size() == 4) {
-            for (float y = sortedVectors.get(0).getY(); y > sortedVectors.get(2).getY(); y--) {
-                for (float x = getXFuncLine(sortedVectors.get(0), sortedVectors.get(2), y); x < getXFuncLine(sortedVectors.get(0), sortedVectors.get(3), y); x++) {
+            drawUpTriangle(sortedVectors, vt0, vt1, vt2, pw, texture);
+            drawDownTriangle(sortedVectors, vt0, vt1, vt2, pw, texture);
+        }
+    }
+
+    private static void drawUpTriangle(ArrayList<Vector2> sortedVectors,
+                                       Vector2 vt0, Vector2 vt1, Vector2 vt2,
+                                       PixelWriter pw, Image texture) throws Exception {
+        for (float y = sortedVectors.get(0).getY(); y > sortedVectors.get(2).getY(); y--) {
+            for (float x = getXFuncLine(sortedVectors.get(0), sortedVectors.get(2), y); x < getXFuncLine(sortedVectors.get(0), sortedVectors.get(3), y); x++) {
+                if (texture != null) {
+                    putPixel(new Vector2(new float[]{(int) x, (int) y}), sortedVectors.get(0), sortedVectors.get(1),
+                            sortedVectors.get(2), vt0, vt1, vt2, texture, pw);
+                } else {
                     pw.setColor((int) x, (int) y, Color.PURPLE);
-                    if (texture != null) {
-                        // сюда ебать
-                    }
-                }
-            }
-            for (float y = sortedVectors.get(1).getY(); y < sortedVectors.get(3).getY(); y++) {
-                for (float x = getXFuncLine(sortedVectors.get(1), sortedVectors.get(2), y); x < getXFuncLine(sortedVectors.get(1), sortedVectors.get(3), y); x++) {
-                    pw.setColor((int) x, (int) y, Color.GREEN);
-                    if (texture != null) {
-                        // сюда ебать
-                    }
                 }
             }
         }
     }
 
-    private static ArrayList<Vector2> getSortedVectors(Vector2 v0, Vector2 v1, Vector2 v2) {
+    private static void drawDownTriangle(ArrayList<Vector2> sortedVectors,
+                                         Vector2 vt0, Vector2 vt1, Vector2 vt2,
+                                         PixelWriter pw, Image texture) throws Exception {
+        for (float y = sortedVectors.get(1).getY(); y < sortedVectors.get(3).getY(); y++) {
+            for (float x = getXFuncLine(sortedVectors.get(1), sortedVectors.get(2), y); x < getXFuncLine(sortedVectors.get(1), sortedVectors.get(3), y); x++) {
+                if (texture != null) {
+                    putPixel(new Vector2(new float[]{(int) x, (int) y}), sortedVectors.get(0), sortedVectors.get(1),
+                            sortedVectors.get(2), vt0, vt1, vt2, texture, pw);
+                } else {
+                    pw.setColor((int) x, (int) y, Color.GREEN);
+                }
+            }
+        }
+    }
+
+    private static ArrayList<Vector2> getSortedVectors(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 vt0, Vector2 vt1, Vector2 vt2) {
         ArrayList<Vector2> sortedVectors = new ArrayList<>();
         if (Math.abs(v0.getY() - v1.getY()) < 1E-5) {
             sortedVectors.add(v2);
+            sortedVectors.add(vt2);
             if (v0.getX() - v1.getX() < 0) {
                 sortedVectors.add(v0);
                 sortedVectors.add(v1);
+                sortedVectors.add(vt0);
+                sortedVectors.add(vt1);
             } else {
                 sortedVectors.add(v1);
                 sortedVectors.add(v0);
+                sortedVectors.add(vt1);
+                sortedVectors.add(vt0);
             }
             return sortedVectors;
         } else if (Math.abs(v0.getY() - v2.getY()) < 1E-5) {
             sortedVectors.add(v1);
+            sortedVectors.add(vt1);
             if (v0.getX() - v2.getX() < 0) {
                 sortedVectors.add(v0);
                 sortedVectors.add(v2);
+                sortedVectors.add(vt0);
+                sortedVectors.add(vt2);
             } else {
                 sortedVectors.add(v2);
                 sortedVectors.add(v0);
+                sortedVectors.add(vt2);
+                sortedVectors.add(vt0);
             }
             return sortedVectors;
         } else if (Math.abs(v1.getY() - v2.getY()) < 1E-5) {
             sortedVectors.add(v0);
+            sortedVectors.add(vt0);
             if (v1.getX() - v2.getX() < 0) {
                 sortedVectors.add(v1);
                 sortedVectors.add(v2);
+                sortedVectors.add(vt1);
+                sortedVectors.add(vt2);
             } else {
                 sortedVectors.add(v2);
                 sortedVectors.add(v1);
+                sortedVectors.add(vt2);
+                sortedVectors.add(vt1);
             }
             return sortedVectors;
         }
@@ -188,5 +233,13 @@ public class DrawTexture {
             return v1;
         }
         return v2;
+    }
+
+    private static float findAlpha(Vector2 v0, Vector2 v1, Vector2 v2) {
+        return (v2.getX() * v0.getY() - v2.getY() * v0.getX()) / (v1.getY() * v2.getX() - v2.getY() * v1.getX());
+    }
+
+    private static float findBeta(Vector2 v0, Vector2 v1, Vector2 v2) {
+        return (v1.getY() * v0.getX() - v1.getX() * v0.getY()) / (v1.getY() * v2.getX() - v2.getY() * v1.getX());
     }
 }
