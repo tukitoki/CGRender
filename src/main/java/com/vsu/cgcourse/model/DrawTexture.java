@@ -103,7 +103,7 @@ public class DrawTexture {
 
     private static ArrayList<Vector2> getSortedVectors(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 vt0, Vector2 vt1, Vector2 vt2) {
         ArrayList<Vector2> sortedVectors = new ArrayList<>();
-        if (Math.abs(v0.getY() - v1.getY()) < 1E-5) {
+        if (Math.floor(v0.getY()) == Math.floor(v1.getY())) {
             sortedVectors.add(v2);
             sortedVectors.add(vt2);
             if (v0.getX() - v1.getX() < 0) {
@@ -118,7 +118,7 @@ public class DrawTexture {
                 sortedVectors.add(vt0);
             }
             return sortedVectors;
-        } else if (Math.abs(v0.getY() - v2.getY()) < 1E-5) {
+        } else if (Math.floor(v0.getY()) == Math.floor(v2.getY())) {
             sortedVectors.add(v1);
             sortedVectors.add(vt1);
             if (v0.getX() - v2.getX() < 0) {
@@ -149,8 +149,7 @@ public class DrawTexture {
             }
             return sortedVectors;
         }
-        sortedVectors.add(getVectorMaxY(v0, v1, v2));
-        sortedVectors.add(getVectorMinY(v0, v1, v2));
+
         getFourSortedVectors(v0, v1, v2, sortedVectors);
         return sortedVectors;
     }

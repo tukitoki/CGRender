@@ -37,7 +37,6 @@ public class RenderEngine {
         modelViewProjectionMatrix.multiply(viewMatrix);
         modelViewProjectionMatrix.multiply(projectionMatrix);
         modelViewProjectionMatrix.transposite();
-        meshContext.setTexture(new Image("file:src\\main\\resources\\com\\vsu\\cgcourse\\models\\Rock1\\Rock-Texture-Surface.jpg"));
         Collections.synchronizedList(meshContext.getMesh().getPolygons()).parallelStream().
                 forEachOrdered(p1 -> {
                     final int nVerticesInPolygon = p1.getPolygonVertexIndices().size();
