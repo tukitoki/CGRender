@@ -2,7 +2,6 @@ package com.vsu.cgcourse;
 
 import com.vsu.cgcourse.math.Matrix3;
 import com.vsu.cgcourse.math.Vector3;
-import com.vsu.cgcourse.model.DeleteFace;
 import com.vsu.cgcourse.model.MeshContext;
 import com.vsu.cgcourse.obj_writer.ObjWriter;
 import com.vsu.cgcourse.render_engine.SceneBuilder;
@@ -12,27 +11,22 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-import java.awt.*;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.File;
@@ -57,8 +51,8 @@ public class GuiController {
     private SceneBuilder sceneBuilder = new SceneBuilder();
 
     private Camera camera = new Camera(
-            new Vector3(new float[]{0, 00, 100}),
-            new Vector3(new float[]{0, 0, 0}),
+            new Vector3(new float[]{0, 0, 100}),
+            new Vector3(new float[]{0, 0, -30}),
             1.0F, 1, 0.01F, 100);
 
     private Timeline timeline;
