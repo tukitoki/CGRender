@@ -2,7 +2,9 @@ package com.vsu.cgcourse.model;
 
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.render_engine.Converter;
+import javafx.scene.image.Image;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class MeshContext {
@@ -12,6 +14,7 @@ public class MeshContext {
     private Converter converter;
     private ArrayList<Integer> verticesDeleteIndices;
     private MeshStatus status;
+    private Image texture;
 
 
     public MeshContext(float x, float y, float z, char axis, float angle) {}
@@ -27,6 +30,22 @@ public class MeshContext {
         this.converter = new Converter(1, 1, 1, 0, 0, 0, new Vector3(new float[] {0, 0, 0}));
         verticesDeleteIndices = new ArrayList<>();
         status = new MeshStatus();
+    }
+
+    public MeshContext(Mesh mesh, Image texture) {
+        this.mesh = mesh;
+        this.converter = new Converter(1, 1, 1, 0, 0, 0, new Vector3(new float[] {0, 0, 0}));
+        verticesDeleteIndices = new ArrayList<>();
+        status = new MeshStatus();
+        this.texture = texture;
+    }
+
+    public Image getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Image texture) {
+        this.texture = texture;
     }
 
     public void setNewMeshConverter() {

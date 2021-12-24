@@ -1,0 +1,18 @@
+#firstExceptionPane {
+    -fx-background-color: darkgrey;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
+    -fx-background-radius: 5;
+}
+.label {
+    -fx-text-fill: #4d4848;
+    -fx-font: 20px Arial;
+    -fx-font-weight: BOLD;
+}
+.button {
+    -fx-background-color: #6e6d6d;
+    -fx-font: 15px Arial;
+    -fx-background-radius: 5;
+}
+.button:pressed {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
+}

@@ -1,6 +1,9 @@
 package com.vsu.cgcourse.render_engine;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.function.Consumer;
 
 import com.vsu.cgcourse.math.Matrix4;
@@ -8,25 +11,17 @@ import com.vsu.cgcourse.math.Vector2;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.DrawTexture;
 import com.vsu.cgcourse.model.MeshContext;
+import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 
 import javax.vecmath.*;
 
 import com.vsu.cgcourse.model.Mesh;
+import javafx.scene.image.Image;
 
 import static com.vsu.cgcourse.render_engine.GraphicConveyor.*;
 
 public class RenderEngine {
-
-    private <T, E extends Exception> Consumer<T> consume(ConsumerWithException<T, E> ce) {
-        return arg -> {
-            try {
-                ce.accept(arg);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
-    }
 
     public void render(
             final GraphicsContext graphicsContext,
@@ -42,7 +37,7 @@ public class RenderEngine {
         modelViewProjectionMatrix.multiply(viewMatrix);
         modelViewProjectionMatrix.multiply(projectionMatrix);
         modelViewProjectionMatrix.transposite();
-        meshContext.getMesh().getPolygons().parallelStream().
+        Collections.synchronizedList(meshContext.getMesh().getPolygons()).parallelStream().
                 forEachOrdered(p1 -> {
                     final int nVerticesInPolygon = p1.getPolygonVertexIndices().size();
                     ArrayList<Vector2> resultPoints = new ArrayList<>();
@@ -74,7 +69,10 @@ public class RenderEngine {
                                 resultPoints.get(0).getY());
 
                     DrawTexture.drawPixels(resultPoints, graphicsContext.getPixelWriter());
-        });
+                    if (meshContext.getTexture() != null) {
+                        DrawTexture.drawTexture(meshContext, graphicsContext.getPixelWriter(), meshContext.getTexture().getPixelReader());
+                    }
+                });
 //        final int nPolygons = meshContext.getMesh().getPolygons().size();
 //        for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
 //            final int nVerticesInPolygon = meshContext.getMesh().getPolygons().get(polygonInd).getPolygonVertexIndices().size();

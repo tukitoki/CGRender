@@ -38,19 +38,6 @@ public class Polygons {
 //        }*/
 //    }
 
-    private void checkOnSize(int index) {
-        if (!polygonVertexIndices.isEmpty() && !polygonTextureVertexIndices.isEmpty()) {
-            if (polygonVertexIndices.size() != polygonTextureVertexIndices.size()) {
-                throw new ObjReaderException("Different size between VertexIndices and TextureVertexIndices");
-            }
-        }
-        if (!polygonVertexIndices.isEmpty() && !polygonNormalIndices.isEmpty()) {
-            if (polygonVertexIndices.size() != polygonNormalIndices.size()) {
-                throw new ObjReaderException("Different size between VertexIndices and NormalIndices");
-            }
-        }
-    }
-
     public void triangulation() {
 
     }

@@ -1,20 +1,32 @@
 package com.vsu.cgcourse.model;
 
 import com.vsu.cgcourse.math.Vector2;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DrawTexture {
+
+    public static void drawTexture(MeshContext meshContext, PixelWriter pw, PixelReader pr) {
+        Mesh mesh = meshContext.getMesh();
+        Image image = meshContext.getTexture();
+        for (int i = 0; i < mesh.getPolygons().size(); i++) {
+            Vector2 vt0 = mesh.getTextureVertices().get(mesh.getPolygons().get(i).getPolygonTextureVertexIndices().get(0));
+            Vector2 vt1 = mesh.getTextureVertices().get(mesh.getPolygons().get(i).getPolygonTextureVertexIndices().get(1));
+            Vector2 vt2 = mesh.getTextureVertices().get(mesh.getPolygons().get(i).getPolygonTextureVertexIndices().get(2));
+        }
+    }
 
     public static void drawPixels(ArrayList<Vector2> resultPoints, PixelWriter pixelWriter) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         /*WritableImage writableImage = new WritableImage(screenSize.width, screenSize.height);
         PixelWriter pixelWriter = writableImage.getPixelWriter();
-
          */
         for (int i = 0; i < resultPoints.size(); i += 3) {
             Vector2 v0 = resultPoints.get(i);
