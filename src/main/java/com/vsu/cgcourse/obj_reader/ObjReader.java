@@ -119,7 +119,7 @@ public class ObjReader {
             polygons.getPolygonTextureVertexIndices().addAll(onePolygonTextureVertexIndices);
         }
         if (triangulate(onePolygonNormalIndices) != null && onePolygonNormalIndices.size() != 0) {
-            polygons.getPolygonVertexIndices().addAll(triangulate(onePolygonNormalIndices));
+            polygons.getPolygonNormalIndices().addAll(triangulate(onePolygonNormalIndices));
         } else {
             polygons.getPolygonNormalIndices().addAll(onePolygonNormalIndices);
         }

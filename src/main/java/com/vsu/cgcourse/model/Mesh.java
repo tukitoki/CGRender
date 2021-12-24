@@ -49,18 +49,29 @@ public class Mesh {
         }
     }
 
-//    private void checkOnSize(int index) {
-//        if (!polygons.isEmpty()) {
-//            if (polygonVertexIndices.size() != polygonTextureVertexIndices.size()) {
-//                throw new ObjReaderException("Different size between VertexIndices and TextureVertexIndices");
-//            }
-//        }
-//        if (!polygons.isEmpty()) {
-//            if (polygonVertexIndices.size() != polygonNormalIndices.size()) {
-//                throw new ObjReaderException("Different size between VertexIndices and NormalIndices");
-//            }
-//        }
-//    }
+
+    public void recheckOnCorrect(int index) {
+        checkOnSize(index);
+        checkOnCorrectPolygonFill(index);
+        /*if (!polygonTextureVertexIndices.get(index).isEmpty() && !polygonNormalIndices.get(index).isEmpty()) {
+            if (polygonTextureVertexIndices.get(index).size() != polygonNormalIndices.get(index).size()) {
+                throw new ObjReaderException("Different size between TextureVertexIndices and NormalIndices");
+            }
+        }*/
+    }
+
+    private void checkOnSize(int index) {
+        if (!polygons.isEmpty() && !polygons.get(index).getPolygonTextureVertexIndices().isEmpty()) {
+            if (polygons.get(index).getPolygonVertexIndices().size() != polygons.get(index).getPolygonTextureVertexIndices().size()) {
+                throw new ObjReaderException("Different size between VertexIndices and TextureVertexIndices");
+            }
+        }
+        if (!polygons.isEmpty() && !polygons.get(index).getPolygonNormalIndices().isEmpty()) {
+            if (polygons.get(index).getPolygonVertexIndices().size() != polygons.get(index).getPolygonNormalIndices().size()) {
+                throw new ObjReaderException("Different size between VertexIndices and NormalIndices");
+            }
+        }
+    }
 
     private void recheckOnRightIndices(int index) {
         for (Integer v : polygons.get(index).getPolygonVertexIndices()) {

@@ -20,6 +20,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -57,8 +58,8 @@ public class GuiController {
     private SceneBuilder sceneBuilder = new SceneBuilder();
 
     private Camera camera = new Camera(
-            new Vector3(new float[]{0, 00, 100}),
-            new Vector3(new float[]{0, 0, 0}),
+            new Vector3(new float[]{0, 00, 2000}),
+            new Vector3(new float[]{0, 0, 200}),
             1.0F, 1, 0.01F, 100);
 
     private Timeline timeline;
@@ -197,21 +198,26 @@ public class GuiController {
                     index++;
                 }
             });
+            if (counter == 0) {
+                tb.setSelected(true);
+            }
             modelGridPane.add(tb, 0, counter);
         } catch (Exception exception) {
-            StackPane stackPane = new StackPane();
-            Scene scene = new Scene(stackPane, 600, 120);
-            Stage stage = new Stage(StageStyle.UTILITY);
-            stage.setTitle("Cannot read model");
-            stage.centerOnScreen();
-            Label label = new Label(exception.getMessage());
-            label.setFont(new javafx.scene.text.Font(15));
-            label.setAlignment(Pos.CENTER);
-            stackPane.getChildren().add(label);
-            stackPane.setAlignment(label, Pos.CENTER);
-            stage.setScene(scene);
-            stage.show();
-            exception.printStackTrace();
+            exceptionMessage.setText(exception.getMessage());
+            firstExceptionPane.setVisible(true);
+//            StackPane stackPane = new StackPane();
+//            Scene scene = new Scene(stackPane, 600, 120);
+//            Stage stage = new Stage(StageStyle.UTILITY);
+//            stage.setTitle("Cannot read model");
+//            stage.centerOnScreen();
+//            Label label = new Label(exception.getMessage());
+//            label.setFont(new javafx.scene.text.Font(15));
+//            label.setAlignment(Pos.CENTER);
+//            stackPane.getChildren().add(label);
+//            stackPane.setAlignment(label, Pos.CENTER);
+//            stage.setScene(scene);
+//            stage.show();
+//            exception.printStackTrace();
         }
     }
 
@@ -265,30 +271,33 @@ public class GuiController {
                 }
             }
         } catch (Exception exception) {
-            StackPane stackPane = new StackPane();
-            Scene scene = new Scene(stackPane, 600, 120);
-            Stage stage = new Stage(StageStyle.UTILITY);
-            stage.setTitle("Cannot write model");
-            stage.centerOnScreen();
-            Label label = new Label(exception.getMessage());
-            label.setFont(new Font(15));
-            label.setAlignment(Pos.CENTER);
-            stackPane.getChildren().add(label);
-            stackPane.setAlignment(label, Pos.CENTER);
-            stage.setScene(scene);
-            stage.show();
+            exceptionMessage.setText("Break&#10;Line" + exception.getMessage());
+            firstExceptionPane.setVisible(true);
+//            StackPane stackPane = new StackPane();
+//            Scene scene = new Scene(stackPane, 600, 120);
+//            Stage stage = new Stage(StageStyle.UTILITY);
+//            stage.setTitle("Cannot write model");
+//            stage.centerOnScreen();
+//            Label label = new Label(exception.getMessage());
+//            label.setFont(new Font(15));
+//            label.setAlignment(Pos.CENTER);
+//            stackPane.getChildren().add(label);
+//            stackPane.setAlignment(label, Pos.CENTER);
+//            stage.setScene(scene);
+//            stage.show();
         }
     }
+
+
 
     @FXML
     TitledPane modelPane;
     @FXML
     GridPane modelGridPane;
-
     @FXML
-    public void testAct(ActionEvent actionEvent) throws Exception {
-        modelGridPane.add(new Label("sdada"), 0, 0);
-    }
+    AnchorPane firstExceptionPane;
+    @FXML
+    Label exceptionMessage;
     @FXML
     AnchorPane rotateScaleTranslatePane;
     @FXML
@@ -315,6 +324,11 @@ public class GuiController {
     Button closeButton;
 
     @FXML
+    public void closeException(ActionEvent actionEvent) throws Exception {
+        firstExceptionPane.setVisible(false);
+    }
+
+    @FXML
     public void openRotateScaleTranslate(ActionEvent actionEvent) throws Exception {
         rotateScaleTranslatePane.setVisible(true);
     }
@@ -325,66 +339,81 @@ public class GuiController {
     }
 
     private void scaleModel() {
-        float x, y, z;
-        if (scaleX.getText().length() != 0) {
-            x = Float.parseFloat(scaleX.getText());
-        } else {
-            x = 1;
-        }
-        if (scaleY.getText().length() != 0) {
-            y = Float.parseFloat(scaleY.getText());
-        } else {
-            y = 1;
-        }
-        if (scaleZ.getText().length() != 0) {
-            z = Float.parseFloat(scaleZ.getText());
-        } else {
-            z = 1;
-        }
-        for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-            if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
-                sceneBuilder.getMeshContexts().get(i).getConverter().setScaleX(x);
-                sceneBuilder.getMeshContexts().get(i).getConverter().setScaleY(y);
-                sceneBuilder.getMeshContexts().get(i).getConverter().setScaleZ(z);
-                break;
+        try {
+            float x, y, z;
+            if (scaleX.getText().length() != 0) {
+                x = Float.parseFloat(scaleX.getText());
+            } else {
+                x = 1;
             }
+            if (scaleY.getText().length() != 0) {
+                y = Float.parseFloat(scaleY.getText());
+            } else {
+                y = 1;
+            }
+            if (scaleZ.getText().length() != 0) {
+                z = Float.parseFloat(scaleZ.getText());
+            } else {
+                z = 1;
+            }
+            for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
+                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
+                    sceneBuilder.getMeshContexts().get(i).getConverter().setScaleX(x);
+                    sceneBuilder.getMeshContexts().get(i).getConverter().setScaleY(y);
+                    sceneBuilder.getMeshContexts().get(i).getConverter().setScaleZ(z);
+                    break;
+                }
+            }
+        } catch (Exception NumberFormatException) {
+            exceptionMessage.setText("Type in field NUMBER!");
+            firstExceptionPane.setVisible(true);
         }
     }
 
     private void rotateModel() {
-        float angleX = Float.parseFloat(rotateX.getText());
-        float angleY = Float.parseFloat(rotateY.getText());
-        float angleZ = Float.parseFloat(rotateZ.getText());
-        for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-            if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
-                sceneBuilder.getMeshContexts().get(i).getConverter().setAngle(angleX, angleY, angleZ);
-                break;
+        try {
+            float angleX = Float.parseFloat(rotateX.getText());
+            float angleY = Float.parseFloat(rotateY.getText());
+            float angleZ = Float.parseFloat(rotateZ.getText());
+            for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
+                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
+                    sceneBuilder.getMeshContexts().get(i).getConverter().setAngle(angleX, angleY, angleZ);
+                    break;
+                }
             }
+        } catch (Exception NumberFormatException) {
+            exceptionMessage.setText("Type in field NUMBER!");
+            firstExceptionPane.setVisible(true);
         }
     }
 
     private void translateModel() {
-        float x, y, z;
-        if (translationX.getText().length() != 0) {
-            x = Float.parseFloat(translationX.getText());
-        } else {
-            x = 0;
-        }
-        if (translationY.getText().length() != 0) {
-            y = Float.parseFloat(translationY.getText());
-        } else {
-            y = 0;
-        }
-        if (translationZ.getText().length() != 0) {
-            z = Float.parseFloat(translationZ.getText());
-        } else {
-            z = 0;
-        }
-        for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-            if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
-                sceneBuilder.getMeshContexts().get(i).getConverter().setVectorTranslate(new Vector3(new float[] {x, y, z}));
-                break;
+        try {
+            float x, y, z;
+            if (translationX.getText().length() != 0) {
+                x = Float.parseFloat(translationX.getText());
+            } else {
+                x = 0;
             }
+            if (translationY.getText().length() != 0) {
+                y = Float.parseFloat(translationY.getText());
+            } else {
+                y = 0;
+            }
+            if (translationZ.getText().length() != 0) {
+                z = Float.parseFloat(translationZ.getText());
+            } else {
+                z = 0;
+            }
+            for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
+                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
+                    sceneBuilder.getMeshContexts().get(i).getConverter().setVectorTranslate(new Vector3(new float[]{x, y, z}));
+                    break;
+                }
+            }
+        } catch (Exception NumberFormatException) {
+            exceptionMessage.setText("Type in field NUMBER!");
+            firstExceptionPane.setVisible(true);
         }
     }
     @FXML

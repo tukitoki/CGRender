@@ -1,9 +1,6 @@
 package com.vsu.cgcourse.render_engine;
 
-import com.vsu.cgcourse.math.Matrix3;
-import com.vsu.cgcourse.math.Matrix4;
-import com.vsu.cgcourse.math.Vector3;
-import com.vsu.cgcourse.math.Vector4;
+import com.vsu.cgcourse.math.*;
 import com.vsu.cgcourse.model.MeshContext;
 
 import javax.vecmath.Point2f;
@@ -72,8 +69,8 @@ public class GraphicConveyor {
                                                                         vertex4.getZ() / vertex4.getW()});
     }
 
-    public static Point2f vertexToPoint(final Vector3 vertex, final int width, final int height) {
-        return new Point2f(vertex.getVectorCoords()[0] * width + width / 2.0F, -vertex.getVectorCoords()[1] * height + height / 2.0F);
+    public static Vector2 vertexToPoint(final Vector3 vertex, final int width, final int height) {
+        return new Vector2(new float[] {vertex.getVectorCoords()[0] * width + width / 2.0F, -vertex.getVectorCoords()[1] * height + height / 2.0F});
     }
 
     public static Matrix3 scale(Converter cnv) throws Exception {
