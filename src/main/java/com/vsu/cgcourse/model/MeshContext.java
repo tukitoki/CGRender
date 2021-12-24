@@ -11,7 +11,7 @@ public class MeshContext {
     private Mesh mesh;
     private Converter converter;
     private ArrayList<Integer> verticesDeleteIndices;
-    private ModeStatus status;
+    private MeshStatus status;
 
 
     public MeshContext(float x, float y, float z, char axis, float angle) {}
@@ -26,7 +26,7 @@ public class MeshContext {
         this.mesh = mesh;
         this.converter = new Converter(1, 1, 1, 0, 0, 0, new Vector3(new float[] {0, 0, 0}));
         verticesDeleteIndices = new ArrayList<>();
-        status = new ModeStatus();
+        status = new MeshStatus();
     }
 
     public void setNewMeshConverter() {
@@ -65,11 +65,11 @@ public class MeshContext {
         this.oldMesh = oldMesh;
     }
 
-    public ModeStatus getStatus() {
+    public MeshStatus getStatus() {
         return status;
     }
 
-    public void setStatus(ModeStatus status) {
+    public void setStatus(MeshStatus status) {
         this.status = status;
     }
 }

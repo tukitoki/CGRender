@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TitledPane?>
 <AnchorPane fx:id="anchorPane" xmlns="http://javafx.com/javafx/11.0.2"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vsu.cgcourse.GuiController" stylesheets="/style.css">
     <MenuBar fx:id="mainMenuBar">
@@ -133,4 +134,10 @@
         <Button fx:id="closeButton" text="Close" AnchorPane.RightAnchor="40.0" AnchorPane.topAnchor="545.0" onAction="#cancelRotateScaleTranslate"/>
 
     </AnchorPane>
+    <TitledPane visible="false" text="Models" fx:id="modelPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0" prefWidth="300" prefHeight="600">
+        <GridPane fx:id="modelGridPane" vgap="10" >
+
+        </GridPane>
+
+    </TitledPane>
 </AnchorPane>

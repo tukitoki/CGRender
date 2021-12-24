@@ -103,7 +103,6 @@ public class GraphicConveyor {
                 {(float) -Math.sin(radZ), (float) Math.cos(radZ), 0},
                 {0, 0, 1}
         }));
-
         return matrix3;
     }
 
