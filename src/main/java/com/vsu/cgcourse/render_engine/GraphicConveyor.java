@@ -69,8 +69,8 @@ public class GraphicConveyor {
                                                                         vertex4.getZ() / vertex4.getW()});
     }
 
-    public static Vector2 vertexToPoint(final Vector3 vertex, final int width, final int height) {
-        return new Vector2(new float[] {vertex.getVectorCoords()[0] * width + width / 2.0F, -vertex.getVectorCoords()[1] * height + height / 2.0F});
+    public static Vector3 vertexToPoint(final Vector3 vertex, final int width, final int height) {
+        return new Vector3(new float[] {vertex.getVectorCoords()[0] * width + width / 2.0F, -vertex.getVectorCoords()[1] * height + height / 2.0F, vertex.getZ()});
     }
 
     public static Matrix3 scale(Converter cnv) throws Exception {

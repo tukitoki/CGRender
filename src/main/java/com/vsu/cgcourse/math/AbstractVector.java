@@ -63,6 +63,17 @@ public abstract class AbstractVector<T> {
         }
     }
 
+    public float[] subtraction(AbstractVector<T> vector) throws Exception {
+        if (this.vectorCoords.length != vector.vectorCoords.length) {
+            throw new Exception("You use Vectors with different sizes");
+        }
+        float[] newVectorCoord = new float[this.vectorCoords.length];
+        for (int i = 0; i < this.vectorCoords.length; i++) {
+            newVectorCoord[i] = this.vectorCoords[i] - vector.vectorCoords[i];
+        }
+        return newVectorCoord;
+    }
+
     public void multiply(float scal) {
         for (int i = 0; i < this.vectorCoords.length; i++) {
             this.vectorCoords[i] *= scal;
