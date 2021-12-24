@@ -5,6 +5,7 @@ import com.vsu.cgcourse.math.Vector2;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.Mesh;
 import com.vsu.cgcourse.model.MeshContext;
+import com.vsu.cgcourse.model.Polygons;
 import com.vsu.cgcourse.render_engine.Converter;
 
 import java.io.Console;
@@ -69,26 +70,24 @@ public class ObjWriter {
 
 
     protected static String writeFace(
-            final ArrayList<ArrayList<Integer>> polygonVertexIndices,
-            final ArrayList<ArrayList<Integer>> polygonTextureVertexIndices,
-            final ArrayList<ArrayList<Integer>> polygonNormalIndices) {
+            final ArrayList<Polygons> polygons) {
         StringBuilder str = new StringBuilder();
-        for (int i = 0; i < polygonVertexIndices.size(); i++) {
+        for (int i = 0; i < polygons.size(); i++) {
             str.append(OBJ_FACE_TOKEN);
-            for (int j = 0; j < polygonVertexIndices.get(i).size(); j++) {
-                str.append(" ").append(polygonVertexIndices.get(i).get(j) + 1);
+            for (int j = 0; j < polygons.get(i).getPolygonVertexIndices().size(); j++) {
+                str.append(" ").append(polygons.get(i).getPolygonVertexIndices().get(j) + 1);
 
-                if (!polygonTextureVertexIndices.get(i).isEmpty()) {
+                if (!polygons.get(i).getPolygonTextureVertexIndices().isEmpty()) {
                     str.append("/");
-                    str.append(polygonTextureVertexIndices.get(i).get(j) + 1);
+                    str.append(polygons.get(i).getPolygonTextureVertexIndices().get(j) + 1);
                 }
 
-                if (!polygonNormalIndices.get(i).isEmpty()) {
+                if (!polygons.get(i).getPolygonNormalIndices().isEmpty()) {
                     str.append("/");
-                    if (polygonTextureVertexIndices.get(i).isEmpty()) {
+                    if (polygons.get(i).getPolygonTextureVertexIndices().isEmpty()) {
                         str.append("/");
                     }
-                    str.append(polygonNormalIndices.get(i).get(j) + 1);
+                    str.append(polygons.get(i).getPolygonNormalIndices().get(j) + 1);
                 }
             }
             str.append("\n");
@@ -114,9 +113,7 @@ public class ObjWriter {
         writer.write("\n");
         try {
             writer.write(writeFace(
-                    model.getPolygons().getPolygonVertexIndices(),
-                    model.getPolygons().getPolygonTextureVertexIndices(),
-                    model.getPolygons().getPolygonNormalIndices()));
+                    model.getPolygons()));
             writer.flush();
         } catch (Exception e) {
             e.printStackTrace();

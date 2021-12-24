@@ -16,32 +16,32 @@ import java.util.HashSet;
 public class DeleteFace {
 
     public static void deleteFace(Mesh model, ArrayList<Integer> indices, boolean deleteVertexes) throws IOException {
-        if (indices.isEmpty()) {
-            return;
-        }
-        indices.sort(Comparator.comparingInt(o -> o));
-        int indexOfDelete;
-        int changeSize = 0;
-        for (int i = 0; i < indices.size(); i++) {
-            indexOfDelete = indices.get(i);
-            if (indexOfDelete >= model.getPolygons().getPolygonTextureVertexIndices().size()) {
-                indexOfDelete -= changeSize;
-            }
-            for (int j = 0; j < model.getPolygons().getPolygonVertexIndices().size(); j++) {
-                if (indexOfDelete == j) {
-                    model.getPolygons().getPolygonVertexIndices().remove(j);
-                    model.getPolygons().getPolygonNormalIndices().remove(j);
-                    model.getPolygons().getPolygonTextureVertexIndices().remove(j);
-                    changeSize++;
-                    break;
-                }
-            }
-        }
-        if (deleteVertexes) {
-            deleteFreeVertices(model.getPolygons().getPolygonVertexIndices(), model.getVertices());
-            deleteTextureVertices(model.getPolygons().getPolygonTextureVertexIndices(), model.getTextureVertices());
-            deleteFreeVertices(model.getPolygons().getPolygonNormalIndices(), model.getNormals());
-        }
+//        if (indices.isEmpty()) {
+//            return;
+//        }
+//        indices.sort(Comparator.comparingInt(o -> o));
+//        int indexOfDelete;
+//        int changeSize = 0;
+//        for (int i = 0; i < indices.size(); i++) {
+//            indexOfDelete = indices.get(i);
+//            if (indexOfDelete >= model.getPolygons().getPolygonTextureVertexIndices().size()) {
+//                indexOfDelete -= changeSize;
+//            }
+//            for (int j = 0; j < model.getPolygons().getPolygonVertexIndices().size(); j++) {
+//                if (indexOfDelete == j) {
+//                    model.getPolygons().getPolygonVertexIndices().remove(j);
+//                    model.getPolygons().getPolygonNormalIndices().remove(j);
+//                    model.getPolygons().getPolygonTextureVertexIndices().remove(j);
+//                    changeSize++;
+//                    break;
+//                }
+//            }
+//        }
+//        if (deleteVertexes) {
+//            deleteFreeVertices(model.getPolygons().getPolygonVertexIndices(), model.getVertices());
+//            deleteTextureVertices(model.getPolygons().getPolygonTextureVertexIndices(), model.getTextureVertices());
+//            deleteFreeVertices(model.getPolygons().getPolygonNormalIndices(), model.getNormals());
+//        }
     }
 
     private static void deleteTextureVertices(ArrayList<ArrayList<Integer>> polygonDeleteIndices, ArrayList<Vector2> deleteVertex) {

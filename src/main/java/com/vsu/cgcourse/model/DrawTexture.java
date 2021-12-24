@@ -10,31 +10,31 @@ import java.util.Collections;
 
 public class DrawTexture {
 
-    public static void drawPixels(Mesh mesh) {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        WritableImage writableImage = new WritableImage(screenSize.width, screenSize.height);
-        PixelWriter pixelWriter = writableImage.getPixelWriter();
-        for (int i = 0; i < mesh.getPolygons().getPolygonTextureVertexIndices().size(); i++) {
-            Vector2 v0 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(0));
-            Vector2 v1 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(1));
-            Vector2 v2 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(2));
-            ArrayList<Vector2> vectors = new ArrayList<>();
-            vectors.add(v0);
-            vectors.add(v1);
-            vectors.add(v2);
-            vectors.sort((o1, o2) -> {
-                if (Math.abs(o1.getY() - o2.getY()) < 1E-5) {
-                    return 0;
-                } else if (o1.getY() - o1.getY() < 0) {
-                    return -1;
-                }
-                return 1;
-            });
-            if (findPointOppositeXAxis(v0, v1, v2) != null) {
-
-            }
-        }
-    }
+//    public static void drawPixels(Mesh mesh) {
+//        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//        WritableImage writableImage = new WritableImage(screenSize.width, screenSize.height);
+//        PixelWriter pixelWriter = writableImage.getPixelWriter();
+//        for (int i = 0; i < mesh.getPolygons().getPolygonTextureVertexIndices().size(); i++) {
+//            Vector2 v0 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(0));
+//            Vector2 v1 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(1));
+//            Vector2 v2 = mesh.getTextureVertices().get(mesh.getPolygons().getPolygonTextureVertexIndices().get(i).get(2));
+//            ArrayList<Vector2> vectors = new ArrayList<>();
+//            vectors.add(v0);
+//            vectors.add(v1);
+//            vectors.add(v2);
+//            vectors.sort((o1, o2) -> {
+//                if (Math.abs(o1.getY() - o2.getY()) < 1E-5) {
+//                    return 0;
+//                } else if (o1.getY() - o1.getY() < 0) {
+//                    return -1;
+//                }
+//                return 1;
+//            });
+//            if (findPointOppositeXAxis(v0, v1, v2) != null) {
+//
+//            }
+//        }
+//    }
 
     private static Vector2 findPointOppositeXAxis(Vector2 v0, Vector2 v1, Vector2 v2) {
         if (Math.abs(v0.getY() - v1.getY()) < 1E-5) {

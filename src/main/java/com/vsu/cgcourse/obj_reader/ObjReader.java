@@ -37,7 +37,7 @@ public class ObjReader {
                 case OBJ_VERTEX_TOKEN -> result.getVertices().add(parseVertex(wordsInLine, lineInd));
                 case OBJ_TEXTURE_TOKEN -> result.getTextureVertices().add(parseTextureVertex(wordsInLine, lineInd));
                 case OBJ_NORMAL_TOKEN -> result.getNormals().add(parseNormal(wordsInLine, lineInd));
-                case OBJ_FACE_TOKEN -> result.setPolygons(parseFace(wordsInLine, result.getPolygons(), lineInd));
+                case OBJ_FACE_TOKEN -> result.getPolygons().add(parseFace(wordsInLine, lineInd));
                 default -> {
                 }
             }
@@ -103,11 +103,11 @@ public class ObjReader {
 
     protected static Polygons parseFace(
             final ArrayList<String> wordsInLineWithoutToken,
-            Polygons polygons,
             int lineInd) {
         ArrayList<Integer> onePolygonVertexIndices = new ArrayList<Integer>();
         ArrayList<Integer> onePolygonTextureVertexIndices = new ArrayList<Integer>();
         ArrayList<Integer> onePolygonNormalIndices = new ArrayList<Integer>();
+        Polygons polygons = new Polygons();
 
         for (String s : wordsInLineWithoutToken) {
             parseFaceWord(s, onePolygonVertexIndices, onePolygonTextureVertexIndices, onePolygonNormalIndices, lineInd);
@@ -116,12 +116,12 @@ public class ObjReader {
         if (triangulate(onePolygonTextureVertexIndices) != null && onePolygonTextureVertexIndices.size() != 0) {
             polygons.getPolygonTextureVertexIndices().addAll(triangulate(onePolygonTextureVertexIndices));
         } else {
-            polygons.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices);
+            polygons.getPolygonTextureVertexIndices().addAll(onePolygonTextureVertexIndices);
         }
         if (triangulate(onePolygonNormalIndices) != null && onePolygonNormalIndices.size() != 0) {
             polygons.getPolygonVertexIndices().addAll(triangulate(onePolygonNormalIndices));
         } else {
-            polygons.getPolygonNormalIndices().add(onePolygonNormalIndices);
+            polygons.getPolygonNormalIndices().addAll(onePolygonNormalIndices);
         }
         return polygons;
     }
@@ -162,19 +162,14 @@ public class ObjReader {
         }
     }
 
-    protected static ArrayList<ArrayList<Integer>> triangulate(ArrayList<Integer> onePolygonIndices) {
-        if (onePolygonIndices.size() > 3) {
-            ArrayList<ArrayList<Integer>> resultVertices = new ArrayList<>();
-            for (int i = 1; i < onePolygonIndices.size() - 1; i++) {
-                ArrayList<Integer> triangulatedVertex = new ArrayList<>();
-                triangulatedVertex.add(onePolygonIndices.get(0));
-                triangulatedVertex.add(onePolygonIndices.get(i));
-                triangulatedVertex.add(onePolygonIndices.get(i + 1));
-                resultVertices.add(triangulatedVertex);
-            }
-            return resultVertices;
+    protected static ArrayList<Integer> triangulate(ArrayList<Integer> onePolygonIndices) {
+        ArrayList<Integer> triangulatedVertex = new ArrayList<>();
+        for (int i = 1; i < onePolygonIndices.size() - 1; i++) {
+            triangulatedVertex.add(onePolygonIndices.get(0));
+            triangulatedVertex.add(onePolygonIndices.get(i));
+            triangulatedVertex.add(onePolygonIndices.get(i + 1));
         }
-        return null;
+        return triangulatedVertex;
     }
 
 }

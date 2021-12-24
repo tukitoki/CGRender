@@ -48,6 +48,9 @@ public class GuiController {
     @FXML
     AnchorPane anchorPane;
 
+    RenderEngine renderEngine = new RenderEngine();
+
+
     @FXML
     private Canvas canvas;
 
@@ -79,7 +82,7 @@ public class GuiController {
             for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
                 if (sceneBuilder.getMeshContexts().get(i).getMesh() != null) {
                     try {
-                        RenderEngine.render(canvas.getGraphicsContext2D(), camera, (int) width, (int) height,
+                        renderEngine.render(canvas.getGraphicsContext2D(), camera, (int) width, (int) height,
                                 sceneBuilder.getMeshContexts().get(i));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -94,57 +97,57 @@ public class GuiController {
 
     @FXML
     private void onOpenFacesMenu() {
-        Stage stageFaces = new Stage(StageStyle.UTILITY);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Group group = new Group();
-        VBox vBox = new VBox();
-        ScrollPane scrollPane = new ScrollPane(vBox);
-        scrollPane.setPrefWidth(200);
-        scrollPane.setPrefHeight(300);
-        stageFaces.setX(screenSize.getWidth() - 10 - scrollPane.getPrefWidth());
-        stageFaces.setY(screenSize.getHeight() / 3);
-        int index = 0;
-        for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-            if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
-                index = i;
-            }
-        }
-        Scene sceneFaces = new Scene(group, scrollPane.getPrefWidth(), scrollPane.getPrefHeight() + 50);
-        scrollPane.setPrefViewportHeight(sceneBuilder.getMeshContexts().get(index).getMesh().getPolygons().
-                getPolygonVertexIndices().size() * 10);
-        for (int i = 0; i < sceneBuilder.getMeshContexts().get(index).getMesh().getPolygons().getPolygonVertexIndices().size(); i++) {
-            CheckBox checkBox = new CheckBox();
-            checkBox.setText(" " + (i + 1) + "f");
-            vBox.getChildren().add(checkBox);
-            int finalIndex = index;
-            int finalI = i;
-            checkBox.setOnAction(actionEvent -> {
-                if (checkBox.isSelected()) {
-                    sceneBuilder.getMeshContexts().get(finalIndex).getVerticesDeleteIndices().add(finalI);
-                }
-            });
-        }
-        Button buttonCheck = new Button("Accept");
-        buttonCheck.setLayoutX(50);
-        buttonCheck.setLayoutY(scrollPane.getLayoutX() + scrollPane.getPrefHeight() + 10);
-        buttonCheck.setPrefSize(100, 30);
-        int finalIndex1 = index;
-        buttonCheck.setOnAction(actionEvent -> {
-            try {
-                DeleteFace.deleteFace(sceneBuilder.getMeshContexts().get(finalIndex1).getMesh(),
-                        sceneBuilder.getMeshContexts().get(finalIndex1).getVerticesDeleteIndices(), true);
-                sceneBuilder.getMeshContexts().get(finalIndex1).getVerticesDeleteIndices().clear();
-                sceneBuilder.getMeshContexts().get(finalIndex1).getStatus().setSelected(true);
-                stageFaces.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        group.getChildren().add(scrollPane);
-        group.getChildren().add(buttonCheck);
-        stageFaces.setScene(sceneFaces);
-        stageFaces.setResizable(false);
-        stageFaces.show();
+//        Stage stageFaces = new Stage(StageStyle.UTILITY);
+//        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//        Group group = new Group();
+//        VBox vBox = new VBox();
+//        ScrollPane scrollPane = new ScrollPane(vBox);
+//        scrollPane.setPrefWidth(200);
+//        scrollPane.setPrefHeight(300);
+//        stageFaces.setX(screenSize.getWidth() - 10 - scrollPane.getPrefWidth());
+//        stageFaces.setY(screenSize.getHeight() / 3);
+//        int index = 0;
+//        for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
+//            if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
+//                index = i;
+//            }
+//        }
+//        Scene sceneFaces = new Scene(group, scrollPane.getPrefWidth(), scrollPane.getPrefHeight() + 50);
+//        scrollPane.setPrefViewportHeight(sceneBuilder.getMeshContexts().get(index).getMesh().getPolygons().
+//                getPolygonVertexIndices().size() * 10);
+//        for (int i = 0; i < sceneBuilder.getMeshContexts().get(index).getMesh().getPolygons().getPolygonVertexIndices().size(); i++) {
+//            CheckBox checkBox = new CheckBox();
+//            checkBox.setText(" " + (i + 1) + "f");
+//            vBox.getChildren().add(checkBox);
+//            int finalIndex = index;
+//            int finalI = i;
+//            checkBox.setOnAction(actionEvent -> {
+//                if (checkBox.isSelected()) {
+//                    sceneBuilder.getMeshContexts().get(finalIndex).getVerticesDeleteIndices().add(finalI);
+//                }
+//            });
+//        }
+//        Button buttonCheck = new Button("Accept");
+//        buttonCheck.setLayoutX(50);
+//        buttonCheck.setLayoutY(scrollPane.getLayoutX() + scrollPane.getPrefHeight() + 10);
+//        buttonCheck.setPrefSize(100, 30);
+//        int finalIndex1 = index;
+//        buttonCheck.setOnAction(actionEvent -> {
+//            try {
+//                DeleteFace.deleteFace(sceneBuilder.getMeshContexts().get(finalIndex1).getMesh(),
+//                        sceneBuilder.getMeshContexts().get(finalIndex1).getVerticesDeleteIndices(), true);
+//                sceneBuilder.getMeshContexts().get(finalIndex1).getVerticesDeleteIndices().clear();
+//                sceneBuilder.getMeshContexts().get(finalIndex1).getStatus().setSelected(true);
+//                stageFaces.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+//        group.getChildren().add(scrollPane);
+//        group.getChildren().add(buttonCheck);
+//        stageFaces.setScene(sceneFaces);
+//        stageFaces.setResizable(false);
+//        stageFaces.show();
     }
 
     @FXML
@@ -208,6 +211,7 @@ public class GuiController {
             stackPane.setAlignment(label, Pos.CENTER);
             stage.setScene(scene);
             stage.show();
+            exception.printStackTrace();
         }
     }
 

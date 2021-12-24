@@ -135,7 +135,7 @@
 
     </AnchorPane>
     <TitledPane visible="false" text="Models" fx:id="modelPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0" prefWidth="300" prefHeight="600">
-        <GridPane fx:id="modelGridPane" vgap="10">
+        <GridPane fx:id="modelGridPane" vgap="10" >
 
         </GridPane>
 
