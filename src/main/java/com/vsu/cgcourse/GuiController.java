@@ -17,11 +17,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-<<<<<<< HEAD
-=======
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
->>>>>>> ac4c4c7ad04118343eaf8cb54b8d328de17d162c
+
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -56,13 +52,8 @@ public class GuiController {
     private SceneBuilder sceneBuilder = new SceneBuilder();
 
     private Camera camera = new Camera(
-<<<<<<< HEAD
             new Vector3(new float[]{0, 0, 100}),
             new Vector3(new float[]{0, 0, -30}),
-=======
-            new Vector3(new float[]{0, 00, 2000}),
-            new Vector3(new float[]{0, 0, 200}),
->>>>>>> ac4c4c7ad04118343eaf8cb54b8d328de17d162c
             1.0F, 1, 0.01F, 100);
 
     private Timeline timeline;

@@ -15,45 +15,56 @@ public class DrawTexture {
 
     public static void drawTexture(MeshContext meshContext, PixelWriter pw, PixelReader pr) {
         Mesh mesh = meshContext.getMesh();
-        Image image = meshContext.getTexture();
+        Image texture = meshContext.getTexture();
         for (int i = 0; i < mesh.getPolygons().size(); i++) {
             Vector2 vt0 = mesh.getTextureVertices().get(mesh.getPolygons().get(i).getPolygonTextureVertexIndices().get(0));
             Vector2 vt1 = mesh.getTextureVertices().get(mesh.getPolygons().get(i).getPolygonTextureVertexIndices().get(1));
             Vector2 vt2 = mesh.getTextureVertices().get(mesh.getPolygons().get(i).getPolygonTextureVertexIndices().get(2));
+            ArrayList<Vector2> sortedVectors = getSortedVectors(vt0, vt1, vt2);
+            draw(sortedVectors, texture, pw, pr);
         }
     }
 
-    public static void drawPixels(ArrayList<Vector2> resultPoints, PixelWriter pixelWriter) {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        /*WritableImage writableImage = new WritableImage(screenSize.width, screenSize.height);
-        PixelWriter pixelWriter = writableImage.getPixelWriter();
-         */
+    public static void drawPixels(ArrayList<Vector2> resultPoints, PixelWriter pw) {
         for (int i = 0; i < resultPoints.size(); i += 3) {
             Vector2 v0 = resultPoints.get(i);
             Vector2 v1 = resultPoints.get(i + 1);
             Vector2 v2 = resultPoints.get(i + 2);
             ArrayList<Vector2> sortedVectors = getSortedVectors(v0, v1, v2);
-            if (sortedVectors.size() == 3) {
-                float n;
-                if (sortedVectors.get(0).getY() - sortedVectors.get(1).getY() > 0) {
-                    n = -1;
-                } else {
-                    n = 1;
-                }
-                for (float y = sortedVectors.get(0).getY(); y  < sortedVectors.get(1).getY(); y += n) {
-                    for (float x = getXFuncLine(sortedVectors.get(0), sortedVectors.get(1), y); x < getXFuncLine(sortedVectors.get(0), sortedVectors.get(2), y); x++) {
-                        pixelWriter.setColor((int) x, (int) y, Color.BLUE);
+            draw(sortedVectors, null, pw, null);
+        }
+    }
+
+    private static void draw(ArrayList<Vector2> sortedVectors, Image texture, PixelWriter pw, PixelReader pr) {
+        if (sortedVectors.size() == 3) {
+            float n;
+            if (sortedVectors.get(0).getY() - sortedVectors.get(1).getY() > 0) {
+                n = -1;
+            } else {
+                n = 1;
+            }
+            for (float y = sortedVectors.get(0).getY(); y  < sortedVectors.get(1).getY(); y += n) {
+                for (float x = getXFuncLine(sortedVectors.get(0), sortedVectors.get(1), y); x < getXFuncLine(sortedVectors.get(0), sortedVectors.get(2), y); x++) {
+                    pw.setColor((int) x, (int) y, Color.BLUE);
+                    if (texture != null) {
+                        // сюда ебать
                     }
                 }
-            } else if (sortedVectors.size() == 4) {
-                for (float y = sortedVectors.get(0).getY(); y > sortedVectors.get(2).getY(); y--) {
-                    for (float x = getXFuncLine(sortedVectors.get(0), sortedVectors.get(2), y); x < getXFuncLine(sortedVectors.get(0), sortedVectors.get(3), y); x++) {
-                        pixelWriter.setColor((int) x, (int) y, Color.PURPLE);
+            }
+        } else if (sortedVectors.size() == 4) {
+            for (float y = sortedVectors.get(0).getY(); y > sortedVectors.get(2).getY(); y--) {
+                for (float x = getXFuncLine(sortedVectors.get(0), sortedVectors.get(2), y); x < getXFuncLine(sortedVectors.get(0), sortedVectors.get(3), y); x++) {
+                    pw.setColor((int) x, (int) y, Color.PURPLE);
+                    if (texture != null) {
+                        // сюда ебать
                     }
                 }
-                for (float y = sortedVectors.get(1).getY(); y < sortedVectors.get(3).getY(); y++) {
-                    for (float x = getXFuncLine(sortedVectors.get(1), sortedVectors.get(2), y); x < getXFuncLine(sortedVectors.get(1), sortedVectors.get(3), y); x++) {
-                        pixelWriter.setColor((int) x, (int) y, Color.GREEN);
+            }
+            for (float y = sortedVectors.get(1).getY(); y < sortedVectors.get(3).getY(); y++) {
+                for (float x = getXFuncLine(sortedVectors.get(1), sortedVectors.get(2), y); x < getXFuncLine(sortedVectors.get(1), sortedVectors.get(3), y); x++) {
+                    pw.setColor((int) x, (int) y, Color.GREEN);
+                    if (texture != null) {
+                        // сюда ебать
                     }
                 }
             }
