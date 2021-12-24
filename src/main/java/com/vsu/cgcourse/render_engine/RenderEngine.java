@@ -1,5 +1,7 @@
 package com.vsu.cgcourse.render_engine;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Consumer;
@@ -15,6 +17,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javax.vecmath.*;
 
 import com.vsu.cgcourse.model.Mesh;
+import javafx.scene.image.Image;
 
 import static com.vsu.cgcourse.render_engine.GraphicConveyor.*;
 
@@ -64,7 +67,11 @@ public class RenderEngine {
                                 resultPoints.get(nVerticesInPolygon - 1).getY(),
                                 resultPoints.get(0).getX(),
                                 resultPoints.get(0).getY());
+
                     DrawTexture.drawPixels(resultPoints, graphicsContext.getPixelWriter());
+                    if (meshContext.getTexture() != null) {
+                        DrawTexture.drawTexture(meshContext, graphicsContext.getPixelWriter(), meshContext.getTexture().getPixelReader());
+                    }
                 });
 //        final int nPolygons = meshContext.getMesh().getPolygons().size();
 //        for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {

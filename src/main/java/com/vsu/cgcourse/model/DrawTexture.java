@@ -1,14 +1,23 @@
 package com.vsu.cgcourse.model;
 
 import com.vsu.cgcourse.math.Vector2;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DrawTexture {
+
+    public static void drawTexture(MeshContext meshContext, PixelWriter pw, PixelReader pr) {
+        Mesh mesh = meshContext.getMesh();
+        Image image = meshContext.getTexture();
+        Vector2 vt0 = mesh.getTextureVertices().get(0);
+    }
 
     public static void drawPixels(ArrayList<Vector2> resultPoints, PixelWriter pixelWriter) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

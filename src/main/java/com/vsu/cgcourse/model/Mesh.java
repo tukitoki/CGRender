@@ -4,6 +4,7 @@ import com.vsu.cgcourse.math.Vector2;
 import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.obj_reader.ObjReaderException;
 
+import java.awt.*;
 import java.util.*;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector2f;
