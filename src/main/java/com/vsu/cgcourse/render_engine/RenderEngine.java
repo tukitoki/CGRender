@@ -1,23 +1,14 @@
 package com.vsu.cgcourse.render_engine;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.function.Consumer;
 
 import com.vsu.cgcourse.math.Matrix4;
 import com.vsu.cgcourse.math.Vector2;
 import com.vsu.cgcourse.math.Vector3;
-import com.vsu.cgcourse.model.DrawTexture;
 import com.vsu.cgcourse.model.MeshContext;
 import com.vsu.cgcourse.model.Vertexes;
-import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
-
-import javax.vecmath.*;
-
-import com.vsu.cgcourse.model.Mesh;
 import javafx.scene.image.Image;
 
 import static com.vsu.cgcourse.render_engine.GraphicConveyor.*;
@@ -38,7 +29,7 @@ public class RenderEngine {
         modelViewProjectionMatrix.multiply(viewMatrix);
         modelViewProjectionMatrix.multiply(projectionMatrix);
         modelViewProjectionMatrix.transposite();
-        //meshContext.setTexture(new Image("file:src\\main\\resources\\com\\vsu\\cgcourse\\models\\Candle_lp_Candle_BaseColor.png"));
+        meshContext.setTexture(new Image("file:src\\main\\resources\\com\\vsu\\cgcourse\\models\\Candle_lp_Candle_BaseColor.png"));
         Collections.synchronizedList(meshContext.getMesh().getPolygons()).parallelStream().
                 forEachOrdered(p1 -> {
                     final int nVerticesInPolygon = p1.getPolygonVertexIndices().size();

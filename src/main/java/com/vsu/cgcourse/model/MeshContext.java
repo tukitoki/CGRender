@@ -20,7 +20,6 @@ public class MeshContext {
     public MeshContext(float x, float y, float z, char axis, float angle) {}
 
     public MeshContext(float scaleX, float scaleY, float scaleZ, float angleX, float angleY, float angleZ) {
-
         mesh = new Mesh();
         converter = new Converter(scaleX, scaleY, scaleZ, angleX, angleY, angleZ, new Vector3(new float[] {0, 0, 0}));
     }

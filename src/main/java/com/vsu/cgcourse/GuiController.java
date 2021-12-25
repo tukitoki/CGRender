@@ -2,7 +2,7 @@ package com.vsu.cgcourse;
 
 import com.vsu.cgcourse.math.Matrix3;
 import com.vsu.cgcourse.math.Vector3;
-import com.vsu.cgcourse.model.DrawTexture;
+import com.vsu.cgcourse.render_engine.DrawTexture;
 import com.vsu.cgcourse.model.MeshContext;
 import com.vsu.cgcourse.obj_writer.ObjWriter;
 import com.vsu.cgcourse.render_engine.SceneBuilder;
@@ -71,7 +71,7 @@ public class GuiController {
 
         sceneBuilder.getMeshContexts().add(new MeshContext(null));
 
-        KeyFrame frame = new KeyFrame(Duration.millis(15), event -> {
+        KeyFrame frame = new KeyFrame(Duration.millis(60), event -> {
             double width = canvas.getWidth();
             double height = canvas.getHeight();
 
