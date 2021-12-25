@@ -3,6 +3,8 @@ package com.vsu.cgcourse.model;
 import com.vsu.cgcourse.math.Vector2;
 import com.vsu.cgcourse.math.Vector3;
 
+import java.util.Objects;
+
 public class Vertexes {
 
     protected Vector3 v;
@@ -37,5 +39,18 @@ public class Vertexes {
 
     public void setVn(Vector3 vn) {
         this.vn = vn;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vertexes vertexes = (Vertexes) o;
+        return Objects.equals(v, vertexes.v) && Objects.equals(vt, vertexes.vt) && Objects.equals(vn, vertexes.vn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(v, vt, vn);
     }
 }
