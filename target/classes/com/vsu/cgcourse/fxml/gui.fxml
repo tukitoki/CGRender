@@ -6,9 +6,22 @@
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.stage.Stage ?>
 
-<AnchorPane fx:id="anchorPane" xmlns:fx="http://javafx.com/fxml" fx:controller="com.vsu.cgcourse.GuiController">
-    <MenuBar>
+<?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleButton?>
+<AnchorPane fx:id="anchorPane" xmlns="http://javafx.com/javafx/11.0.2"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vsu.cgcourse.GuiController" stylesheets="/style.css">
+    <MenuBar fx:id="mainMenuBar">
         <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" onAction="#onOpenModelMenuItemClick" text="Load Model">
             <accelerator>
@@ -24,36 +37,118 @@
         <Menu mnemonicParsing="false" text="Camera Options">
             <MenuItem mnemonicParsing="false" onAction="#handleCameraForward" text="Forward">
                 <accelerator>
-                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="UP"/>
+                    <KeyCodeCombination alt="ANY" control="ANY" meta="ANY" shift="ANY" shortcut="ANY" code="PAGE_UP"/>
                 </accelerator>
             </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#handleCameraBackward" text="Backward">
                 <accelerator>
-                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="DOWN"/>
+                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="PAGE_DOWN"/>
                 </accelerator>
             </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#handleCameraLeft" text="Left">
                 <accelerator>
-                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="LEFT"/>
+                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="HOME"/>
                 </accelerator>
             </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#handleCameraRight" text="Right">
                 <accelerator>
-                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="RIGHT"/>
+                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="END"/>
                 </accelerator>
             </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#handleCameraUp" text="Up">
                 <accelerator>
-                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="W"/>
+                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="R"/>
                 </accelerator>
             </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#handleCameraDown" text="Down">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="F"/>
+                </accelerator>
+            </MenuItem>
+            <MenuItem mnemonicParsing="false" onAction="#handleCameraRotateLeft" text="RotateLeft">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="A"/>
+                </accelerator>
+            </MenuItem>
+            <MenuItem mnemonicParsing="false" onAction="#handleCameraRotateRight" text="RotateRight">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="D"/>
+                </accelerator>
+            </MenuItem>
+            <MenuItem mnemonicParsing="false" onAction="#handleCameraRotateUp" text="RotateUp">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="W"/>
+                </accelerator>
+            </MenuItem>
+            <MenuItem mnemonicParsing="false" onAction="#handleCameraRotateDown" text="RotateDown">
                 <accelerator>
                     <KeyCodeCombination alt="UP" control="UP" meta="UP" shift="UP" shortcut="UP" code="S"/>
                 </accelerator>
             </MenuItem>
         </Menu>
+        <Menu mnemonicParsing="false" text="Actions with model">
+            <MenuItem mnemonicParsing="false" onAction="#openRotateScaleTranslate" text="Scale/Rotate/Translate">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="Z"/>
+                </accelerator>
+            </MenuItem>
+            <MenuItem mnemonicParsing="false" onAction="#onOpenFacesMenu" text="Show faces">
+                <accelerator>
+                    <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="O"/>
+                </accelerator>
+            </MenuItem>
+        </Menu>
     </MenuBar>
-
     <Canvas fx:id="canvas" width="1600" height="870" AnchorPane.topAnchor="30.0"/>
+
+    <AnchorPane fx:id="rotateScaleTranslatePane"
+                visible="false"
+                AnchorPane.RightAnchor="20.0"
+                AnchorPane.topAnchor="220.0"
+                 prefWidth="300" prefHeight="600">
+        <Label text="Rotate/Scale/Translate panel" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="10.0"/>
+
+        <Label text="Scale: " AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="40.0"/>
+        <Label text="X: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="75.0"/>
+        <TextField text="1" fx:id="scaleX" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="75.0"/>
+        <Label text="Y: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="115.0" />
+        <TextField text="1" fx:id="scaleY" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="115.0"/>
+        <Label text="Z: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="155.0"/>
+        <TextField text="1" fx:id="scaleZ" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="155.0"/>
+
+        <Label text="Rotate: " AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="190.0"/>
+        <Label text="X: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="235.0"/>
+        <TextField text="0" fx:id="rotateX" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="235.0"/>
+        <Label text="Y: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="280.0" />
+        <TextField text="0" fx:id="rotateY" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="280.0"/>
+        <Label text="Z: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="325.0"/>
+        <TextField text="0" fx:id="rotateZ" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="325.0"/>
+
+        <Label text="Translate: " AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="360.0"/>
+        <Label text="X: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="405.0"/>
+        <TextField text="0" fx:id="translationX" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="405.0"/>
+        <Label text="Y: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="450.0" />
+        <TextField text="0" fx:id="translationY" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="450.0"/>
+        <Label text="Z: " AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="495.0"/>
+        <TextField text="0" fx:id="translationZ" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="495.0"/>
+
+        <Button fx:id="acceptButton" text="Accept" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="545.0" onAction="#acceptRotateScaleTranslate"/>
+        <Button fx:id="closeButton" text="Close" AnchorPane.RightAnchor="40.0" AnchorPane.topAnchor="545.0" onAction="#cancelRotateScaleTranslate"/>
+
+    </AnchorPane>
+
+    <AnchorPane visible="false" fx:id="firstExceptionPane" stylesheets="/exceptionsStyle.css" AnchorPane.leftAnchor="700.0" AnchorPane.topAnchor="300.0" prefWidth="500" prefHeight="300">
+        <Label wrapText="true" fx:id="exceptionMessage" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0" />
+        <Button fx:id="okButton" text="okay" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.bottomAnchor="10.0" onAction="#closeException" />
+    </AnchorPane>
+    <AnchorPane visible="false" fx:id="meshSettings" AnchorPane.topAnchor="50.0" AnchorPane.rightAnchor="20.0" prefWidth="400" prefHeight="50">
+        <ToggleButton selected="true" text="gridVisible" AnchorPane.bottomAnchor="12" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="12" onAction="#gridVisible"/>
+        <ToggleButton selected="true" text="textureVisible" AnchorPane.bottomAnchor="12" AnchorPane.leftAnchor="135.0" AnchorPane.topAnchor="12" onAction="#textureVisible"/>
+        <ToggleButton selected="true" text="paintingVisible" AnchorPane.bottomAnchor="12" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="12" onAction="#paintingVisible"/>
+    </AnchorPane>
+    <TitledPane visible="false" text="Models" fx:id="modelPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0" prefWidth="300" prefHeight="600">
+        <GridPane fx:id="modelGridPane" vgap="10" >
+        </GridPane>
+
+    </TitledPane>
 </AnchorPane>

@@ -1,14 +1,20 @@
 package com.vsu.cgcourse.obj_writer;
 
+import com.vsu.cgcourse.math.Matrix4;
+import com.vsu.cgcourse.math.Vector2;
+import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.Mesh;
+import com.vsu.cgcourse.model.MeshContext;
+import com.vsu.cgcourse.model.Polygon;
 
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.vsu.cgcourse.render_engine.GraphicConveyor.multiplyMatrix4ByVector3;
+import static com.vsu.cgcourse.render_engine.GraphicConveyor.rotateScaleTranslate;
 
 public class ObjWriter {
 
@@ -23,12 +29,20 @@ public class ObjWriter {
 
     protected static void writeAllVertices(
             FileWriter writer,
-            final ArrayList<Vector3f> vertices,
-            final ArrayList<Vector2f> textureVertices,
-            final ArrayList<Vector3f> normals) throws Exception{
-        List<String> listVertices = vertices.stream().map(Vector3f::toString).collect(Collectors.toList());
-        List<String> listTextureVertices = textureVertices.stream().map(Vector2f::toString).collect(Collectors.toList());
-        List<String> listNormals = normals.stream().map(Vector3f::toString).collect(Collectors.toList());
+            final ArrayList<Vector3> vertices,
+            final ArrayList<Vector2> textureVertices,
+            final ArrayList<Vector3> normals,
+            final MeshContext meshContext) throws Exception {
+        if (meshContext.getStatus().isChanges()) {
+            Matrix4 modelMatrix = rotateScaleTranslate(meshContext);
+            modelMatrix.transposite();
+            for (int i = 0; i < vertices.size(); i++) {
+                vertices.set(i, multiplyMatrix4ByVector3(modelMatrix, vertices.get(i)));
+            }
+        }
+        List<String> listVertices = vertices.stream().map(Vector3::toString).collect(Collectors.toList());
+        List<String> listTextureVertices = textureVertices.stream().map(Vector2::toString).collect(Collectors.toList());
+        List<String> listNormals = normals.stream().map(Vector3::toString).collect(Collectors.toList());
         writer.write(writeTheDesiredVertices(listVertices, OBJ_VERTEX_TOKEN));
         writer.write("\n");
         writer.flush();
@@ -54,23 +68,24 @@ public class ObjWriter {
 
 
     protected static String writeFace(
-            final ArrayList<ArrayList<Integer>> polygonVertexIndices,
-            final ArrayList<ArrayList<Integer>> polygonTextureVertexIndices,
-            final ArrayList<ArrayList<Integer>> polygonNormalIndices) {
+            final ArrayList<Polygon> polygons) {
         StringBuilder str = new StringBuilder();
-        for (int i = 0; i < polygonVertexIndices.size(); i++) {
+        for (int i = 0; i < polygons.size(); i++) {
             str.append(OBJ_FACE_TOKEN);
-            for (int j = 0; j < polygonVertexIndices.get(i).size(); j++) {
-                str.append(" ").append(polygonVertexIndices.get(i).get(j) + 1);
+            for (int j = 0; j < polygons.get(i).getPolygonVertexIndices().size(); j++) {
+                str.append(" ").append(polygons.get(i).getPolygonVertexIndices().get(j) + 1);
 
-                if (!polygonTextureVertexIndices.get(i).isEmpty()) {
+                if (!polygons.get(i).getPolygonTextureVertexIndices().isEmpty()) {
                     str.append("/");
-                    str.append(polygonTextureVertexIndices.get(i).get(j) + 1);
+                    str.append(polygons.get(i).getPolygonTextureVertexIndices().get(j) + 1);
                 }
 
-                if (!polygonNormalIndices.get(i).isEmpty()) {
+                if (!polygons.get(i).getPolygonNormalIndices().isEmpty()) {
                     str.append("/");
-                    str.append(polygonNormalIndices.get(i).get(j) + 1);
+                    if (polygons.get(i).getPolygonTextureVertexIndices().isEmpty()) {
+                        str.append("/");
+                    }
+                    str.append(polygons.get(i).getPolygonNormalIndices().get(j) + 1);
                 }
             }
             str.append("\n");
@@ -82,20 +97,21 @@ public class ObjWriter {
         model.recheckModel();
     }
 
-    public static void write(final Mesh model, final File file) throws Exception {
-        isModelReadyForRecording(model);
+    public static void write(final File file, MeshContext meshContext) throws Exception {
         FileWriter writer = new FileWriter(file, false);
-
-        writeAllVertices(writer, model.getVertices(), model.getTextureVertices(), model.getNormals());
+        Mesh model;
+        if (meshContext.getStatus().isChanges()) {
+            model = meshContext.getMesh();
+        } else {
+            model = meshContext.getOldMesh();
+        }
+        isModelReadyForRecording(model);
+        writeAllVertices(writer, model.getVertices(), model.getTextureVertices(), model.getNormals(), meshContext);
         writer.flush();
         writer.write("\n");
-        //writer.write(writeAllVertices(model.getVertices(), model.getTextureVertices(), model.getNormals()));
         try {
             writer.write(writeFace(
-                    model.getPolygons().getPolygonVertexIndices(),
-                    model.getPolygons().getPolygonTextureVertexIndices(),
-                    model.getPolygons().getPolygonNormalIndices())
-            );
+                    model.getPolygons()));
             writer.flush();
         } catch (Exception e) {
             e.printStackTrace();

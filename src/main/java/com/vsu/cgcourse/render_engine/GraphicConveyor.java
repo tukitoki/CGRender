@@ -1,66 +1,123 @@
 package com.vsu.cgcourse.render_engine;
-import javax.vecmath.*;
+
+import com.vsu.cgcourse.math.*;
+import com.vsu.cgcourse.model.MeshContext;
+
+import javax.vecmath.Point2f;
 
 public class GraphicConveyor {
 
-    public static Matrix4f rotateScaleTranslate() {
-        float[] matrix = new float[]{
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1};
-        return new Matrix4f(matrix);
+    public static Matrix4 rotateScaleTranslate(MeshContext meshContext) throws Exception {
+        Matrix3 matrix3 = scale(meshContext.getConverter());
+        matrix3.multiply(rotate(meshContext.getConverter()));
+        Matrix4 matrixScaledRotated = new Matrix4(new float[][]{
+                {matrix3.getMatrix()[0][0], matrix3.getMatrix()[0][1], matrix3.getMatrix()[0][2], 0},
+                {matrix3.getMatrix()[1][0], matrix3.getMatrix()[1][1], matrix3.getMatrix()[1][2], 0},
+                {matrix3.getMatrix()[2][0], matrix3.getMatrix()[2][1], matrix3.getMatrix()[2][2], 0},
+                {0, 0, 0, 1}
+        });
+        matrixScaledRotated.multiply(translate(meshContext.getConverter()));
+        return matrixScaledRotated;
     }
 
-    public static Matrix4f lookAt(Vector3f eye, Vector3f target) {
-        return lookAt(eye, target, new Vector3f(0F, 1.0F, 0F));
+
+    public static Matrix4 lookAt(Vector3 eye, Vector3 target) throws Exception {
+        return lookAt(eye, target, new Vector3(new float[]{0F, 1.0F, 0F}));
     }
 
-    public static Matrix4f lookAt(Vector3f eye, Vector3f target, Vector3f up) {
-        Vector3f resultX = new Vector3f();
-        Vector3f resultY = new Vector3f();
-        Vector3f resultZ = new Vector3f();
+    public static Matrix4 lookAt(Vector3 eye, Vector3 target, Vector3 up) throws Exception {
+        Vector3 resultX = new Vector3(up);
+        Vector3 resultZ = new Vector3(target);
 
-        resultZ.sub(target, eye);
-        resultX.cross(up, resultZ);
-        resultY.cross(resultZ, resultX);
+        resultZ.sub(eye);
+        resultX.vectorMultiply(resultZ);
 
-        resultX.normalize();
-        resultY.normalize();
-        resultZ.normalize();
+        Vector3 resultY = new Vector3(resultZ);
+        resultY.vectorMultiply(resultX);
 
-        float[] matrix = new float[]{
-                resultX.x, resultY.x, resultZ.x, 0,
-                resultX.y, resultY.y, resultZ.y, 0,
-                resultX.z, resultY.z, resultZ.z, 0,
-                -resultX.dot(eye), -resultY.dot(eye), -resultZ.dot(eye), 1};
-        return new Matrix4f(matrix);
+        resultX.normal();
+        resultY.normal();
+        resultZ.normal();
+
+        float[][] matrix = new float[][]{
+                {resultX.getX(), resultY.getX(), resultZ.getX(), 0},
+                {resultX.getY(), resultY.getY(), resultZ.getY(), 0},
+                {resultX.getZ(), resultY.getZ(), resultZ.getZ(), 0},
+                {-resultX.scalarMultiply(eye), -resultY.scalarMultiply(eye), -resultZ.scalarMultiply(eye), 1}};
+        return new Matrix4(matrix);
     }
 
-    public static Matrix4f perspective(
+    public static Matrix4 perspective(
             final float fov,
             final float aspectRatio,
             final float nearPlane,
             final float farPlane) {
-        Matrix4f result = new Matrix4f();
+        Matrix4 result = new Matrix4();
         float tangentMinusOnDegree = (float) (1.0F / (Math.tan(fov * 0.5F)));
-        result.m00 = tangentMinusOnDegree / aspectRatio;
-        result.m11 = tangentMinusOnDegree;
-        result.m22 = (farPlane + nearPlane) / (farPlane - nearPlane);
-        result.m23 = 1.0F;
-        result.m32 = 2 * (nearPlane * farPlane) / (nearPlane - farPlane);
+        result.setElement(0, 0, tangentMinusOnDegree / aspectRatio);
+        result.setElement(1, 1, tangentMinusOnDegree);
+        result.setElement(2, 2, (farPlane + nearPlane) / (farPlane - nearPlane));
+        result.setElement(2, 3, 1.0F);
+        result.setElement(3, 2, 2 * (nearPlane * farPlane) / (nearPlane - farPlane));
         return result;
     }
 
-    public static Vector3f multiplyMatrix4ByVector3(final Matrix4f matrix, final Vector3f vertex) {
-        final float x = (vertex.x * matrix.m00) + (vertex.y * matrix.m10) + (vertex.z * matrix.m20) + matrix.m30;
-        final float y = (vertex.x * matrix.m01) + (vertex.y * matrix.m11) + (vertex.z * matrix.m21) + matrix.m31;
-        final float z = (vertex.x * matrix.m02) + (vertex.y * matrix.m12) + (vertex.z * matrix.m22) + matrix.m32;
-        final float w = (vertex.x * matrix.m03) + (vertex.y * matrix.m13) + (vertex.z * matrix.m23) + matrix.m33;
-        return new Vector3f(x / w, y / w, z / w);
+    public static Vector3 multiplyMatrix4ByVector3(final Matrix4 matrix, final Vector3 vertex) throws Exception {
+        Vector4 vertex4 = new Vector4(new float[] {vertex.getX(), vertex.getY(), vertex.getZ(), 1});
+        vertex4.multiply(matrix);
+        return new Vector3(new float[] {vertex4.getX() / vertex4.getW(), vertex4.getY() / vertex4.getW(),
+                                                                        vertex4.getZ() / vertex4.getW()});
     }
 
-    public static Point2f vertexToPoint(final Vector3f vertex, final int width, final int height) {
-        return new Point2f(vertex.x * width + width / 2.0F, -vertex.y * height + height / 2.0F);
+    public static Vector3 vertexToPoint(final Vector3 vertex, final int width, final int height) {
+        return new Vector3(new float[] {vertex.getVectorCoords()[0] * width + width / 2.0F, -vertex.getVectorCoords()[1] * height + height / 2.0F, vertex.getZ()});
+    }
+
+    public static Matrix3 scale(Converter cnv) throws Exception {
+        return new Matrix3(new float[][]{
+                {cnv.getScaleX(), 0, 0},
+                {0, cnv.getScaleY(), 0},
+                {0, 0, cnv.getScaleZ()}
+        });
+    }
+
+    public static Matrix3 rotate(Converter cnv) throws Exception {
+        float radX = (float) Math.toRadians(cnv.getAngleX());
+        float radY = (float) Math.toRadians(cnv.getAngleY());
+        float radZ = (float) Math.toRadians(cnv.getAngleZ());
+        Matrix3 matrix3 = new Matrix3(new float[][]{
+                {1, 0, 0},
+                {0, (float) Math.cos(radX), (float) Math.sin(radX)},
+                {0, (float) -Math.sin(radX), (float) Math.cos(radX)}
+        });
+        matrix3.multiply(new Matrix3(new float[][]{
+                {(float) Math.cos(radY), 0, (float) Math.sin(radY)},
+                {0, 1, 0},
+                {(float) -Math.sin(radY), 0, (float) Math.cos(radY)}
+        }));
+        matrix3.multiply(new Matrix3(new float[][]{
+                {(float) Math.cos(radZ), (float) Math.sin(radZ), 0},
+                {(float) -Math.sin(radZ), (float) Math.cos(radZ), 0},
+                {0, 0, 1}
+        }));
+        return matrix3;
+    }
+
+    public static Matrix4 translate(Converter cnv) throws Exception {
+        if (cnv.getVectorTranslate().getX() == 0 && cnv.getVectorTranslate().getY() == 0 &&
+                cnv.getVectorTranslate().getZ() == 0) {
+            return new Matrix4(new float[][]{
+                    {1, 0, 0, 0},
+                    {0, 1, 0, 0},
+                    {0, 0, 1, 0},
+                    {0, 0, 0, 1}
+            });
+        }
+        return new Matrix4(new float[][] {
+                {1, 0, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 1, 0},
+                {cnv.getVectorTranslate().getX(), cnv.getVectorTranslate().getY(), cnv.getVectorTranslate().getZ(), 1}
+        });
     }
 }

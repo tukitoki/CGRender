@@ -1,10 +1,10 @@
 package com.vsu.cgcourse.obj_reader;
 
+import com.vsu.cgcourse.math.Vector2;
+import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.Mesh;
-import com.vsu.cgcourse.model.Polygons;
+import com.vsu.cgcourse.model.Polygon;
 
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -32,25 +32,12 @@ public class ObjReader {
 
             lineInd++;
             switch (token) {
-                // Обратите внимание!
-                // Для структур типа вершин методы написаны так, чтобы ничего не знать о внешней среде.
-                // Они принимают только то, что им нужно для работы, а возвращают только то, что могут создать.
-                // Исключение - индекс строки. Он прокидывается, чтобы выводить сообщение об ошибке.
-                // Могло быть иначе. Например, метод parseVertex мог вместо возвращения вершины принимать вектор вершин
-                // модели или сам класс модели, работать с ним.
-                // Но такой подход может привести к большему количеству ошибок в коде. Например, в нем что-то может
-                // тайно сделаться с классом модели.
-                // А еще это портит читаемость
-                // И не стоит забывать про тесты. Чем проще вам задать данные для теста, проверить, что метод рабочий,
-                // тем лучше.
                 case OBJ_VERTEX_TOKEN -> result.getVertices().add(parseVertex(wordsInLine, lineInd));
                 case OBJ_TEXTURE_TOKEN -> result.getTextureVertices().add(parseTextureVertex(wordsInLine, lineInd));
                 case OBJ_NORMAL_TOKEN -> result.getNormals().add(parseNormal(wordsInLine, lineInd));
-                // А здесь описанное выше правило нарушается, и это плохо. Например, очевидно, что тестировать такой
-                // метод сложнее.
-                // Подумайте и перепишите его так, чтобы с ним было легче работать.
-                case OBJ_FACE_TOKEN -> result.setPolygons(parseFace(wordsInLine, result.getPolygons(), lineInd));
-                default -> {}
+                case OBJ_FACE_TOKEN -> parseFace(wordsInLine, lineInd, result);
+                default -> {
+                }
             }
         }
         scanner.close();
@@ -58,65 +45,63 @@ public class ObjReader {
         return result;
     }
 
-    // Всем методам кроме основного я поставил модификатор доступа protected, чтобы обращаться к ним в тестах
-    protected static Vector3f parseVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
+    protected static Vector3 parseVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
         try {
             if (wordsInLineWithoutToken.size() > 3) {
                 throw new ObjReaderException("Too many vertex arguments.", lineInd);
             }
-            return new Vector3f(
+            return new Vector3(new float[]{
                     Float.parseFloat(wordsInLineWithoutToken.get(0)),
                     Float.parseFloat(wordsInLineWithoutToken.get(1)),
-                    Float.parseFloat(wordsInLineWithoutToken.get(2)));
-        } catch(NumberFormatException e) {
+                    Float.parseFloat(wordsInLineWithoutToken.get(2))});
+        } catch (NumberFormatException e) {
             throw new ObjReaderException("Failed to parse float value.", lineInd);
 
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new ObjReaderException("Too few vertex arguments.", lineInd);
         }
     }
 
-    protected static Vector2f parseTextureVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
+    protected static Vector2 parseTextureVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
         try {
             if (wordsInLineWithoutToken.size() > 2) {
                 if (Math.abs(Float.parseFloat(wordsInLineWithoutToken.get(2))) - 0.00000f > 1e-6) {
                     throw new ObjReaderException("Too many texture vertex arguments.", lineInd);
                 }
             }
-            return new Vector2f(
+            return new Vector2(new float[]{
                     Float.parseFloat(wordsInLineWithoutToken.get(0)),
-                    Float.parseFloat(wordsInLineWithoutToken.get(1)));
+                    Float.parseFloat(wordsInLineWithoutToken.get(1))});
 
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new ObjReaderException("Failed to parse float value.", lineInd);
 
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new ObjReaderException("Too few texture vertex arguments.", lineInd);
         }
     }
 
-    protected static Vector3f parseNormal(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
+    protected static Vector3 parseNormal(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
         try {
             if (wordsInLineWithoutToken.size() > 3) {
                 throw new ObjReaderException("Too many normal arguments.", lineInd);
             }
-            return new Vector3f(
+            return new Vector3(new float[]{
                     Float.parseFloat(wordsInLineWithoutToken.get(0)),
                     Float.parseFloat(wordsInLineWithoutToken.get(1)),
-                    Float.parseFloat(wordsInLineWithoutToken.get(2)));
+                    Float.parseFloat(wordsInLineWithoutToken.get(2))});
 
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new ObjReaderException("Failed to parse float value.", lineInd);
 
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new ObjReaderException("Too few normal arguments.", lineInd);
         }
     }
 
-    protected static Polygons parseFace(
+    protected static void parseFace(
             final ArrayList<String> wordsInLineWithoutToken,
-            Polygons polygons,
-            int lineInd) {
+            int lineInd, Mesh mesh) {
         ArrayList<Integer> onePolygonVertexIndices = new ArrayList<Integer>();
         ArrayList<Integer> onePolygonTextureVertexIndices = new ArrayList<Integer>();
         ArrayList<Integer> onePolygonNormalIndices = new ArrayList<Integer>();
@@ -124,18 +109,11 @@ public class ObjReader {
         for (String s : wordsInLineWithoutToken) {
             parseFaceWord(s, onePolygonVertexIndices, onePolygonTextureVertexIndices, onePolygonNormalIndices, lineInd);
         }
-        //Polygons polygons = model.getPolygons();
-        polygons.getPolygonVertexIndices().add(onePolygonVertexIndices);
-        polygons.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices);
-        polygons.getPolygonNormalIndices().add(onePolygonNormalIndices);
 
-        //model.recheckingModel(polygons.getPolygonVertexIndices().size() - 1, lineInd);
-        return polygons;
+        mesh.getPolygons().addAll(triangulate(onePolygonVertexIndices, onePolygonTextureVertexIndices, onePolygonNormalIndices));
+
     }
 
-    // Обратите внимание, что для чтения полигонов я выделил еще один вспомогательный метод.
-    // Это бывает очень полезно и с точки зрения структурирования алгоритма в голове, и с точки зрения тестирования.
-    // В радикальных случаях не бойтесь выносить в отдельные методы и тестировать код из одной-двух строчек.
     protected static void parseFaceWord(
             String wordInLine,
             ArrayList<Integer> onePolygonVertexIndices,
@@ -164,11 +142,42 @@ public class ObjReader {
                 }
             }
 
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new ObjReaderException("Failed to parse int value.", lineInd);
 
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new ObjReaderException("Too few arguments.", lineInd);
         }
     }
+
+    protected static ArrayList<Polygon> triangulate(ArrayList<Integer> onePolygonVertexIndices,
+                                                    ArrayList<Integer> onePolygonTextureVertexIndices,
+                                                    ArrayList<Integer> onePolygonNormalIndices) {
+        ArrayList<Polygon> triangulatedPolygons = new ArrayList<>();
+        for (int i = 1; i < onePolygonTextureVertexIndices.size() - 1; i++) {
+            Polygon polygon = new Polygon();
+
+            if (onePolygonVertexIndices.size() > 0) {
+                polygon.getPolygonVertexIndices().add(onePolygonVertexIndices.get(0));
+                polygon.getPolygonVertexIndices().add(onePolygonVertexIndices.get(i));
+                polygon.getPolygonVertexIndices().add(onePolygonVertexIndices.get(i + 1));
+            }
+
+            if (onePolygonTextureVertexIndices.size() > 0) {
+                polygon.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices.get(0));
+                polygon.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices.get(i));
+                polygon.getPolygonTextureVertexIndices().add(onePolygonTextureVertexIndices.get(i + 1));
+            }
+
+            if (onePolygonNormalIndices.size() > 0) {
+                polygon.getPolygonNormalIndices().add(onePolygonNormalIndices.get(0));
+                polygon.getPolygonNormalIndices().add(onePolygonNormalIndices.get(i));
+                polygon.getPolygonNormalIndices().add(onePolygonNormalIndices.get(i + 1));
+            }
+
+            triangulatedPolygons.add(polygon);
+        }
+        return triangulatedPolygons;
+    }
+
 }
