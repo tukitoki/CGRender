@@ -15,6 +15,8 @@ import java.util.Comparator;
 
 public class DrawTexture {
 
+    private static Color fillingColor = Color.rgb(52, 52, 52, 1.0);
+
     public static void drawTexture(Vertexes ver0, Vertexes ver1, Vertexes ver2,
                                    MeshContext meshContext, PixelWriter pw,
                                    PixelReader pr) throws Exception {
@@ -63,7 +65,7 @@ public class DrawTexture {
                     break;
                 }
                 for (float x = getXFuncLine(ver0, ver1, y); x < getXFuncLine(ver0, ver2, y); x++) {
-                    pw.setColor((int) x, (int) y, Color.PURPLE);
+                    pw.setColor((int) x, (int) y, fillingColor);
                 }
             }
         } else if (sortedVectors.size() == 4) {
@@ -74,13 +76,13 @@ public class DrawTexture {
                     //    putPixel(new Vector2(new float[]{(int) x, (int) y}), ver0, ver1,
                     //            ver2, texture, pw);
                     //} else {
-                    pw.setColor((int) x, (int) y, Color.PURPLE);
+                    pw.setColor((int) x, (int) y, fillingColor);
                     //}
                 }
             }
             for (float y = ver1.v.getY(); y < ver2.v.getY(); y++) {
                 for (float x = getXFuncLine(ver1, ver2, y); x < getXFuncLine(ver1, ver3, y); x++) {
-                    pw.setColor((int) x, (int) y, Color.GREEN);
+                    pw.setColor((int) x, (int) y, fillingColor);
 //                    if (texture != null) {
 //                        putPixel(new Vector2(new float[]{(int) x, (int) y}), sortedVectors.get(0), sortedVectors.get(1),
 //                                sortedVectors.get(2), vt0, vt1, vt2, texture, pw);

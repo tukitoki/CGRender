@@ -58,41 +58,43 @@ public class RenderEngine {
                         vertexes.add(new Vertexes(resultPoint, textureVertex, null));
                     }
 
-                    /*for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
-                        graphicsContext.strokeLine(
-                                vertexes.get(vertexInPolygonInd - 1).getV().getX(),
-                                vertexes.get(vertexInPolygonInd - 1).getV().getY(),
-                                vertexes.get(vertexInPolygonInd).getV().getX(),
-                                vertexes.get(vertexInPolygonInd).getV().getY());
+                    if (meshContext.getStatus().isGrid()) {
+                        for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
+                            graphicsContext.strokeLine(
+                                    vertexes.get(vertexInPolygonInd - 1).getV().getX(),
+                                    vertexes.get(vertexInPolygonInd - 1).getV().getY(),
+                                    vertexes.get(vertexInPolygonInd).getV().getX(),
+                                    vertexes.get(vertexInPolygonInd).getV().getY());
+                        }
+
+                        if (nVerticesInPolygon > 0)
+                            graphicsContext.strokeLine(
+                                    vertexes.get(nVerticesInPolygon - 1).getV().getX(),
+                                    vertexes.get(nVerticesInPolygon - 1).getV().getY(),
+                                    vertexes.get(0).getV().getX(),
+                                    vertexes.get(0).getV().getY());
                     }
 
-                    if (nVerticesInPolygon > 0)
-                        graphicsContext.strokeLine(
-                                vertexes.get(nVerticesInPolygon - 1).getV().getX(),
-                                vertexes.get(nVerticesInPolygon - 1).getV().getY(),
-                                vertexes.get(0).getV().getX(),
-                                vertexes.get(0).getV().getY());
 
-                     */
-
-                    for (int i = 0; i < vertexes.size(); i += 3) {
-                        if (meshContext.getTexture() != null) {
-                            try {
-                                DrawTexture.drawTexture(vertexes.get(i), vertexes.get(i + 1), vertexes.get(i + 2),
-                                        meshContext, graphicsContext.getPixelWriter(), meshContext.getTexture().getPixelReader());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            try {
-                                DrawTexture.drawPixels(vertexes.get(i), vertexes.get(i + 1), vertexes.get(i + 2),
-                                        graphicsContext.getPixelWriter());
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                    if (meshContext.getStatus().isPainting()) {
+                        for (int i = 0; i < vertexes.size(); i += 3) {
+                            if (meshContext.getTexture() != null) {
+                                try {
+                                    DrawTexture.drawTexture(vertexes.get(i), vertexes.get(i + 1), vertexes.get(i + 2),
+                                            meshContext, graphicsContext.getPixelWriter(), meshContext.getTexture().getPixelReader());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                try {
+                                    DrawTexture.drawPixels(vertexes.get(i), vertexes.get(i + 1), vertexes.get(i + 2),
+                                            graphicsContext.getPixelWriter());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
-
                 });
 //        final int nPolygons = meshContext.getMesh().getPolygons().size();
 //        for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {

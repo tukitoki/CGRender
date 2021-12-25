@@ -76,6 +76,18 @@
     -fx-background-color: #6e6d6d;
     -fx-background-radius: 5;
 }
+#meshSettings {
+    -fx-background-color: darkgray;
+    -fx-background-radius: 5;
+}
+#meshSettings > .toggle-button {
+    -fx-font: 15px Arial;
+    -fx-background-color: #6e6d6d;
+    -fx-background-radius: 5;
+}
+#meshSettings > .toggle-button:selected {
+    -fx-background-color: #a3a3f6;
+}
 #modelGridPane > .toggle-button:selected {
     -fx-background-color: #a3a3f6;
 }

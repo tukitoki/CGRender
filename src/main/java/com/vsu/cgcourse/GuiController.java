@@ -52,7 +52,7 @@ public class GuiController {
     private SceneBuilder sceneBuilder = new SceneBuilder();
 
     private Camera camera = new Camera(
-            new Vector3(new float[]{0, 0, 2000}),
+            new Vector3(new float[]{0, 0, 1000}),
             new Vector3(new float[]{0, 0, 0}),
             1.0F, 1, 0.01F, 100);
 
@@ -195,6 +195,7 @@ public class GuiController {
             if (counter == 0) {
                 tb.setSelected(true);
             }
+            meshSettings.setVisible(true);
             modelGridPane.add(tb, 0, counter);
         } catch (Exception exception) {
             exceptionMessage.setText(exception.getMessage());
@@ -212,6 +213,36 @@ public class GuiController {
 //            stage.setScene(scene);
 //            stage.show();
 //            exception.printStackTrace();
+        }
+    }
+
+    @FXML
+    AnchorPane meshSettings;
+
+    @FXML
+    public void gridVisible(ActionEvent actionEvent) throws Exception {
+        for (MeshContext mc : sceneBuilder.getMeshContexts()) {
+            if (mc.getStatus().isSelected()) {
+                mc.getStatus().setGrid(!mc.getStatus().isGrid());
+            }
+        }
+    }
+
+    @FXML
+    public void textureVisible(ActionEvent actionEvent) throws Exception {
+        for (MeshContext mc : sceneBuilder.getMeshContexts()) {
+            if (mc.getStatus().isSelected()) {
+                mc.getStatus().setTexture(!mc.getStatus().isTexture());
+            }
+        }
+    }
+
+    @FXML
+    public void paintingVisible(ActionEvent actionEvent) throws Exception {
+        for (MeshContext mc : sceneBuilder.getMeshContexts()) {
+            if (mc.getStatus().isSelected()) {
+                mc.getStatus().setPainting(!mc.getStatus().isPainting());
+            }
         }
     }
 
