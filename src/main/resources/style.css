@@ -104,3 +104,21 @@
     -fx-font: 20px Tahoma;
     -fx-text-fill: #4d4848;
 }
+#saveModel {
+    -fx-background-color: darkgray;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
+}
+#saveModel > .label {
+    -fx-text-fill: #4d4848;
+    -fx-font: 20px Arial;
+    -fx-font-weight: BOLD;
+}
+#saveModel > .button {
+    -fx-background-color: #6e6d6d;
+    -fx-font: 15px Arial;
+    -fx-background-radius: 5;
+}
+#saveModel > .button:pressed {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
+}

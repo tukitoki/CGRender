@@ -227,6 +227,8 @@ public class GuiController {
 
     @FXML
     AnchorPane meshSettings;
+    @FXML
+    AnchorPane saveModel;
 
     @FXML
     public void gridVisible(ActionEvent actionEvent) throws Exception {
@@ -256,69 +258,71 @@ public class GuiController {
     }
 
     @FXML
+    public void acceptChanges(ActionEvent actionEvent) throws Exception {
+        MeshContext selected = null;
+        for (MeshContext mc : sceneBuilder.getMeshContexts()) {
+            if (mc.getStatus().isSelected()) {
+                selected = mc;
+                selected.getStatus().setChanges(true);
+            }
+        }
+        saveModel.setVisible(false);
+        if (!saveModel.isVisible()) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
+            fileChooser.setTitle("Save Model");
+
+            fileChooser.setInitialDirectory(new File("src/main/resources/com/vsu/cgcourse/models"));
+
+            File file = fileChooser.showSaveDialog((Stage) canvas.getScene().getWindow());
+            if (file == null) {
+                return;
+            }
+
+            try {
+                ObjWriter.write(file, selected);
+                selected.getStatus().setChanges(false);
+            } catch (Exception exception) {
+                exceptionMessage.setText(exception.getMessage());
+                firstExceptionPane.setVisible(true);
+            }
+        }
+    }
+    @FXML
+    public void declineChanges(ActionEvent actionEvent) throws Exception {
+        MeshContext selected = null;
+        for (MeshContext mc : sceneBuilder.getMeshContexts()) {
+            if (mc.getStatus().isSelected()) {
+                selected = mc;
+                selected.getStatus().setChanges(false);
+            }
+        }
+        saveModel.setVisible(false);
+        if (!saveModel.isVisible()) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
+            fileChooser.setTitle("Save Model");
+
+            fileChooser.setInitialDirectory(new File("src/main/resources/com/vsu/cgcourse/models"));
+
+            File file = fileChooser.showSaveDialog((Stage) canvas.getScene().getWindow());
+            if (file == null) {
+                return;
+            }
+
+            try {
+                ObjWriter.write(file, selected);
+            } catch (Exception exception) {
+                exceptionMessage.setText(exception.getMessage());
+                firstExceptionPane.setVisible(true);
+            }
+        }
+    }
+
+    @FXML
     private void onSaveModelMenuItemClick() {
         if (sceneBuilder.getMeshContexts().get(0).getMesh() != null) {
-            StackPane stackPane1 = new StackPane();
-            Scene scene1 = new Scene(stackPane1, 600, 120);
-            Stage stage1 = new Stage(StageStyle.UTILITY);
-            stage1.setTitle("Cannot write model");
-            stage1.centerOnScreen();
-            Label label1 = new Label("Do you agree with changes?");
-            label1.setFont(new Font(15));
-            label1.setAlignment(Pos.CENTER);
-            Button buttonAccept = new Button("Yes");
-            buttonAccept.setOnAction(actionEvent -> {
-                sceneBuilder.getMeshContexts().get(0).getStatus().setChanges(true);
-                stage1.close();
-            });
-            Button buttonDecline = new Button("No");
-            buttonDecline.setOnAction(actionEvent -> {
-                sceneBuilder.getMeshContexts().get(0).getStatus().setChanges(false);
-                stage1.close();
-            });
-            stackPane1.getChildren().addAll(label1, buttonDecline, buttonAccept);
-            stackPane1.setAlignment(label1, Pos.CENTER);
-            stackPane1.setAlignment(buttonAccept, Pos.BOTTOM_RIGHT);
-            buttonAccept.setPrefSize(60, 40);
-            stackPane1.setAlignment(buttonDecline, Pos.BOTTOM_LEFT);
-            buttonDecline.setPrefSize(60, 40);
-            stage1.setScene(scene1);
-            //stage1.initModality(Modality.APPLICATION_MODAL);
-            stage1.showAndWait();
-        }
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
-        fileChooser.setTitle("Save Model");
-
-        fileChooser.setInitialDirectory(new File("src/main/resources/com/vsu/cgcourse/models"));
-
-        File file = fileChooser.showSaveDialog((Stage) canvas.getScene().getWindow());
-        if (file == null) {
-            return;
-        }
-
-        try {
-            for (int i = 0; i < sceneBuilder.getMeshContexts().size(); i++) {
-                if (sceneBuilder.getMeshContexts().get(i).getStatus().isSelected()) {
-                    ObjWriter.write(file, sceneBuilder.getMeshContexts().get(i));
-                }
-            }
-        } catch (Exception exception) {
-            exceptionMessage.setText("Break&#10;Line" + exception.getMessage());
-            firstExceptionPane.setVisible(true);
-//            StackPane stackPane = new StackPane();
-//            Scene scene = new Scene(stackPane, 600, 120);
-//            Stage stage = new Stage(StageStyle.UTILITY);
-//            stage.setTitle("Cannot write model");
-//            stage.centerOnScreen();
-//            Label label = new Label(exception.getMessage());
-//            label.setFont(new Font(15));
-//            label.setAlignment(Pos.CENTER);
-//            stackPane.getChildren().add(label);
-//            stackPane.setAlignment(label, Pos.CENTER);
-//            stage.setScene(scene);
-//            stage.show();
+            saveModel.setVisible(true);
         }
     }
 

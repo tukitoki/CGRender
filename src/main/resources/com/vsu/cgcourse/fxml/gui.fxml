@@ -146,6 +146,11 @@
         <ToggleButton selected="true" text="textureVisible" AnchorPane.bottomAnchor="12" AnchorPane.leftAnchor="135.0" AnchorPane.topAnchor="12" onAction="#textureVisible"/>
         <ToggleButton selected="true" text="paintingVisible" AnchorPane.bottomAnchor="12" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="12" onAction="#paintingVisible"/>
     </AnchorPane>
+    <AnchorPane visible="false" fx:id="saveModel" stylesheets="/exceptionsStyle.css" AnchorPane.leftAnchor="700.0" AnchorPane.topAnchor="300.0" prefWidth="500" prefHeight="200">
+        <Label wrapText="true" text="Do you agree with changes?" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="50.0" />
+        <Button fx:id="apply" text="Apply" AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="10.0" onAction="#acceptChanges" />
+        <Button fx:id="decline" text="Decline" AnchorPane.leftAnchor="20.0" AnchorPane.bottomAnchor="10.0" onAction="#declineChanges" />
+    </AnchorPane>
     <TitledPane visible="false" text="Models" fx:id="modelPane" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0" prefWidth="300" prefHeight="600">
         <GridPane fx:id="modelGridPane" vgap="10" >
         </GridPane>
