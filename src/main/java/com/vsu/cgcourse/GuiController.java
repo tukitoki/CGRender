@@ -2,6 +2,7 @@ package com.vsu.cgcourse;
 
 import com.vsu.cgcourse.math.Matrix3;
 import com.vsu.cgcourse.math.Vector3;
+import com.vsu.cgcourse.model.DrawTexture;
 import com.vsu.cgcourse.model.MeshContext;
 import com.vsu.cgcourse.obj_writer.ObjWriter;
 import com.vsu.cgcourse.render_engine.SceneBuilder;
@@ -31,6 +32,7 @@ import javafx.util.Duration;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.File;
+import java.util.Arrays;
 
 import com.vsu.cgcourse.obj_reader.ObjReader;
 import com.vsu.cgcourse.render_engine.Camera;
@@ -45,6 +47,7 @@ public class GuiController {
 
     RenderEngine renderEngine = new RenderEngine();
 
+    DrawTexture drawTexture = new DrawTexture();
 
     @FXML
     private Canvas canvas;
@@ -52,7 +55,7 @@ public class GuiController {
     private SceneBuilder sceneBuilder = new SceneBuilder();
 
     private Camera camera = new Camera(
-            new Vector3(new float[]{0, 0, 1000}),
+            new Vector3(new float[]{0, 0, 150}),
             new Vector3(new float[]{0, 0, 0}),
             1.0F, 1, 0.01F, 100);
 
@@ -71,6 +74,12 @@ public class GuiController {
         KeyFrame frame = new KeyFrame(Duration.millis(15), event -> {
             double width = canvas.getWidth();
             double height = canvas.getHeight();
+
+            float[][] zBuffer = new float[(int) height][(int) width];
+            for (float[] row: zBuffer) {
+                Arrays.fill(row, Float.MAX_VALUE);
+            }
+            drawTexture.setZBuffer(zBuffer);
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
             camera.setAspectRatio((float) (width / height));

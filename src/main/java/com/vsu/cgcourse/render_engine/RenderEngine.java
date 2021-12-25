@@ -38,6 +38,7 @@ public class RenderEngine {
         modelViewProjectionMatrix.multiply(viewMatrix);
         modelViewProjectionMatrix.multiply(projectionMatrix);
         modelViewProjectionMatrix.transposite();
+        //meshContext.setTexture(new Image("file:src\\main\\resources\\com\\vsu\\cgcourse\\models\\Candle_lp_Candle_BaseColor.png"));
         Collections.synchronizedList(meshContext.getMesh().getPolygons()).parallelStream().
                 forEachOrdered(p1 -> {
                     final int nVerticesInPolygon = p1.getPolygonVertexIndices().size();
@@ -81,7 +82,7 @@ public class RenderEngine {
                             if (meshContext.getTexture() != null) {
                                 try {
                                     DrawTexture.drawTexture(vertexes.get(i), vertexes.get(i + 1), vertexes.get(i + 2),
-                                            meshContext, graphicsContext.getPixelWriter(), meshContext.getTexture().getPixelReader());
+                                            meshContext, graphicsContext.getPixelWriter());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

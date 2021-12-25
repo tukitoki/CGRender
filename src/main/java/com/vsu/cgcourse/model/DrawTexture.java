@@ -15,11 +15,16 @@ import java.util.Comparator;
 
 public class DrawTexture {
 
-    private static Color fillingColor = Color.rgb(52, 52, 52, 1.0);
+    private float[][] zBuffer;
+
+    public void setZBuffer(float[][] zBuffer) {
+        this.zBuffer = zBuffer;
+    }
+
+    private static Color fillingColor = Color.rgb(255, 111, 255, 1.0);
 
     public static void drawTexture(Vertexes ver0, Vertexes ver1, Vertexes ver2,
-                                   MeshContext meshContext, PixelWriter pw,
-                                   PixelReader pr) throws Exception {
+                                   MeshContext meshContext, PixelWriter pw) throws Exception {
         Image texture = meshContext.getTexture();
         ArrayList<Vertexes> sortedVectors = getSortedVectors(ver0, ver1, ver2);
         draw(sortedVectors, texture, pw);
@@ -32,21 +37,20 @@ public class DrawTexture {
         draw(sortedVectors, null, pw);
     }
 
-    /*private static void putPixel(Vertexes ver0, Vertexes ver1, Vertexes ver2,
+    private static void putPixel(Vector2 o, Vertexes ver0, Vertexes ver1, Vertexes ver2,
                                  Image texture, PixelWriter pw) throws Exception {
-        p1.sub(p0);
-        p2.sub(p0);
-        o.sub(p0);
-        float alpha = findAlpha(o, p1, p2);
-        float beta = findBeta(o, p1, p2);
-        float vtResultX = vt0.getX() * (1 - alpha - beta) + vt1.getX() * beta + vt2.getX() * alpha;
-        float vtResultY = vt0.getY() * (1 - alpha - beta) + vt1.getY() * beta + vt2.getY() * alpha;
+
+        Vertexes vec1 = new Vertexes(new Vector3(ver1.v.subtraction(ver0.v)), ver1.vt, ver1.vn) ;
+        Vertexes vec2 = new Vertexes(new Vector3(ver2.v.subtraction(ver0.v)), ver1.vt, ver1.vn) ;
+        o.sub(ver0.v.getVector2());
+        float alpha = findAlpha(o, vec1.v.getVector2(), vec2.v.getVector2());
+        float beta = findBeta(o, vec1.v.getVector2(), vec2.v.getVector2());
+        float vtResultX = ver0.vt.getX() * (1 - alpha - beta) + vec1.vt.getX() * beta + vec2.vt.getX() * alpha;
+        float vtResultY = ver0.vt.getY() * (1 - alpha - beta) + vec1.vt.getY() * beta + vec2.vt.getY() * alpha;
         vtResultX *= (float) texture.getWidth();
-        vtResultY *= (float) texture.getHeight();
+        vtResultY = (float) texture.getHeight() * (1 - vtResultY);
         pw.setColor((int) vtResultX, (int) vtResultY, texture.getPixelReader().getColor((int) vtResultX, (int) vtResultY));
     }
-
-     */
 
     private static void draw(ArrayList<Vertexes> sortedVectors,
                              Image texture, PixelWriter pw) throws Exception {
@@ -65,30 +69,31 @@ public class DrawTexture {
                     break;
                 }
                 for (float x = getXFuncLine(ver0, ver1, y); x < getXFuncLine(ver0, ver2, y); x++) {
-                    pw.setColor((int) x, (int) y, fillingColor);
+                    if (texture != null) {
+                        putPixel(new Vector2(new float[] {x, y}), ver0, ver1, ver2, texture, pw);
+                    } else {
+                        pw.setColor((int) x, (int) y, fillingColor);
+                    }
                 }
             }
         } else if (sortedVectors.size() == 4) {
             Vertexes ver3 = sortedVectors.get(3);
-            for (float y = ver0.v.getY(); y > ver2.v.getY(); y--) {
+            for (float y = ver0.v.getY(); y > ver2.v.getY(); y--) { //down
                 for (float x = getXFuncLine(ver0, ver2, y); x < getXFuncLine(ver0, ver3, y); x++) {
-                    //if (texture != null) {
-                    //    putPixel(new Vector2(new float[]{(int) x, (int) y}), ver0, ver1,
-                    //            ver2, texture, pw);
-                    //} else {
+                    if (texture != null) {
+                        putPixel(new Vector2(new float[] {x, y}), ver0, ver2, ver3, texture, pw);
+                    } else {
                     pw.setColor((int) x, (int) y, fillingColor);
-                    //}
+                    }
                 }
             }
-            for (float y = ver1.v.getY(); y < ver2.v.getY(); y++) {
+            for (float y = ver1.v.getY(); y < ver2.v.getY(); y++) { //up
                 for (float x = getXFuncLine(ver1, ver2, y); x < getXFuncLine(ver1, ver3, y); x++) {
-                    pw.setColor((int) x, (int) y, fillingColor);
-//                    if (texture != null) {
-//                        putPixel(new Vector2(new float[]{(int) x, (int) y}), sortedVectors.get(0), sortedVectors.get(1),
-//                                sortedVectors.get(2), vt0, vt1, vt2, texture, pw);
-//                    } else {
-//
-//                    }
+                    if (texture != null) {
+                        putPixel(new Vector2(new float[] {x, y}), ver1, ver2, ver3, texture, pw);
+                    } else {
+                        pw.setColor((int) x, (int) y, fillingColor);
+                    }
                 }
             }
         }
@@ -140,77 +145,8 @@ public class DrawTexture {
             sortedVectors.add(opposite);
             sortedVectors.add(mid);
         }
-//        if (ver0.v.getY() - max.v.getY() < 0 && ver0.v.getY() - min.v.getY() > 0) {
-//            Vertexes ver3 = getOppositeVector(max, ver0, ver0.v.getY());
-//            if (ver3.v.getX() - ver0.v.getX() < 0) {
-//                sortedVectors.add(ver3);
-//                sortedVectors.add(ver0);
-//            } else {
-//                sortedVectors.add(ver0);
-//                sortedVectors.add(ver3);
-//            }
-//        } else if (ver1.v.getY() - max.v.getY() < 0 && ver1.v.getY() - min.v.getY() > 0) {
-//            Vertexes ver3 = getOppositeVector(max, ver1, ver1.v.getY());
-//            if (ver3.v.getX() - ver1.v.getX() < 0) {
-//                sortedVectors.add(ver3);
-//                sortedVectors.add(ver1);
-//            } else {
-//                sortedVectors.add(ver1);
-//                sortedVectors.add(ver3);
-//            }
-//        } else if (ver2.v.getY() - max.v.getY() < 0 && ver2.v.getY() - min.v.getY() > 0) {
-//            Vertexes ver3 = getOppositeVector(max, ver2, ver2.v.getY());
-//            if (ver3.v.getX() - ver2.v.getX() < 0) {
-//                sortedVectors.add(ver3);
-//                sortedVectors.add(ver2);
-//            } else {
-//                sortedVectors.add(ver2);
-//                sortedVectors.add(ver3);
-//            }
-//        }
-        /*sortedVectors.sort((o1, o2) -> {
-            if (Math.floor(o2.v.getY()) - Math.floor(o1.v.getY()) > 0) {
-                return 1;
-            } else {
-                return -1;
-            }
-        });
-
-         */
         return sortedVectors;
     }
-    /*private static void getFourSortedVectors(Vertexes ver0, Vertexes ver1, Vertexes ver2, ArrayList<Vertexes> sortedVectors) {
-        if (ver0.v.getY() - ver1.v.getY() < 0 && ver0.v.getY() - ver2.v.getY() > 0 || ver0.v.getY() - ver1.v.getY() > 0 && ver0.v.getY() - ver2.v.getY() < 0) {
-            Vector2 v3 = getOppositeVector(sortedVectors.get(0), sortedVectors.get(1), ver0.v.getY());
-            if (ver0.v.getX() - v3.getX() < 0) {
-                sortedVectors.add(ver0);
-                sortedVectors.add(v3);
-            } else {
-                sortedVectors.add(v3);
-                sortedVectors.add(ver0);
-            }
-        } else if (ver1.v.getY() - ver0.v.getY() < 0 && ver1.v.getY() - ver2.v.getY() > 0 || ver1.v.getY() - ver0.v.getY() > 0 && ver1.v.getY() - ver2.v.getY() < 0) {
-            Vector2 v3 = getOppositeVector(sortedVectors.get(0), sortedVectors.get(1), ver1.v.getY());
-            if (ver1.v.getX() - v3.getX() < 0) {
-                sortedVectors.add(ver1);
-                sortedVectors.add(v3);
-            } else {
-                sortedVectors.add(v3);
-                sortedVectors.add(ver1);
-            }
-        } else if (ver2.v.getY() - ver0.v.getY() > 0 && ver2.v.getY() - ver1.v.getY() < 0 || ver2.v.getY() - ver0.v.getY() < 0 && ver2.v.getY() - ver1.v.getY() > 0) {
-            Vector2 v3 = getOppositeVector(sortedVectors.get(0), sortedVectors.get(1), ver2.v.getY());
-            if (ver2.v.getX() - v3.getX() < 0) {
-                sortedVectors.add(ver2);
-                sortedVectors.add(v3);
-            } else {
-                sortedVectors.add(v3);
-                sortedVectors.add(ver2);
-            }
-        }
-    }
-
-     */
 
     private static float getXFuncLine(Vertexes ver0, Vertexes ver1, float y0) {
         float x = (y0 - ver0.v.getY()) * (ver1.v.getX() - ver0.v.getX()) / (ver1.v.getY() - ver0.v.getY()) + ver0.v.getX();
@@ -223,13 +159,13 @@ public class DrawTexture {
 
     private static Vertexes getOppositeVector(Vertexes ver0, Vertexes ver1, float y0) throws Exception {
         Vector3 ver3 = new Vector3(new float[]{(y0 - ver0.v.getY()) * (ver1.v.getX() - ver0.v.getX()) / (ver1.v.getY() - ver0.v.getY()) + ver0.v.getX(), y0, 0});
-        /*Vector3 verMax = new Vector3(ver0.v.subtraction(ver1.v));
-        Vector3 verMin = new Vector3(ver0.v.subtraction(v3));
-        float prop = verMin.getX() / verMax.getX();
-        Vector2 verTexture = new Vector2(ver0.vt.subtraction(ver1.vt));
-
-         */
-        return new Vertexes(ver3, new Vector2(new float[]{1, 2}), new Vector3(new float[]{1, 2, 3}));
+        Vector3 verMax = new Vector3(ver1.v.subtraction(ver0.v));
+        Vector3 verMin = new Vector3(ver3.subtraction(ver0.v));
+        float prop = verMin.length() / verMax.length();
+        Vector2 verTexture = new Vector2(ver1.vt.subtraction(ver0.vt));
+        verTexture.multiply(prop);
+        verTexture.plus(ver0.vt);
+        return new Vertexes(ver3, verTexture, new Vector3(new float[]{1, 2, 3}));
     }
 
     private static Vertexes getVectorMinY(Vertexes ver0, Vertexes ver1, Vertexes ver2) {
@@ -284,6 +220,10 @@ public class DrawTexture {
     }
 
     private static float findBeta(Vector2 v0, Vector2 v1, Vector2 v2) {
-        return (v1.getY() * v0.getX() - v1.getX() * v0.getY()) / (v1.getY() * v2.getX() - v2.getY() * v1.getX());
+        float beta = (v1.getY() * v0.getX() - v1.getX() * v0.getY()) / (v1.getY() * v2.getX() - v2.getY() * v1.getX());
+        if (beta < 0) {
+            return Math.abs(beta);
+        }
+        return beta;
     }
 }
