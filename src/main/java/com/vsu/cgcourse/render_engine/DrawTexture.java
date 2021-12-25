@@ -49,8 +49,10 @@ public class DrawTexture {
         float beta = findBeta(vecO, vec1.getV().getVector2(), vec2.getV().getVector2());
         float vtResultX = ver0.getVt().getX() * (1 - alpha - beta) + vec1.getVt().getX() * beta + vec2.getVt().getX() * alpha;
         float vtResultY = ver0.getVt().getY() * (1 - alpha - beta) + vec1.getVt().getY() * beta + vec2.getVt().getY() * alpha;
-        Color color = texture.getPixelReader().getColor((int) vtResultX, (int) vtResultY);
-        pw.setColor((int) o.getX(), (int) o.getY(), color);
+        vtResultX *= (float) texture.getWidth();
+        vtResultY = (float) texture.getHeight() * (1 - vtResultY);
+        Color color = texture.getPixelReader().getColor((int) Math.floor(vtResultX), (int) Math.floor(vtResultY));
+        pw.setColor((int) Math.floor(o.getX()), (int) Math.floor(o.getY()), color);
     }
 
     private static void draw(ArrayList<Vertexes> sortedVectors,

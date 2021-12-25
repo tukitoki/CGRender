@@ -55,7 +55,7 @@ public class GuiController {
     private SceneBuilder sceneBuilder = new SceneBuilder();
 
     private Camera camera = new Camera(
-            new Vector3(new float[]{0, 0, 150}),
+            new Vector3(new float[]{0, 0, 500}),
             new Vector3(new float[]{0, 0, 0}),
             1.0F, 1, 0.01F, 100);
 
@@ -71,7 +71,7 @@ public class GuiController {
 
         sceneBuilder.getMeshContexts().add(new MeshContext(null));
 
-        KeyFrame frame = new KeyFrame(Duration.millis(60), event -> {
+        KeyFrame frame = new KeyFrame(Duration.millis(80), event -> {
             double width = canvas.getWidth();
             double height = canvas.getHeight();
 
