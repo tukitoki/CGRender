@@ -52,7 +52,7 @@ public class GuiController {
     private SceneBuilder sceneBuilder = new SceneBuilder();
 
     private Camera camera = new Camera(
-            new Vector3(new float[]{0, 0, 150}),
+            new Vector3(new float[]{0, 0, 2000}),
             new Vector3(new float[]{0, 0, 0}),
             1.0F, 1, 0.01F, 100);
 

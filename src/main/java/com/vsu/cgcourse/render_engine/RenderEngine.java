@@ -47,18 +47,18 @@ public class RenderEngine {
                                 .getPolygonVertexIndices().get(vertexInPolygonInd));
                         Vector2 textureVertex = meshContext.getMesh().getTextureVertices().get(p1
                                 .getPolygonTextureVertexIndices().get(vertexInPolygonInd));
-                        Vector3 normalVertex = meshContext.getMesh().getNormals().get(p1
-                                .getPolygonNormalIndices().get(vertexInPolygonInd));
+                        //Vector3 normalVertex = meshContext.getMesh().getNormals().get(p1
+                          //      .getPolygonNormalIndices().get(vertexInPolygonInd));
                         Vector3 resultPoint = null;
                         try {
                            resultPoint = vertexToPoint(multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertex), width, height);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        vertexes.add(new Vertexes(resultPoint, textureVertex, normalVertex));
+                        vertexes.add(new Vertexes(resultPoint, textureVertex, null));
                     }
 
-                    for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
+                    /*for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
                         graphicsContext.strokeLine(
                                 vertexes.get(vertexInPolygonInd - 1).getV().getX(),
                                 vertexes.get(vertexInPolygonInd - 1).getV().getY(),
@@ -72,6 +72,8 @@ public class RenderEngine {
                                 vertexes.get(nVerticesInPolygon - 1).getV().getY(),
                                 vertexes.get(0).getV().getX(),
                                 vertexes.get(0).getV().getY());
+
+                     */
 
                     for (int i = 0; i < vertexes.size(); i += 3) {
                         if (meshContext.getTexture() != null) {
