@@ -16,19 +16,19 @@ public class Vector2 extends AbstractVector<Vector2> {
     }
 
     public float getX() {
-        return this.getVectorCoords()[0];
+        return this.getVectorCord()[0];
     }
 
     public void setX(float x) {
-        this.getVectorCoords()[0] = x;
+        this.getVectorCord()[0] = x;
     }
 
     public float getY() {
-        return this.getVectorCoords()[1];
+        return this.getVectorCord()[1];
     }
 
     public void setY(float y) {
-        this.getVectorCoords()[1] = y;
+        this.getVectorCord()[1] = y;
     }
 
     @Override

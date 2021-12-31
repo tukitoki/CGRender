@@ -3,8 +3,6 @@ package com.vsu.cgcourse.render_engine;
 import com.vsu.cgcourse.math.*;
 import com.vsu.cgcourse.model.MeshContext;
 
-import javax.vecmath.Point2f;
-
 public class GraphicConveyor {
 
     public static Matrix4 rotateScaleTranslate(MeshContext meshContext) throws Exception {
@@ -30,10 +28,10 @@ public class GraphicConveyor {
         Vector3 resultZ = new Vector3(target);
 
         resultZ.sub(eye);
-        resultX.vectorMultiply(resultZ);
+        resultX.vectorMul(resultZ);
 
         Vector3 resultY = new Vector3(resultZ);
-        resultY.vectorMultiply(resultX);
+        resultY.vectorMul(resultX);
 
         resultX.normal();
         resultY.normal();
@@ -64,13 +62,13 @@ public class GraphicConveyor {
 
     public static Vector3 multiplyMatrix4ByVector3(final Matrix4 matrix, final Vector3 vertex) throws Exception {
         Vector4 vertex4 = new Vector4(new float[] {vertex.getX(), vertex.getY(), vertex.getZ(), 1});
-        vertex4.multiply(matrix);
+        vertex4.mulMatrix(matrix);
         return new Vector3(new float[] {vertex4.getX() / vertex4.getW(), vertex4.getY() / vertex4.getW(),
                                                                         vertex4.getZ() / vertex4.getW()});
     }
 
     public static Vector3 vertexToPoint(final Vector3 vertex, final int width, final int height) {
-        return new Vector3(new float[] {vertex.getVectorCoords()[0] * width + width / 2.0F, -vertex.getVectorCoords()[1] * height + height / 2.0F, vertex.getZ()});
+        return new Vector3(new float[] {vertex.getVectorCord()[0] * width + width / 2.0F, -vertex.getVectorCord()[1] * height + height / 2.0F, vertex.getZ()});
     }
 
     public static Matrix3 scale(Converter cnv) throws Exception {

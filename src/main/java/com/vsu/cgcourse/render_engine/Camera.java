@@ -41,15 +41,15 @@ public class Camera {
     }
 
     public void movePosition(final Vector3 translation) throws Exception {
-        this.position.plus(translation);
+        this.position.sum(translation);
     }
 
     public void rotate(final Matrix3 rotation) throws Exception {
-        this.position.multiply(rotation);
+        this.position.mulMatrix(rotation);
     }
 
     public void moveTarget(final Vector3 translation) throws Exception {
-        this.target.plus(translation);
+        this.target.sum(translation);
     }
 
     Matrix4 getViewMatrix() throws Exception {

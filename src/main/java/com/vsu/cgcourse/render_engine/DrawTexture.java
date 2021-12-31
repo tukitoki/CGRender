@@ -5,15 +5,10 @@ import com.vsu.cgcourse.math.Vector3;
 import com.vsu.cgcourse.model.MeshContext;
 import com.vsu.cgcourse.model.Vertexes;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 
 public class DrawTexture {
 
@@ -42,9 +37,9 @@ public class DrawTexture {
     private static void putPixel(Vector2 o, Vertexes ver0, Vertexes ver1, Vertexes ver2,
                                  Image texture, PixelWriter pw) throws Exception {
 
-        Vertexes vec1 = new Vertexes(new Vector3(ver1.getV().subtraction(ver0.getV())), ver1.getVt(), ver1.getVn()) ;
-        Vertexes vec2 = new Vertexes(new Vector3(ver2.getV().subtraction(ver0.getV())), ver1.getVt(), ver1.getVn()) ;
-        Vector2 vecO = new Vector2(o.subtraction(ver0.getV().getVector2()));
+        Vertexes vec1 = new Vertexes(new Vector3(ver1.getV().subtract(ver0.getV())), ver1.getVt(), ver1.getVn()) ;
+        Vertexes vec2 = new Vertexes(new Vector3(ver2.getV().subtract(ver0.getV())), ver1.getVt(), ver1.getVn()) ;
+        Vector2 vecO = new Vector2(o.subtract(ver0.getV().getVector2()));
         float alpha = findAlpha(vecO, vec1.getV().getVector2(), vec2.getV().getVector2());
         float beta = findBeta(vecO, vec1.getV().getVector2(), vec2.getV().getVector2());
         float vtResultX = ver0.getVt().getX() * (1 - alpha - beta) + vec1.getVt().getX() * beta + vec2.getVt().getX() * alpha;
@@ -161,12 +156,12 @@ public class DrawTexture {
 
     private static Vertexes getOppositeVector(Vertexes ver0, Vertexes ver1, float y0) throws Exception {
         Vector3 ver3 = new Vector3(new float[]{(y0 - ver0.getV().getY()) * (ver1.getV().getX() - ver0.getV().getX()) / (ver1.getV().getY() - ver0.getV().getY()) + ver0.getV().getX(), y0, 0});
-        Vector3 verMax = new Vector3(ver1.getV().subtraction(ver0.getV()));
-        Vector3 verMin = new Vector3(ver3.subtraction(ver0.getV()));
+        Vector3 verMax = new Vector3(ver1.getV().subtract(ver0.getV()));
+        Vector3 verMin = new Vector3(ver3.subtract(ver0.getV()));
         float prop = verMin.length() / verMax.length();
-        Vector2 verTexture = new Vector2(ver1.getVt().subtraction(ver0.getVt()));
-        verTexture.multiply(prop);
-        verTexture.plus(ver0.getVt());
+        Vector2 verTexture = new Vector2(ver1.getVt().subtract(ver0.getVt()));
+        verTexture.mulScal(prop);
+        verTexture.sum(ver0.getVt());
         return new Vertexes(ver3, verTexture, new Vector3(new float[]{1, 2, 3}));
     }
 

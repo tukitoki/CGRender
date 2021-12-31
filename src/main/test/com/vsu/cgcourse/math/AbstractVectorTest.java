@@ -12,7 +12,7 @@ class AbstractVectorTest {
                                                     {5,  3, 4, 5},
                                                     {8,  7, 4, 6}});
         Vector4 vector4 = new Vector4(new float[] {4, 1, 3, 7});
-        vector4.multiply(matrix4);
+        vector4.mulMatrix(matrix4);
         Assertions.assertEquals(vector4.getX(), 86);
         Assertions.assertEquals(vector4.getY(), 59);
         Assertions.assertEquals(vector4.getZ(), 70);
